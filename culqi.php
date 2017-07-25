@@ -22,15 +22,15 @@ class Culqi extends PaymentModule
 
     private $_postErrors = array();
 
-    const MODULE_NAME = "culqi";
-    const MODULE_AUTHOR = "Team Culqi (Brayan Cruces, Willy Aguirre)";
-    const MODULE_NAME_DISP = "Culqi";
+    //const MODULE_NAME = "culqi";
+    //const MODULE_AUTHOR = "Team Culqi (Willy Aguirre, Brayan Cruces, Lizz Ruelas)";
+    //const MODULE_NAME_DISP = "Culqi";
 
     public function __construct()
     {
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.2';
+        $this->version = '3.0.3';
         $this->controllers = array('chargeajax','postpayment');
         $this->author = 'Team Culqi (Willy Aguirre)';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
@@ -112,13 +112,13 @@ class Culqi extends PaymentModule
               "antifraud_details" => array(
                   "address" => $this->getAddress($userAddress),
                   "address_city" => $userAddress->city,
-                  "country_code" => $userCountry->iso_code,
+                  "country_code" => "PE",
                   "first_name" => $this->context->customer->firstname,
                   "last_name" => $this->context->customer->lastname,
                   "phone_number" => $this->getPhone($userAddress)
               ),
               "capture" => true,
-              "currency_code" => "PEN",
+              "currency_code" => $this->context->currency->iso_code,
               "description" => "Orden de compra ".$cart->id,
               "installments" => $installments,
               "metadata" => array("order_id"=>(string)$cart->id),
@@ -151,10 +151,11 @@ class Culqi extends PaymentModule
           $this->getCulqiInfoCheckout()
         );
 
-        $newOption->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
-                      ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                      ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'))
-                      ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_culqi.png'));;
+        $newOption->setModuleName($this->name)
+                  ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
+                  ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
+                  ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'))
+                  ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_culqi.png'));;
 
         $payment_options = [
             $newOption,
@@ -189,7 +190,8 @@ class Culqi extends PaymentModule
         "descripcion" => "Orden de compra ".$cart->id,
         "orden" => $cart->id,
         "total" => $cart->getOrderTotal(true, Cart::BOTH),
-        "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA')
+        "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
+        "currency" => $this->context->currency->iso_code
       );
     }
 
