@@ -86,82 +86,82 @@ $(document).ready(function() {
 
 		if(myPaymentMethodSelected) {
 				Culqi.createToken();
-				culqi();
 				return false;
 		}
 
-	});				
+	});
 
 });
 
 // Process to Pay
 function culqi() {
-if(Culqi.token) {
-  $(document).ajaxStart(function(){
-      run_waitMe();
-  });
-  $(document).ajaxComplete(function(){
-      $('body').waitMe('hide');
-  });
-  var installments = (Culqi.token.metadata.installments == undefined) ? 1 : Culqi.token.metadata.installments;
-  $.ajax({
-      url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
-      data: {
-	ajax: true,
-	action: 'displayAjax',
-	token_id: Culqi.token.id,
-	installments: installments
-      },
-      type: "POST",
-      dataType: 'json',
-      success: function(data) {
-	if(data === "Error de autenticación") {
-	  $('body').waitMe('hide');
-	  showResult('red',data + ": verificar si su Llave Secreta es la correcta");
+	if(Culqi.token) {
+	  $(document).ajaxStart(function(){
+	      run_waitMe();
+	  });
+	  $(document).ajaxComplete(function(){
+	      $('body').waitMe('hide');
+	  });
+	  var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+	  $.ajax({
+	      url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
+	      data: {
+					ajax: true,
+					action: 'displayAjax',
+					token_id: Culqi.token.id,
+					installments: installments
+	      },
+	      type: "POST",
+	      dataType: 'json',
+	      success: function(data) {
+						if (data === "Imposible conectar a Culqi API") {
+							$('body').waitMe('hide');
+							showResult('red',data + ": aumentar el timeout de la consulta");
+						} else if(data === "Error de autenticación") {
+						  $('body').waitMe('hide');
+						  showResult('red',data + ": verificar si su Llave Secreta es la correcta");
+						} else {
+						  var result = "";
+						  if(data.constructor == String) {
+						      result = JSON.parse(data);
+						  }
+						  if(data.constructor == Object) {
+						      result = JSON.parse(JSON.stringify(data));
+						  }
+						  if(result.object === 'charge') {
+						    showResult('green',result.outcome.user_message);
+								$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
+						    redirect();
+						  }
+						  if(result.object === 'error') {
+						    $('body').waitMe('hide');
+						    showResult('red',result.user_message);
+						  }
+						}
+	      }
+	  });
 	} else {
-	  var result = "";
-	  if(data.constructor == String){
-	      result = JSON.parse(data);
-	  }
-	  if(data.constructor == Object){
-	      result = JSON.parse(JSON.stringify(data));
-	  }
-	  if(result.object === 'charge'){
-	    //$('body').waitMe('hide');
-	    showResult('green',result.outcome.user_message);
-									//$('body').waitMe('show');
-									$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
-	    redirect();
-	  }
-	  if(result.object === 'error'){
-	    $('body').waitMe('hide');
-	    showResult('red',result.user_message);
-	  }
+	  $('body').waitMe('hide');
+		if(Culqi.error) {
+			showResult('red',Culqi.error.user_message);
+		}
 	}
-      }
-  });
-} else {
-  $('body').waitMe('hide');
-				if(Culqi.error) {
-					showResult('red',Culqi.error.user_message);
-				}
-}
 }
 
 function run_waitMe() {
-$('body').waitMe({
-  effect: 'orbit',
-  text: 'Procesando pago...',
-  bg: 'rgba(255,255,255,0.7)',
-  color:'#28d2c8'
-});
+	$('body').waitMe({
+	  effect: 'orbit',
+	  text: 'Procesando pago...',
+	  bg: 'rgba(255,255,255,0.7)',
+	  color:'#28d2c8'
+	});
 }
 
 function showResult(style,message) {
-$('#showresult').removeClass('hide');
-$('#showresultcontent').attr('class', '');
-$('#showresultcontent').addClass(style);
-$('#showresultcontent').html(message);
+	$('#showresult').removeClass('hide');
+	$('#showresultcontent').attr('class', '');
+	$('#showresultcontent').addClass(style);
+	$('#showresultcontent').html(message);
 }
 
 function redirect() {
