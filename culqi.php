@@ -189,7 +189,8 @@ class Culqi extends PaymentModule
         "descripcion" => "Orden de compra ".$cart->id,
         "orden" => $cart->id,
         "total" => $cart->getOrderTotal(true, Cart::BOTH),
-        "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA')
+        "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
+        "currency" => $this->context->currency->iso_code
       );
     }
 
