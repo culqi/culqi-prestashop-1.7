@@ -52,7 +52,7 @@
 		<br/>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="http://checkout.culqi.com/v2"></script>
+<script src="https://checkout.culqi.com/v2"></script>
 <script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
 
 
