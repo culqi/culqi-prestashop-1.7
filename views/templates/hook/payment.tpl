@@ -12,25 +12,25 @@
     <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css" media="all">
 
 		<div class="row" >
-			<div class="col-md-3"></div>
-			<div class="col-md-6">
+			<div class="col-md-3 col-xs-1"></div>
+			<div class="col-md-5 col-xs-8">
 				<form id="form-payment" >
 					<div class="form-group">
 						<h6>Correo Electronico</h6>
 						<input  name="input-email" id="input-email" data-culqi="card[email]" class="culqi-email w"/>
 					</div>
 					<div class="form-group">
-						<h6>Numero Tarjeta</h6>
+						<h6>Número Tarjeta</h6>
 						<input  name="input-card" id="input-card" data-culqi="card[number]" class="culqi-card w"/>
 					</div>
 
 					<div class="form-group">
 						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-6 col-xs-6">
 								<h6>Mes expiración</h6>
 								<input placeholder="MM" maxlength="2" data-culqi="card[exp_month]" class="culqi-expm w"/>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-6 col-xs-6">
 								<h6>Año expiración</h6>
 								<input placeholder="AAAA" maxlength="4" data-culqi="card[exp_year]" class="culqi-expy w"/>
 							</div>
@@ -46,7 +46,7 @@
 					<b id="showresultcontent"></b>
 				</p>
 			</div>
-			<div class="col-md-3"></div>
+			<div class="col-md-4 col-xs-9"></div>
 
 		</div>
 		<br/>
