@@ -1,84 +1,97 @@
 <div class="row culqi_payment">
+		<style type="text/css">
+			.w {
+				width: 100%;
+			}
+			.wc {
+				width: 45%;
+			}
 
+		</style>
 		<link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/culqi.css" type="text/css" media="all">
     <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css" media="all">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="http://checkout.culqi.com/v2"></script>
-    <script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
 
-		<div class="row">
-
-			<div class="col-md-3">
-			</div>
-
+		<div class="row" >
+			<div class="col-md-3"></div>
 			<div class="col-md-6">
-
-				<form>
-
+				<form id="form-payment" >
 					<div class="form-group">
-						<label>Email</label>
-						<input type="text" placeholder="username@culqi.com" class="form-control" size="25" data-culqi="card[email]" id="card[email]" />
+						<h6>Correo Electronico</h6>
+						<input  name="input-email" id="input-email" data-culqi="card[email]" class="culqi-email w"/>
+					</div>
+					<div class="form-group">
+						<h6>Numero Tarjeta</h6>
+						<input  name="input-card" id="input-card" data-culqi="card[number]" class="culqi-card w"/>
 					</div>
 
 					<div class="form-group">
-						<label>Numero Tarjeta</label>
-						<input type="text" placeholder="411111******1111" size="16" class="form-control" data-culqi="card[number]" id="card[number]" />
+						<div class="row">
+							<div class="col-md-6">
+								<h6>Mes expiración</h6>
+								<input placeholder="MM" maxlength="2" data-culqi="card[exp_month]" class="culqi-expm w"/>
+							</div>
+							<div class="col-md-6">
+								<h6>Año expiración</h6>
+								<input placeholder="AAAA" maxlength="4" data-culqi="card[exp_year]" class="culqi-expy w"/>
+							</div>
+						</div>
 					</div>
-
-					<div class="row">
-
-						<div class="col-md-4">
-
-							<div class="form-group">
-									<label>CVV</label>
-									<input type="text" placeholder="OOO" size="4" class="form-control" data-culqi="card[cvv]" id="card[cvv]" placeholder />
-							</div>
-
-						</div>
-
-						<div class="col-md-4">
-
-							<div class="form-group">
-								<label>Mes exp.</label>
-								<input type="text" placeholder="MM" size="2" class="form-control" data-culqi="card[exp_month]" id="card[exp_month]" />
-							</div>
-
-						</div>
-
-						<div class="col-md-4">
-
-							<div class="form-group">
-								<label>Año exp.</label>
-								<input type="text" placeholder="YYYY" size="2" class="form-control" data-culqi="card[exp_year]" id="card[exp_year]"/>
-							</div>
-
-						</div>
-
+					<div class="form-group">
+							<h6>CVV</h6>
+							<input  name="input-cvc" id="input-cvc" data-culqi="card[cvv]" class="culqi-cvv wc"/>
 					</div>
 
 				</form>
-
 				<p class="hide" id="showresult">
-		        <b id="showresultcontent"></b>
-		    </p>
-
+					<b id="showresultcontent"></b>
+				</p>
 			</div>
-
-			<div class="col-md-3">
-			</div>
+			<div class="col-md-3"></div>
 
 		</div>
-
 		<br/>
-
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://checkout.culqi.com/v2"></script>
+<script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
+
 
 {literal}
 <script>
 
-$(document).ready(function() {
+	$(".culqi-expm").on("input" , function() {
+	  this.value = this.value.replace(/[^0-9]/g,'');
+	  var expm = $('.culqi-expm').val().length;
+	  if ( expm == 1 ) {
+			$('.culqi-expm').css({"outline-color": "#ff4c4c",
+             								"outline-style":"solid",
+														"outline-width":".1875rem"
+             								});
+	  } else if (expm == 2){
+			$('.culqi-expm').css({"outline-color": "white",
+														"outline-width":"0"
+             								});
+		}
+	});
 
+	$(".culqi-expy").on("input" , function() {
+	  this.value = this.value.replace(/[^0-9]/g,'');
+	  var expy = $('.culqi-expy').val().length;
+	  if ( expy < 4 ) {
+			$('.culqi-expy').css({"outline-color": "#ff4c4c",
+             								"outline-style":"solid",
+														"outline-width":".1875rem"
+             								});
+	  } else if (expy == 4) {
+			$('.culqi-expy').css({"outline-color": "white",
+														"outline-width":"0"
+             								});
+		}
+	});
+
+$(document).ready(function() {
 	Culqi.publicKey = '{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}';
+	Culqi.useClasses = true;
 	Culqi.init();
 
 	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
@@ -90,7 +103,6 @@ $(document).ready(function() {
 		}
 
 	});
-
 });
 
 // Process to Pay
@@ -174,4 +186,22 @@ function fnReplace(url) {
 }
 
 </script>
+
 {/literal}
+
+<script defer src="https://www.culqi.com/libs/jquery.culqi.js"></script>
+<script>
+$(function () {
+		$("#form-payment").checkout({
+				inputs: [
+					{ id: "#input-card",
+						type: "card"},
+					{ id: "#input-cvc",
+						type: "cvc"},
+					{ id: "#input-email",
+						type: "email"
+					}
+				]
+		});
+	});
+</script>
