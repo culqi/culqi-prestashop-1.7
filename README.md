@@ -1,4 +1,4 @@
-# Culqi JS - Prestashop 1.7
+# Culqi JS v2 - Prestashop 1.7
 
 ### Pasos para la Integración del Modulo de Culqi
 
