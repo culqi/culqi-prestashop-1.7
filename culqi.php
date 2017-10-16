@@ -26,9 +26,9 @@ class Culqi extends PaymentModule
     {
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.3';
+        $this->version = '3.0.4';
         $this->controllers = array('chargeajax','postpayment');
-        $this->author = 'Team Culqi (Willy Aguirre, Brayan Cruces, Lizz Ruelas)';
+        $this->author = 'Team Culqi (Willy Aguirre, Brayan Cruces, Liz Ruelas)';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
         $this->display = 'view';
@@ -148,7 +148,7 @@ class Culqi extends PaymentModule
         );
 
         $newOption->setModuleName($this->name)
-                  ->setCallToActionText($this->trans('Pagar con Tarjeta de credito o debito', array(), 'culqi'))
+                  ->setCallToActionText($this->trans('Pagar con Tarjeta', array(), 'culqi'))
                   ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
                   ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'))
                   ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
