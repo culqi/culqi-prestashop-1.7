@@ -7,9 +7,8 @@
 Así podrás tener acceso al [ambiente de pruebas de Culqi](<https://integ-panel.culqi.com/)
 donde encontrarás [tus llaves](https://integ-panel.culqi.com/#/desarrollo/llaves/)
 
-`Llave publica: pk_test_xxxxxxxxxxxxxx`
-
-`Llave privada: sk_test_xxxxxxxxxxxxxx`
+* Llave pública: `pk_live_xxxxxxxxxxxxxx`
+* Llave privada: `sk_live_xxxxxxxxxxxxxx`
 
 #### 2. Descargar  el [Módulo de Culqi 3.0.4](https://github.com/culqi/culqi-prestashop-1.7/releases/tag/v3.0.4/)
 
