@@ -21,6 +21,9 @@ $(document).ready(function() {
     var errorCard = "<div class=\"alert alert-danger\" role=\"alert\">" + localStorage.getItem('culqi_message') + "</div>";
 
     $('#notifications .container').html(errorCard)
+
+    setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 2000);
+    setInterval(function(){ $('#notifications .container').html('') }, 5000);
   }
 
   Culqi = new culqijs.Checkout();
@@ -36,13 +39,13 @@ $(document).ready(function() {
       buttontext: '#ffffff',
       maintext: '#4A4A4A',
       desctext: '#4A4A4A',
-      logo: 'https://image.flaticon.com/icons/svg/25/25231.svg'
+      logo: '{/literal}{$urls.img_ps_url}{$shop.logo}{literal}'
     }
   })
   Culqi.settings({
-    title: 'Title Tienda',
-    currency: 'PEN',
-    description: 'Descripcion tienda',
+    title: '{/literal}{$page.meta.title}{literal}',
+    currency: '{/literal}{$currency}{literal}',
+    description: '',
     amount: 700,
     order: '{/literal}{$order_culqi->id}{literal}'
   });

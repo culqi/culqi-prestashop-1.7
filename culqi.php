@@ -211,6 +211,7 @@ class Culqi extends PaymentModule
 
     public function getCulqiInfoCheckout(){
         $cart = $this->context->cart;
+        $currency = $this->context->currency;
 
         $orderCulqi = $this->orderCulqi();
 
