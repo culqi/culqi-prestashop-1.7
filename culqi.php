@@ -111,7 +111,7 @@ class Culqi extends PaymentModule
                   "country_code" => "PE",
                   "first_name" => $this->context->customer->firstname,
                   "last_name" => $this->context->customer->lastname,
-                  "phone_number" => $this->getPhone($userAddress)
+                  "phone_number" => $this->getPhone($userAddress) ?: 999999999,
               ),
               "capture" => true,
               "currency_code" => $this->context->currency->iso_code,
@@ -149,7 +149,7 @@ class Culqi extends PaymentModule
 
         $newOption->setModuleName($this->name)
                   ->setCallToActionText($this->trans('Pagar con Tarjeta', array(), 'culqi'))
-                  ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
+                  //->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
                   ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'))
                   ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
 
@@ -183,6 +183,7 @@ class Culqi extends PaymentModule
       $cart = $this->context->cart;
       return array(
         "module_dir" => $this->_path,
+        'id_cart' => $cart->id,
         "descripcion" => "Orden de compra ".$cart->id,
         "orden" => $cart->id,
         "total" => $cart->getOrderTotal(true, Cart::BOTH),

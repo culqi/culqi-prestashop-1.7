@@ -1,64 +1,20 @@
 <div class="row culqi_payment">
-		<style type="text/css">
-			.w {
-				width: 100%;
-			}
-			.wc {
-				width: 45%;
-			}
-
-		</style>
 		<link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/culqi.css" type="text/css" media="all">
     <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css" media="all">
 
-		<div class="row" >
-			<div class="col-md-3 col-xs-1"></div>
-			<div class="col-md-5 col-xs-8">
-				<form id="form-payment" >
-					<div class="form-group">
-						<h6>Correo Electronico</h6>
-						<input  name="input-email" id="input-email" data-culqi="card[email]" class="culqi-email w"/>
-					</div>
-					<div class="form-group">
-						<h6>Número Tarjeta</h6>
-						<input  name="input-card" id="input-card" data-culqi="card[number]" class="culqi-card w"/>
-					</div>
+    <div id="showresult" class="hide">
+      <div id="showresultcontent"></div>
+    </div>
 
-					<div class="form-group">
-						<div class="row">
-							<div class="col-md-6 col-xs-6">
-								<h6>Mes expiración</h6>
-								<input placeholder="MM" maxlength="2" data-culqi="card[exp_month]" class="culqi-expm w"/>
-							</div>
-							<div class="col-md-6 col-xs-6">
-								<h6>Año expiración</h6>
-								<input placeholder="AAAA" maxlength="4" data-culqi="card[exp_year]" class="culqi-expy w"/>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-							<h6>CVV</h6>
-							<input  name="input-cvc" id="input-cvc" data-culqi="card[cvv]" class="culqi-cvv wc"/>
-					</div>
-
-				</form>
-				<p class="hide" id="showresult">
-					<b id="showresultcontent"></b>
-				</p>
-			</div>
-			<div class="col-md-4 col-xs-9"></div>
-
-		</div>
-		<br/>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="https://checkout.culqi.com/v2"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
 
+<script src="https://checkout.culqi.com/js/v3"></script>
 
 {literal}
 <script>
-
+/*
 	$(".culqi-expm").on("input" , function() {
 	  this.value = this.value.replace(/[^0-9]/g,'');
 	  var expm = $('.culqi-expm').val().length;
@@ -88,22 +44,125 @@
              								});
 		}
 	});
+*/
 
 $(document).ready(function() {
+  Culqi = new culqijs.Checkout();
+  Culqi.publicKey = '{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}';
+  Culqi.options({
+    lang: 'auto',
+    modal: true,
+    installments: true,
+    style: {
+      bgcolor: '#f0f0f0',
+      maincolor: '#53D3CA',
+      disabledcolor: '#ffffff',
+      buttontext: '#ffffff',
+      maintext: '#4A4A4A',
+      desctext: '#4A4A4A',
+      logo: 'https://image.flaticon.com/icons/svg/25/25231.svg'
+    }
+  })
+  Culqi.settings({
+    title: 'Title Tienda',
+    currency: 'PEN',
+    description: 'Descripcion tienda',
+    amount: 700,
+    order: 'ord_test_sm6aEl0TRRHmCXBP'
+  });
+
+
+
+
+
+
+/*
 	Culqi.publicKey = '{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}';
 	Culqi.useClasses = true;
 	Culqi.init();
+*/
 
 	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
 		var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
 
 		if(myPaymentMethodSelected) {
-				Culqi.createToken();
+				//Culqi.createToken();
+        e.preventDefault();
+        Culqi.open();
 				return false;
 		}
 
 	});
 });
+
+  function culqi() {
+    if (Culqi.token) {
+
+      console.log("Token obtenido");
+      console.log(Culqi.token);
+      console.log("Respuesta desde iframe: ", Culqi.token);
+      //alert('llego token')
+      $(document).ajaxStart(function(){
+        //run_waitMe();
+      });
+
+      var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+      $.ajax({
+        type: 'POST',
+        url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
+        data: {
+          //token: Culqi.token.id,
+          //cuotas: Culqi.token.metadata.installments
+          ajax: true,
+          action: 'displayAjax',
+          token_id: Culqi.token.id,
+          installments: installments
+        },
+        datatype: 'json',
+        success: function(data) {
+          var result = data.constructor === String ? JSON.parse(eval(data)) : data;
+          console.log(result);
+
+          switch (result.object) {
+            case 'charge':
+              color = 'green';
+              // redirect to SUCCESS
+              break;
+
+            case 'error':
+              showResult('red', result.user_message);
+              Culqi.close();
+              break;
+
+            default:
+              showResult('black', result.user_message);
+              Culqi.close();
+              break;
+          }
+        },
+        error: function(error) {
+          showResult('red', JSON.stringify(error));
+        }
+      });
+    } else if (Culqi.order) {
+      console.log("Order confirmada con PagoEfectivo");
+      console.log(Culqi.order);
+      // resultpe(Culqi.order);
+      showResult('green', Culqi.order);
+      // alert('Se ha elegido el metodo de pago en efectivo:' + Culqi.order);
+    }
+    else if (Culqi.closeEvent){
+      console.log(Culqi.closeEvent);
+    }
+    else {
+      $('#response-panel').show();
+      $('#response').html(Culqi.error.merchant_message);
+      // $('body').waitMe('hide');
+    }
+  }
+
+
+/*
 
 // Process to Pay
 function culqi() {
@@ -159,6 +218,7 @@ function culqi() {
 		}
 	}
 }
+*/
 
 function run_waitMe() {
 	$('body').waitMe({
@@ -170,6 +230,7 @@ function run_waitMe() {
 }
 
 function showResult(style,message) {
+  console.log('showResult ===> ', style, message);
 	$('#showresult').removeClass('hide');
 	$('#showresultcontent').attr('class', '');
 	$('#showresultcontent').addClass(style);
@@ -188,20 +249,3 @@ function fnReplace(url) {
 </script>
 
 {/literal}
-
-<script defer src="https://www.culqi.com/libs/jquery.culqi.js"></script>
-<script>
-$(function () {
-		$("#form-payment").checkout({
-				inputs: [
-					{ id: "#input-card",
-						type: "card"},
-					{ id: "#input-cvc",
-						type: "cvc"},
-					{ id: "#input-email",
-						type: "email"
-					}
-				]
-		});
-	});
-</script>
