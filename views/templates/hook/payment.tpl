@@ -68,7 +68,7 @@ $(document).ready(function() {
     currency: 'PEN',
     description: 'Descripcion tienda',
     amount: 700,
-    order: 'ord_test_sm6aEl0TRRHmCXBP'
+    order: '{/literal}{$order_culqi->id}{literal}'
   });
 
 
@@ -106,12 +106,12 @@ $(document).ready(function() {
         //run_waitMe();
       });
 
-      var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+      var installments = (Culqi.token.metadata.installments === undefined) ? 0 : Culqi.token.metadata.installments;
       $.ajax({
         type: 'POST',
         url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
         data: {
-          //token: Culqi.token.id,
+          token: Culqi.token.id,
           //cuotas: Culqi.token.metadata.installments
           ajax: true,
           action: 'displayAjax',

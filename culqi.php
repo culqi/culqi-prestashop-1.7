@@ -89,10 +89,40 @@ class Culqi extends PaymentModule
         $smarty->assign('culqi_error_pago', $mensaje);
     }
 
+    /* Se crea un Cargo con la nueva api v3 de Culqi PHP */
+    public function orderCulqi()
+    {
+        try {
+            $cart = $this->context->cart;
+            $userAddress = new Address((int)$cart->id_address_invoice);
+
+            $culqi = new Culqi\Culqi(array('api_key' => Configuration::get('CULQI_LLAVE_SECRETA')));
+            $orderCulqi = $culqi->Orders->create(
+                array(
+                    "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
+                    "currency_code" => $this->context->currency->iso_code,
+                    "description" => "Orden de compra ".$cart->id,
+                    "order_number" => "#id-".rand(1,9999),
+                    "client_details" => array(
+                        "first_name" => $this->context->customer->firstname,
+                        "last_name" => $this->context->customer->lastname,
+                        "phone_number" => $this->getPhone($userAddress) ?: 999999999,
+                        "email" => $this->context->customer->email,
+                    ),
+                    "expiration_date" => time() + 24*60*60,   // Orden con un dia de validez
+                    "confirm" => false
+                )
+            );
+            return $orderCulqi;
+        } catch(Exception $e){
+            return $e->getMessage();
+        }
+
+    }
+
     /* Se crea un Cargo con la nueva api v2 de Culqi PHP */
     public function charge($token_id, $installments)
     {
-
       try {
 
         $cart = $this->context->cart;
@@ -180,12 +210,15 @@ class Culqi extends PaymentModule
     }
 
     public function getCulqiInfoCheckout(){
-      $cart = $this->context->cart;
-      return array(
+        $cart = $this->context->cart;
+
+        $orderCulqi = $this->orderCulqi();
+
+        return array(
         "module_dir" => $this->_path,
-        'id_cart' => $cart->id,
         "descripcion" => "Orden de compra ".$cart->id,
         "orden" => $cart->id,
+        'order_culqi' => $orderCulqi,
         "total" => $cart->getOrderTotal(true, Cart::BOTH),
         "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
         "currency" => $this->context->currency->iso_code
