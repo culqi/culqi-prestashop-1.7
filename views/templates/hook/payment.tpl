@@ -82,8 +82,15 @@ $(document).ready(function() {
         },
         datatype: 'json',
         success: function(data) {
-          var result = data.constructor === String ? JSON.parse(eval(data)) : data;
-          console.log(result);
+          var result;
+
+          if (data.constructor === String) {
+            result = JSON.parse(data);
+          }
+          if (data.constructor === Object) {
+            result = JSON.parse(JSON.stringify(data));
+          }
+
 
           switch (result.object) {
             case 'charge':
@@ -107,12 +114,10 @@ $(document).ready(function() {
         }
       });
     } else if (Culqi.order) {
-      console.log("Order confirmada con PagoEfectivo");
-      console.log(Culqi.order);
       showResult('green', Culqi.order);
     }
     else if (Culqi.closeEvent){
-      console.log(Culqi.closeEvent);
+      // console.log(Culqi.closeEvent);
     }
     else {
       $('#response-panel').show();
@@ -122,7 +127,7 @@ $(document).ready(function() {
 
 function showResult(style,message) {
   localStorage.setItem('culqi_message', message);
-  console.log('showResult ===> ', style, message);
+  // console.log('showResult ===> ', style, message);
 	$('#showresult').removeClass('hide');
 	$('#showresultcontent').attr('class', '');
 	$('#showresultcontent').addClass(style);
