@@ -23,7 +23,7 @@ $(document).ready(function() {
     $('#notifications .container').html(errorCard)
 
     setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 2000);
-    setInterval(function(){ $('#notifications .container').html('') }, 5000);
+    setInterval(function(){ $('#notifications .container').html('') }, 10000);
   }
 
   Culqi = new culqijs.Checkout();
@@ -87,14 +87,12 @@ $(document).ready(function() {
 
           switch (result.object) {
             case 'charge':
-              console.log('SUCCESS PAY!!!!!!!!!!!!!!!!!!!!!', result)
-                    localStorage.setItem('culqi_message', '')
-              // redirect to SUCCESS
+              localStorage.setItem('culqi_message', '');
+              redirect();
               break;
 
             case 'error':
               showResult('red', result.user_message);
-              // Culqi.close();
               location.reload();
               break;
 
@@ -119,18 +117,8 @@ $(document).ready(function() {
     else {
       $('#response-panel').show();
       $('#response').html(Culqi.error.merchant_message);
-      // $('body').waitMe('hide');
     }
   }
-
-function run_waitMe() {
-	$('body').waitMe({
-	  effect: 'orbit',
-	  text: 'Procesando pago...',
-	  bg: 'rgba(255,255,255,0.7)',
-	  color:'#28d2c8'
-	});
-}
 
 function showResult(style,message) {
   localStorage.setItem('culqi_message', message);

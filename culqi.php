@@ -291,7 +291,7 @@ class Culqi extends PaymentModule
             }
         }
 
-        $this->_html .= $this->_displayInfo();
+        // $this->_html .= $this->_displayInfo();
         $this->_html .= $this->renderForm();
 
         return $this->_html;
