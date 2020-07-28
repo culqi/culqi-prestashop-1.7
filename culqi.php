@@ -162,7 +162,7 @@ class Culqi extends PaymentModule
             array(
               "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
               "antifraud_details" => array(
-                  "address" => empty($address->address1) ? $address->address2 : $address->address1,
+                  "address" => empty($userAddress->address1) ? $userAddress->address2 : $userAddress->address1,
                   "address_city" => $userAddress->city,
                   "country_code" => "PE",
                   "first_name" => $this->context->customer->firstname,

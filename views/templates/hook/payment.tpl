@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css" media="all">
 
     <div id="showresult" class="hide">
-      <div id="showresultcontent"></div>
+      <div class="showresultcontent"></div>
     </div>
 
 </div>
@@ -20,10 +20,10 @@ $(document).ready(function() {
   if (localStorage.getItem('culqi_message') !== '') {
     var errorCard = "<div class=\"alert alert-danger\" role=\"alert\">" + localStorage.getItem('culqi_message') + "</div>";
 
-    $('#notifications .container').html(errorCard)
+    $('#showresult .showresultcontent').html(errorCard)
 
     setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 2000);
-    setInterval(function(){ $('#notifications .container').html('') }, 10000);
+    setInterval(function(){ $('#showresult .showresultcontent').html('') }, 10000);
   }
 
   Culqi = new culqijs.Checkout();
@@ -91,7 +91,7 @@ $(document).ready(function() {
             result = JSON.parse(JSON.stringify(data));
           }
 
-
+          console.log(result);
           switch (result.object) {
             case 'charge':
               localStorage.setItem('culqi_message', '');
