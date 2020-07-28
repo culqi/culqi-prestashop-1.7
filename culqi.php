@@ -245,11 +245,15 @@ class Culqi extends PaymentModule
     public function getCulqiInfoCheckout(){
         $cart = $this->context->cart;
         $currency = $this->context->currency;
-
+        $link = new Link;
+        
         $orderCulqi = $this->orderCulqi();
+
+        $logo = $link->getMediaLink(_PS_IMG_.Configuration::get('PS_LOGO'));
 
         return array(
         "module_dir" => $this->_path,
+        'logo' => $logo,
         "descripcion" => "Orden de compra ".$cart->id,
         "orden" => $cart->id,
         'order_culqi' => $orderCulqi,

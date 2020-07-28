@@ -20,10 +20,9 @@ $(document).ready(function() {
   if (localStorage.getItem('culqi_message') !== '') {
     var errorCard = "<div class=\"alert alert-danger\" role=\"alert\">" + localStorage.getItem('culqi_message') + "</div>";
 
-    $('#showresult .showresultcontent').html(errorCard)
+    $('#notifications .container').html(errorCard)
 
-    setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 2000);
-    setInterval(function(){ $('#showresult .showresultcontent').html('') }, 10000);
+    setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 5000);
   }
 
   Culqi = new culqijs.Checkout();
@@ -39,7 +38,7 @@ $(document).ready(function() {
       buttontext: '#ffffff',
       maintext: '#4A4A4A',
       desctext: '#4A4A4A',
-      logo: '{/literal}{$urls.img_ps_url}{$shop.logo}{literal}'
+      logo: '{/literal}http://{$logo}{literal}'
     }
   })
   Culqi.settings({
@@ -65,11 +64,6 @@ $(document).ready(function() {
 
   function culqi() {
     if (Culqi.token) {
-
-      console.log("Token obtenido");
-      console.log(Culqi.token);
-      console.log("Respuesta desde iframe: ", Culqi.token);
-
       var installments = (Culqi.token.metadata.installments === undefined) ? 0 : Culqi.token.metadata.installments;
       $.ajax({
         type: 'POST',
@@ -84,29 +78,38 @@ $(document).ready(function() {
         success: function(data) {
           var result;
 
-          if (data.constructor === String) {
-            result = JSON.parse(data);
-          }
-          if (data.constructor === Object) {
-            result = JSON.parse(JSON.stringify(data));
-          }
+          if (data === "Imposible conectar a Culqi API") {
+						showResult('red', data + ": aumentar el timeout de la consulta");
+          } else if (data === "Error de autenticación") {
+            showResult('red',data + ": verificar si su Llave Secreta es la correcta");
+          } else {
+            if (data.constructor === String) {
+              var dataParsed = JSON.parse(data);
+              if (dataParsed.constructor === String) {
+                  result = JSON.parse(dataParsed);
+              } else {
+                result = dataParsed
+              }
+            }
+            if (data.constructor === Object) {
+              result = JSON.parse(JSON.stringify(data));
+            }
+            switch (result.object) {
+              case 'charge':
+                localStorage.setItem('culqi_message', '');
+                redirect();
+                break;
 
-          console.log(result);
-          switch (result.object) {
-            case 'charge':
-              localStorage.setItem('culqi_message', '');
-              redirect();
-              break;
+              case 'error':
+                showResult('red', result.user_message);
+                location.reload();
+                break;
 
-            case 'error':
-              showResult('red', result.user_message);
-              location.reload();
-              break;
-
-            default:
-              showResult('black', result.user_message);
-              Culqi.close();
-              break;
+              default:
+                showResult('black', result.user_message);
+                Culqi.close();
+                break;
+            }
           }
         },
         error: function(error) {
@@ -117,7 +120,7 @@ $(document).ready(function() {
       showResult('green', Culqi.order);
     }
     else if (Culqi.closeEvent){
-      // console.log(Culqi.closeEvent);
+      console.log(Culqi.closeEvent);
     }
     else {
       $('#response-panel').show();
@@ -125,9 +128,8 @@ $(document).ready(function() {
     }
   }
 
-function showResult(style,message) {
+function showResult(style, message) {
   localStorage.setItem('culqi_message', message);
-  // console.log('showResult ===> ', style, message);
 	$('#showresult').removeClass('hide');
 	$('#showresultcontent').attr('class', '');
 	$('#showresultcontent').addClass(style);
