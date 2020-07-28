@@ -22,6 +22,12 @@ class Culqi extends PaymentModule
 
     private $_postErrors = array();
 
+    /**
+     * 
+     * Constructor del módulo
+     * 
+     * @return void
+     */
     public function __construct()
     {
         $this->name = 'culqi';
@@ -42,6 +48,12 @@ class Culqi extends PaymentModule
 
     }
 
+    /**
+     * 
+     * Registra el módulo en los hooks correspondientes y elimina los valores anteriores de llaves de Culqi
+     * 
+     * @return void
+     */
     public function install()
     {
         $this->createStates();
@@ -54,15 +66,6 @@ class Culqi extends PaymentModule
         );
     }
 
-    private function getAddress($address)
-    {
-        if(empty($address->address1)) {
-            return $address->address2;
-        } else {
-            return $address->address1;
-        }
-    }
-
     private function getPhone($address)
     {
         if(empty($address->phone_mobile))
@@ -73,6 +76,11 @@ class Culqi extends PaymentModule
         }
     }
 
+    /**
+     * @deprecated
+     * 
+     * Esta funcion no se llama en ningun momento dentro del módulo
+     */
     private function getCustomerId()
     {
         if ($this->context->customer->isLogged())
@@ -83,13 +91,23 @@ class Culqi extends PaymentModule
         }
     }
 
+     /**
+     * @deprecated
+     * 
+     * Esta funcion no se llama en ningun momento dentro del módulo
+     */
     public function errorPayment($mensaje)
     {
         $smarty = $this->context->smarty;
         $smarty->assign('culqi_error_pago', $mensaje);
     }
 
-    /* Se crea un Cargo con la nueva api v3 de Culqi PHP */
+    /**
+     * 
+     * Se crea un Cargo con la nueva api v3 de Culqi PHP
+     * 
+     * @return void
+     */
     public function orderCulqi()
     {
         try {
@@ -120,7 +138,15 @@ class Culqi extends PaymentModule
 
     }
 
-    /* Se crea un Cargo con la nueva api v2 de Culqi PHP */
+    /**
+    * 
+    * Se crea un Cargo con la nueva api v2 de Culqi PHP
+    *
+    * @param  string  $token_id Contiene el token generado por la Api de culqi
+    * @param  int  $installments Cuotas en las que desea financiar su pago
+    *
+    * @return object
+    */
     public function charge($token_id, $installments)
     {
       try {
@@ -136,7 +162,7 @@ class Culqi extends PaymentModule
             array(
               "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
               "antifraud_details" => array(
-                  "address" => $this->getAddress($userAddress),
+                  "address" => empty($address->address1) ? $address->address2 : $address->address1,
                   "address_city" => $userAddress->city,
                   "country_code" => "PE",
                   "first_name" => $this->context->customer->firstname,
@@ -152,7 +178,7 @@ class Culqi extends PaymentModule
               "source_id" => $token_id
             )
         );
-        //return $cargo;
+
         return $charge;
       } catch(Exception $e){
         return $e->getMessage();
@@ -160,6 +186,14 @@ class Culqi extends PaymentModule
 
     }
 
+    /**
+     * 
+     * Hook de Prestashop para mostrar el método de pago
+     * 
+     * @param array $params recibo los parámetros de prestashop
+     * 
+     * @return array
+     */
     public function hookPaymentOptions($params)
     {
         if (!$this->active)
@@ -179,7 +213,6 @@ class Culqi extends PaymentModule
 
         $newOption->setModuleName($this->name)
                   ->setCallToActionText($this->trans('Pagar con Tarjeta', array(), 'culqi'))
-                  //->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
                   ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'))
                   ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
 
@@ -226,6 +259,12 @@ class Culqi extends PaymentModule
       );
     }
 
+    /**
+     * @deprecated
+     * 
+     * No se debe elminar el id_order_state por que pueden haber pedidos con ese método de pago y estarán corruptos 
+     * si llegan a eliminarlo.
+     */
     public function uninstallStates()
     {
         if (Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value
@@ -240,14 +279,18 @@ class Culqi extends PaymentModule
         return false;
     }
 
+    /**
+     * 
+     * Elimina los valores generados en el módilo
+     * 
+     * @return bool
+     */
     public function uninstall()
     {
         if (!parent::uninstall()
-        || !Configuration::deleteByName('CULQI_STATE_OK')
-        || !Configuration::deleteByName('CULQI_STATE_ERROR')
         || !Configuration::deleteByName('CULQI_LLAVE_SECRETA')
-        || !Configuration::deleteByName('CULQI_LLAVE_PUBLICA')
-        || !$this->uninstallStates())
+        || !Configuration::deleteByName('CULQI_LLAVE_PUBLICA'))
+        // || !$this->uninstallStates())
             return false;
         return true;
     }
@@ -268,11 +311,6 @@ class Culqi extends PaymentModule
         }
     }
 
-    private function _displayInfo()
-    {
-        return $this->display(__FILE__, 'info.tpl');
-    }
-
     public function getContent()
     {
 
@@ -291,12 +329,18 @@ class Culqi extends PaymentModule
             }
         }
 
-        // $this->_html .= $this->_displayInfo();
         $this->_html .= $this->renderForm();
 
         return $this->_html;
     }
 
+    /**
+     * 
+     * Crea los estados de pago en las tablas de Prestashop, en caso
+     * ya existan no las generará
+     * 
+     * @return void
+     */
     private function createStates()
     {
         if (!Configuration::get('CULQI_STATE_OK'))
@@ -337,9 +381,11 @@ class Culqi extends PaymentModule
         }
     }
 
-
     /**
-     * Admin Zone
+     * 
+     * Genera la vista "Configuración" dentro del módulo de cullqi en Prestashop
+     * 
+     * @return array
      */
     public function renderForm()
     {
@@ -398,6 +444,12 @@ class Culqi extends PaymentModule
         );
     }
 
+    /**
+     * 
+     * Guarda los campos del módulo de culqi
+     * 
+     * @return array
+     */
     private function _postProcess()
     {
         if (Tools::isSubmit('btnSubmit'))
@@ -408,6 +460,14 @@ class Culqi extends PaymentModule
         $this->_html .= $this->displayConfirmation($this->l('Se actualizaron las configuraciones'));
     }
 
+    /**
+     * 
+     * Elimina las comas de una cadena de texto
+     * 
+     * @param string $amount importe del pago a culqi
+     * 
+     * @return string
+     */
     public function removeComma($amount) {
         return str_replace(".","",str_replace(',', '', number_format($amount,2,'.',',')));
     }
