@@ -181,7 +181,7 @@ class Culqi extends PaymentModule
               "currency_code" => $this->context->currency->iso_code,
               "description" => "Orden de compra ".$cart->id,
               "installments" => $installments,
-              "metadata" => array("order_id"=>(string)$cart->id),
+              "metadata" => ["cart_id" => (string)$cart->id ],
               "email" => $this->context->customer->email,
               "source_id" => $token_id
             )
@@ -252,7 +252,6 @@ class Culqi extends PaymentModule
 
     public function getCulqiInfoCheckout(){
         $cart = $this->context->cart;
-        $currency = $this->context->currency;
         $link = new Link;
         
         $orderCulqi = $this->orderCulqi();
@@ -265,7 +264,7 @@ class Culqi extends PaymentModule
         "descripcion" => "Orden de compra ".$cart->id,
         "orden" => $cart->id,
         'order_culqi' => $orderCulqi,
-        "total" => $cart->getOrderTotal(true, Cart::BOTH),
+        "total" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
         "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
         "currency" => $this->context->currency->iso_code
       );

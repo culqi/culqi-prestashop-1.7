@@ -13,10 +13,14 @@
 {literal}
 <script>
 $(document).ready(function() {
+
+  /**
+   * Muestra el error de la tarjeta al momento de intentar pagar.
+   */
   if (localStorage.getItem('culqi_message') !== '') {
     var errorCard = "<div class=\"alert alert-danger\" role=\"alert\">" + localStorage.getItem('culqi_message') + "</div>";
     $('#notifications .container').html(errorCard)
-    setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 5000);
+    setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 3000);
   }
 
   Culqi = new culqijs.Checkout();
@@ -39,7 +43,7 @@ $(document).ready(function() {
     title: '{/literal}{$page.meta.title}{literal}',
     currency: '{/literal}{$currency}{literal}',
     description: '',
-    amount: 700,
+    amount: {/literal}{$total}{literal},
     order: '{/literal}{$order_culqi->id}{literal}'
   });
 
@@ -71,12 +75,12 @@ $(document).ready(function() {
           var result;
 
           if (data === "Imposible conectar a Culqi API") {
-						showResult('red', data + ": aumentar el timeout de la consulta");
+			showResult('red', data + ": aumentar el timeout de la consulta");
           } else if (data === "Error de autenticación") {
             showResult('red',data + ": verificar si su Llave Secreta es la correcta");
           } else {
             if (data.constructor === String) {
-              var dataParsed = JSON.parse(data);
+              let dataParsed = JSON.parse(data);
               if (dataParsed.constructor === String) {
                   result = JSON.parse(dataParsed);
               } else {
@@ -89,7 +93,8 @@ $(document).ready(function() {
             switch (result.object) {
               case 'charge':
                 localStorage.setItem('culqi_message', '');
-                redirect();
+                console.log('charge success, REDIRECT!!')
+                // redirect();
                 break;
 
               case 'error':
@@ -125,9 +130,7 @@ $(document).ready(function() {
   function showResult(style, message) {
     localStorage.setItem('culqi_message', message);
       $('#showresult').removeClass('hide');
-      $('#showresultcontent').attr('class', '');
-      $('#showresultcontent').addClass(style);
-      $('#showresultcontent').html(message);
+      $('.showresultcontent').attr('class', '').addClass(style).html(message);
   }
 
   function redirect() {
