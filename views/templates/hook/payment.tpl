@@ -1,27 +1,21 @@
 <div class="row culqi_payment">
-		<link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/culqi.css" type="text/css" media="all">
+    <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/culqi.css" type="text/css" media="all">
     <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css" media="all">
-
     <div id="showresult" class="hide">
       <div class="showresultcontent"></div>
     </div>
-
 </div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
-
 <script src="https://checkout.culqi.com/js/v3"></script>
 
 {literal}
 <script>
-
 $(document).ready(function() {
-
   if (localStorage.getItem('culqi_message') !== '') {
     var errorCard = "<div class=\"alert alert-danger\" role=\"alert\">" + localStorage.getItem('culqi_message') + "</div>";
-
     $('#notifications .container').html(errorCard)
-
     setInterval(function(){ localStorage.setItem('culqi_message', ''); }, 5000);
   }
 
@@ -49,17 +43,15 @@ $(document).ready(function() {
     order: '{/literal}{$order_culqi->id}{literal}'
   });
 
+  $('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
+    var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
 
-	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
-		var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
-
-		if(myPaymentMethodSelected) {
-        e.preventDefault();
-        Culqi.open();
-				return false;
-		}
-
-	});
+    if (myPaymentMethodSelected) {
+      e.preventDefault();
+      Culqi.open();
+      return false;
+    }
+  });
 });
 
   function culqi() {
@@ -118,6 +110,8 @@ $(document).ready(function() {
       });
     } else if (Culqi.order) {
       showResult('green', Culqi.order);
+      alert('Se ha elegido el metodo de pago en efectivo:' + Culqi.order);
+      console.log(Culqi.order)
     }
     else if (Culqi.closeEvent){
       console.log(Culqi.closeEvent);
@@ -128,23 +122,21 @@ $(document).ready(function() {
     }
   }
 
-function showResult(style, message) {
-  localStorage.setItem('culqi_message', message);
-	$('#showresult').removeClass('hide');
-	$('#showresultcontent').attr('class', '');
-	$('#showresultcontent').addClass(style);
-	$('#showresultcontent').html(message);
-}
+  function showResult(style, message) {
+    localStorage.setItem('culqi_message', message);
+      $('#showresult').removeClass('hide');
+      $('#showresultcontent').attr('class', '');
+      $('#showresultcontent').addClass(style);
+      $('#showresultcontent').html(message);
+  }
 
-function redirect() {
-  var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-  location.href = url;
-}
+  function redirect() {
+    var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
+    location.href = url;
+  }
 
-function fnReplace(url) {
-  return url.replace(/&amp;/g, '&');
-}
-
+  function fnReplace(url) {
+    return url.replace(/&amp;/g, '&');
+  }
 </script>
-
 {/literal}

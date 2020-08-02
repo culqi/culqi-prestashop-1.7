@@ -38,6 +38,9 @@ class Culqi extends PaymentModule
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
         $this->display = 'view';
+        $this->domain = Tools::getShopDomainSsl(true, true).__PS_BASE_URI__;
+        $this->url_return = $this->domain.'index.php?fc=module&module='.$this->name.'&controller=orderStatusChanged';
+        $this->module_key = '';
 
         parent::__construct();
 
@@ -62,10 +65,15 @@ class Culqi extends PaymentModule
             parent::install() &&
             $this->registerHook('paymentOptions') &&
             Configuration::updateValue('CULQI_LLAVE_SECRETA', '') &&
-            Configuration::updateValue('CULQI_LLAVE_PUBLICA', '')
+            Configuration::updateValue('CULQI_LLAVE_PUBLICA', '') && 
+            Configuration::updateValue('CULQI_ORDER_STATUS_CHANGED', $this->url_return)
         );
     }
 
+    /**
+     * 
+     * Obtiene el número de telefono
+     */
     private function getPhone($address)
     {
         if(empty($address->phone_mobile))
@@ -299,6 +307,10 @@ class Culqi extends PaymentModule
         return true;
     }
 
+    /**
+     * 
+     * Valida los campos de la configuración del módulo en el backoffice antes de guardar.
+     */
     private function _postValidation()
     {
         if (Tools::isSubmit('btnSubmit'))
@@ -411,7 +423,13 @@ class Culqi extends PaymentModule
                         'label' => $this->l('Llave Secreta'),
                         'name' => 'CULQI_LLAVE_SECRETA',
                         'required' => true
-                    )
+                    ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Webhook'),
+                        'name' => 'CULQI_ORDER_STATUS_CHANGED',
+                        'desc' => 'Pega esta url en el Webhook "order.status.changed"'
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Guardar'),
@@ -444,7 +462,8 @@ class Culqi extends PaymentModule
     {
         return array(
             'CULQI_LLAVE_SECRETA' => Tools::getValue('CULQI_LLAVE_SECRETA', Configuration::get('CULQI_LLAVE_SECRETA')),
-            'CULQI_LLAVE_PUBLICA' => Tools::getValue('CULQI_LLAVE_PUBLICA', Configuration::get('CULQI_LLAVE_PUBLICA'))
+            'CULQI_LLAVE_PUBLICA' => Tools::getValue('CULQI_LLAVE_PUBLICA', Configuration::get('CULQI_LLAVE_PUBLICA')),
+            'CULQI_ORDER_STATUS_CHANGED' => Tools::getValue('CULQI_ORDER_STATUS_CHANGED', Configuration::get('CULQI_ORDER_STATUS_CHANGED'))
         );
     }
 
