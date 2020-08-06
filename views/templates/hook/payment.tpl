@@ -59,6 +59,10 @@ $(document).ready(function() {
 });
 
   function culqi() {
+    // order.creation.succeeded
+    // order.status.changed
+
+    // ORDER es pagoefectivo
     if (Culqi.token) {
       var installments = (Culqi.token.metadata.installments === undefined) ? 0 : Culqi.token.metadata.installments;
       $.ajax({
@@ -96,6 +100,14 @@ $(document).ready(function() {
                 console.log('charge success, REDIRECT!!')
                 // redirect();
                 break;
+
+              /*
+              case 'order':
+                localStorage.setItem('culqi_message', '');
+                console.log('charge success, REDIRECT!!')
+                // redirect();
+                break;
+              */
 
               case 'error':
                 showResult('red', result.user_message);
