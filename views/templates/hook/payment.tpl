@@ -122,7 +122,6 @@ $(document).ready(function() {
         }
       });
     } else if (Culqi.order) {
-      alert('Se ha elegido el metodo de pago en efectivo:' + Culqi.order.payment_code);
       validation('order', Culqi.order.payment_code)
       console.log(Culqi.order)
     }
