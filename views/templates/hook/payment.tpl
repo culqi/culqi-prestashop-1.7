@@ -6,6 +6,10 @@
     </div>
 </div>
 
+<input id="clq_validation" type="hidden" value="{$link->getModuleLink('culqi', 'validation', ['clqtype' => 'CLQ_TYPE', 'clqcode' => 'CLQ_CODE'], true)|escape}">
+<input id="clq_chargeajax" type="hidden" value="{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape}">
+<input id="clq_logo" type="hidden" value="{$logo|escape}">
+<input id="clq_key" type="hidden" value="{$llave_publica|escape}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
 <script src="https://checkout.culqi.com/js/v3"></script>
@@ -24,7 +28,7 @@ $(document).ready(function() {
   }
 
   Culqi = new culqijs.Checkout();
-  Culqi.publicKey = '{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}';
+  Culqi.publicKey = $('#clq_key').val();
   Culqi.options({
     lang: 'auto',
     modal: true,
@@ -36,7 +40,7 @@ $(document).ready(function() {
       buttontext: '#ffffff',
       maintext: '#4A4A4A',
       desctext: '#4A4A4A',
-      logo: '{/literal}http://{$logo}{literal}'
+      logo: $('#clq_logo').val()
     }
   })
   Culqi.settings({
@@ -65,9 +69,10 @@ $(document).ready(function() {
     // ORDER es pagoefectivo
     if (Culqi.token) {
       var installments = (Culqi.token.metadata.installments === undefined) ? 0 : Culqi.token.metadata.installments;
+      console.log(Culqi.token)
       $.ajax({
         type: 'POST',
-        url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
+        url: $('#clq_chargeajax').val(),
         data: {
           ajax: true,
           action: 'displayAjax',
@@ -79,7 +84,7 @@ $(document).ready(function() {
           var result;
 
           if (data === "Imposible conectar a Culqi API") {
-			showResult('red', data + ": aumentar el timeout de la consulta");
+			      showResult('red', data + ": aumentar el timeout de la consulta");
           } else if (data === "Error de autenticación") {
             showResult('red',data + ": verificar si su Llave Secreta es la correcta");
           } else {
@@ -97,17 +102,8 @@ $(document).ready(function() {
             switch (result.object) {
               case 'charge':
                 localStorage.setItem('culqi_message', '');
-                console.log('charge success, REDIRECT!!')
-                // redirect();
+                validation('charge', result.outcome.code);
                 break;
-
-              /*
-              case 'order':
-                localStorage.setItem('culqi_message', '');
-                console.log('charge success, REDIRECT!!')
-                // redirect();
-                break;
-              */
 
               case 'error':
                 showResult('red', result.user_message);
@@ -116,7 +112,7 @@ $(document).ready(function() {
 
               default:
                 showResult('black', result.user_message);
-                Culqi.close();
+                // Culqi.close();
                 break;
             }
           }
@@ -126,8 +122,8 @@ $(document).ready(function() {
         }
       });
     } else if (Culqi.order) {
-      showResult('green', Culqi.order);
-      alert('Se ha elegido el metodo de pago en efectivo:' + Culqi.order);
+      alert('Se ha elegido el metodo de pago en efectivo:' + Culqi.order.payment_code);
+      validation('order', Culqi.order.payment_code)
       console.log(Culqi.order)
     }
     else if (Culqi.closeEvent){
@@ -145,9 +141,9 @@ $(document).ready(function() {
       $('.showresultcontent').attr('class', '').addClass(style).html(message);
   }
 
-  function redirect() {
-    var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-    location.href = url;
+  function validation(type, code) {
+    const urlValidation = $('#clq_validation').val()
+    location.href = urlValidation.replace('CLQ_TYPE', type).replace('CLQ_CODE', code);
   }
 
   function fnReplace(url) {
