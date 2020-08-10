@@ -15,19 +15,22 @@ class CulqiValidationModuleFrontController extends ModuleFrontController
         switch ($type) {
             case 'charge':
                 $ps_os_payment = $code == "AUT0000" ? Configuration::get('CULQI_STATE_OK') : Configuration::get('CULQI_STATE_ERROR');
+                $cip = '';
                 break;
 
             case 'order':
                 $ps_os_payment = $code != "" ? Configuration::get('CULQI_STATE_PENDING') : Configuration::get('CULQI_STATE_ERROR');
+                $cip = $code;
                 break;
 
             default:
                 $ps_os_payment = Configuration::get('CULQI_STATE_ERROR');
+                $cip = '';
         }
 
         $this->module->validateOrder((int)$cart->id, $ps_os_payment, (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer->secure_key);
 
-        Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
+        Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key.'&cip='.$cip);
     }
 
 }

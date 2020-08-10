@@ -64,6 +64,7 @@ class Culqi extends PaymentModule
         return (
             parent::install() &&
             $this->registerHook('paymentOptions') &&
+            $this->registerHook('paymentReturn') &&
             Configuration::updateValue('CULQI_LLAVE_SECRETA', '') &&
             Configuration::updateValue('CULQI_LLAVE_PUBLICA', '') &&
             Configuration::updateValue('CULQI_WEBHOOK_ORDER_STATUS_CHANGED', $this->url_return)
@@ -231,6 +232,60 @@ class Culqi extends PaymentModule
         return $payment_options;
     }
 
+    public function hookPaymentReturn($params)
+    {
+        if (!$this->active) {
+            return;
+        }
+
+        $currentState = $params['order']->getCurrentState();
+
+        $in_array = in_array(
+            $currentState,
+            array(
+                Configuration::get('CULQI_STATE_OK'),
+                Configuration::get('CULQI_STATE_PENDING'),
+                Configuration::get('CULQI_STATE_ERROR')
+            )
+        );
+
+        switch ($currentState) {
+            case Configuration::get('CULQI_STATE_OK'):
+                $paymentState['code'] = 'OKS';
+                $paymentState['icon'] = 'done_all';
+                $paymentState['cip'] = '';
+                $paymentState['description'] = 'Pago registrado correctamente';
+                break;
+
+            case Configuration::get('CULQI_STATE_PENDING'):
+                $paymentState['code'] = 'PND';
+                $paymentState['icon'] = 'hourglass_empty';
+                $paymentState['cip'] = Tools::getValue('cip');
+                $paymentState['description'] = 'Pendiente de pago';
+                break;
+
+            default:
+                $paymentState['code'] = 'ERR';
+                $paymentState['icon'] = 'error';
+                $paymentState['cip'] = '';
+                $paymentState['description'] = 'Error de pago';
+                break;
+        }
+
+        if ($in_array) {
+            $this->smarty->assign([
+                'status' =>'ok',
+                'paymentState' => $paymentState,
+            ]);
+        } else {
+            $this->smarty->assign('status', 'failed');
+        }
+
+        $this->context->controller->addJS([$this->_path . 'views/js/confirmation.js']);
+
+        return $this->display(__FILE__, 'confirmation.tpl');
+    }
+
     public function checkCurrency($cart)
     {
         $currency_order = new Currency((int)($cart->id_currency));
@@ -258,6 +313,7 @@ class Culqi extends PaymentModule
             "module_dir" => $this->_path,
             'logo' => $this->domain.'img/'.Configuration::get('PS_LOGO'),
             "descripcion" => "Orden de compra ".$cart->id,
+            "orden" => $cart->id,
             "orden" => $cart->id,
             'order_culqi' => $orderCulqi,
             "total" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
