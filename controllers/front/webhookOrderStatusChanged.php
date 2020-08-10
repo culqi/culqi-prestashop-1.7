@@ -29,7 +29,6 @@ class CulqiWebhookOrderStatusChangedModuleFrontController extends ModuleFrontCon
                 $idCart = substr($data['description'], 16);
 
                 $cart = new Cart($idCart);
-                $customer = new Customer($cart->id_customer);
 
                 switch ($data['state']) {
                     case 'paid':
@@ -43,12 +42,13 @@ class CulqiWebhookOrderStatusChangedModuleFrontController extends ModuleFrontCon
                     default:
                         $ps_os_payment = Configuration::get('CULQI_STATE_ERROR');
                 }
-                $ps_os_payment = $data['state'] == "paid" ? Configuration::get('CULQI_STATE_OK') : Configuration::get('CULQI_STATE_ERROR');
-                $module_name = $this->module->displayName;
 
+                $orderObject = new Order();
+                $order = new Order($orderObject->getOrderByCartId((int)$cart->id));
 
-
-                // $this->module->validateOrder((int)$cart->id, $ps_os_payment, (float)$cart->getordertotal(true), $module_name, null, null, (int)$cart->id_currency, false, $customer->secure_key);
+                $history = new OrderHistory();
+                $history->id_order = (int)$order->id;
+                $history->changeIdOrderState((int)$ps_os_payment, (int)($order->id));
 
                 $this->response(200, 'Order updated successfully.');
             } else {
