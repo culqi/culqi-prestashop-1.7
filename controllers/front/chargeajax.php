@@ -12,6 +12,7 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
   public function displayAjax()
   {
     $result = $this->module->charge(Tools::getValue("token_id"), Tools::getValue("installments"));
+    if($result->id) Configuration::updateValue($result->id,'generatedCharge');
     die(Tools::jsonEncode($result));
   }
 

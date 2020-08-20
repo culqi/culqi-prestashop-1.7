@@ -143,7 +143,7 @@ function culqi() {
 						  if(result.object === 'charge') {
 						    showResult('green',result.outcome.user_message);
 								$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
-						    redirect();
+						    redirect(result.id);
 						  }
 						  if(result.object === 'error') {
 						    $('body').waitMe('hide');
@@ -176,9 +176,9 @@ function showResult(style,message) {
 	$('#showresultcontent').html(message);
 }
 
-function redirect() {
+function redirect(value) {
   var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-  location.href = url;
+  location.href = url + '?validation=' + value;
 }
 
 function fnReplace(url) {
