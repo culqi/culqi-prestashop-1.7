@@ -63,13 +63,8 @@ $(document).ready(function() {
 });
 
   function culqi() {
-    // order.creation.succeeded
-    // order.status.changed
-
-    // ORDER es pagoefectivo
     if (Culqi.token) {
       var installments = (Culqi.token.metadata.installments === undefined) ? 0 : Culqi.token.metadata.installments;
-      console.log(Culqi.token)
       $.ajax({
         type: 'POST',
         url: $('#clq_chargeajax').val(),

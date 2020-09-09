@@ -5,8 +5,7 @@ class CulqiWebhookOrderStatusChangedModuleFrontController extends ModuleFrontCon
     public function postProcess()
     {
         $this->ajax = true;
-
-        // $input = '{"object":"event","id":"evt_live_Tf1WJVWcSHF9R3HA","type":"order.status.changed","creation_date":1596248428134,"data":"{\"object\":\"order\",\"id\":\"ord_live_BfjQayoI9DhEwUBG\",\"amount\":1320,\"payment_code\":\"36338442\",\"currency_code\":\"PEN\",\"description\":\"Orden de compra 416\",\"order_number\":\"#id-2570\",\"state\":\"paid\",\"total_fee\":null,\"net_amount\":null,\"fee_details\":null,\"creation_date\":1596247975,\"expiration_date\":1596334374,\"updated_at\":null,\"paid_at\":null,\"available_on\":null,\"metadata\":{}}"}';
+        
         $input = file_get_contents("php://input");
 
         if (Configuration::get('CULQI_WEBHOOK_CATCH_LOG')) {
