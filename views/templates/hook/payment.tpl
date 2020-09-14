@@ -95,6 +95,8 @@ $(document).ready(function() {
 	Culqi.init();
 
 	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
+
+		$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
 		var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
 
 		if(myPaymentMethodSelected) {
