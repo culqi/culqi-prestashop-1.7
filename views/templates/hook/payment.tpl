@@ -21,12 +21,7 @@ $(document).ready(function() {
 	Culqi.useClasses = true;
 	Culqi.init();
 
-	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
-
-		$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
-		var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
-
-  /**
+	/**
    * Muestra el error de la tarjeta al momento de intentar pagar.
    */
   if (localStorage.getItem('culqi_message') !== '') {
