@@ -17,6 +17,14 @@
 {literal}
 <script>
 $(document).ready(function() {
+	Culqi.publicKey = '{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}';
+	Culqi.useClasses = true;
+	Culqi.init();
+
+	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
+
+		$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
+		var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
 
   /**
    * Muestra el error de la tarjeta al momento de intentar pagar.
