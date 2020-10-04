@@ -121,7 +121,6 @@ $(document).ready(function() {
       });
     } else if (Culqi.order) {
       validation('order', Culqi.order.payment_code)
-      console.log(Culqi.order)
     }
     else if (Culqi.closeEvent){
       console.log(Culqi.closeEvent);
@@ -138,7 +137,7 @@ $(document).ready(function() {
       $('.showresultcontent').attr('class', '').addClass(style).html(message);
   }
 
-  function validation(type, code) {
+  function validation(type, code)   {
     const urlValidation = $('#clq_validation').val()
     location.href = urlValidation.replace('CLQ_TYPE', type).replace('CLQ_CODE', code);
   }

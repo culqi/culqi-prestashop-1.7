@@ -180,9 +180,9 @@ class Culqi extends PaymentModule
               ),
               "capture" => true,
               "currency_code" => $this->context->currency->iso_code,
-              "description" => "Orden de compra ".$cart->id,
+              "description" => substr($cart->getProducts()[0]['name'], 0, 12),
               "installments" => $installments,
-              "metadata" => ["cart_id" => (string)$cart->id ],
+              "metadata" => ["ORDER_ID" => (string)$cart->id ],
               "email" => $this->context->customer->email,
               "source_id" => $token_id
             )
