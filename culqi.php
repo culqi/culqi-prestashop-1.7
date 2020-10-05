@@ -22,16 +22,25 @@ class Culqi extends PaymentModule
 
     private $_postErrors = array();
 
+    /**
+     *
+     * Constructor del módulo
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.3';
+        $this->version = '3.0.4';
         $this->controllers = array('chargeajax','postpayment');
-        $this->author = 'Team Culqi (Willy Aguirre, Brayan Cruces, Lizz Ruelas)';
+        $this->author = 'Team Culqi (Willy Aguirre, Brayan Cruces, Liz Ruelas)';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
         $this->display = 'view';
+        $this->domain = Tools::getShopDomainSsl(true, true).__PS_BASE_URI__;
+        $this->url_return = $this->domain.'index.php?fc=module&module='.$this->name.'&controller=webhookOrderStatusChanged';
+        $this->module_key = '';
 
         parent::__construct();
 
@@ -42,6 +51,12 @@ class Culqi extends PaymentModule
 
     }
 
+    /**
+     *
+     * Registra el módulo en los hooks correspondientes y elimina los valores anteriores de llaves de Culqi
+     *
+     * @return void
+     */
     public function install()
     {
         $this->createStates();
@@ -49,20 +64,17 @@ class Culqi extends PaymentModule
         return (
             parent::install() &&
             $this->registerHook('paymentOptions') &&
+            $this->registerHook('paymentReturn') &&
             Configuration::updateValue('CULQI_LLAVE_SECRETA', '') &&
-            Configuration::updateValue('CULQI_LLAVE_PUBLICA', '')
+            Configuration::updateValue('CULQI_LLAVE_PUBLICA', '') &&
+            Configuration::updateValue('CULQI_WEBHOOK_ORDER_STATUS_CHANGED', $this->url_return)
         );
     }
 
-    private function getAddress($address)
-    {
-        if(empty($address->address1)) {
-            return $address->address2;
-        } else {
-            return $address->address1;
-        }
-    }
-
+    /**
+     *
+     * Obtiene el número de telefono
+     */
     private function getPhone($address)
     {
         if(empty($address->phone_mobile))
@@ -73,6 +85,11 @@ class Culqi extends PaymentModule
         }
     }
 
+    /**
+     * @deprecated
+     *
+     * Esta funcion no se llama en ningun momento dentro del módulo
+     */
     private function getCustomerId()
     {
         if ($this->context->customer->isLogged())
@@ -83,16 +100,64 @@ class Culqi extends PaymentModule
         }
     }
 
+     /**
+     * @deprecated
+     *
+     * Esta funcion no se llama en ningun momento dentro del módulo
+     */
     public function errorPayment($mensaje)
     {
         $smarty = $this->context->smarty;
         $smarty->assign('culqi_error_pago', $mensaje);
     }
 
-    /* Se crea un Cargo con la nueva api v2 de Culqi PHP */
+    /**
+     *
+     * Se crea un Cargo con la nueva api v3 de Culqi PHP
+     *
+     * @return void
+     */
+    public function orderCulqi()
+    {
+        try {
+            $cart = $this->context->cart;
+            $userAddress = new Address((int)$cart->id_address_invoice);
+
+            $culqi = new Culqi\Culqi(array('api_key' => Configuration::get('CULQI_LLAVE_SECRETA')));
+            $orderCulqi = $culqi->Orders->create(
+                array(
+                    "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
+                    "currency_code" => $this->context->currency->iso_code,
+                    "description" => "Orden de compra ".$cart->id,
+                    "order_number" => "#id-".rand(1,9999),
+                    "client_details" => array(
+                        "first_name" => $this->context->customer->firstname,
+                        "last_name" => $this->context->customer->lastname,
+                        "phone_number" => $this->getPhone($userAddress) ?: 999999999,
+                        "email" => $this->context->customer->email,
+                    ),
+                    "expiration_date" => time() + 24*60*60,   // Orden con un dia de validez
+                    "confirm" => false
+                )
+            );
+            return $orderCulqi;
+        } catch(Exception $e){
+            return $e->getMessage();
+        }
+
+    }
+
+    /**
+    *
+    * Se crea un Cargo con la nueva api v2 de Culqi PHP
+    *
+    * @param  string  $token_id Contiene el token generado por la Api de culqi
+    * @param  int  $installments Cuotas en las que desea financiar su pago
+    *
+    * @return object
+    */
     public function charge($token_id, $installments)
     {
-
       try {
 
         $cart = $this->context->cart;
@@ -106,23 +171,23 @@ class Culqi extends PaymentModule
             array(
               "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
               "antifraud_details" => array(
-                  "address" => $this->getAddress($userAddress),
+                  "address" => empty($userAddress->address1) ? $userAddress->address2 : $userAddress->address1,
                   "address_city" => $userAddress->city,
                   "country_code" => "PE",
                   "first_name" => $this->context->customer->firstname,
                   "last_name" => $this->context->customer->lastname,
-                  "phone_number" => $this->getPhone($userAddress)
+                  "phone_number" => $this->getPhone($userAddress) ?: 999999999,
               ),
               "capture" => true,
               "currency_code" => $this->context->currency->iso_code,
-              "description" => "Orden de compra ".$cart->id,
+              "description" => substr($cart->getProducts()[0]['name'], 0, 12),
               "installments" => $installments,
-              "metadata" => array("order_id"=>(string)$cart->id),
+              "metadata" => ["ORDER_ID" => (string)$cart->id ],
               "email" => $this->context->customer->email,
               "source_id" => $token_id
             )
         );
-        //return $cargo;
+
         return $charge;
       } catch(Exception $e){
         return $e->getMessage();
@@ -130,6 +195,14 @@ class Culqi extends PaymentModule
 
     }
 
+    /**
+     *
+     * Hook de Prestashop para mostrar el método de pago
+     *
+     * @param array $params recibo los parámetros de prestashop
+     *
+     * @return array
+     */
     public function hookPaymentOptions($params)
     {
         if (!$this->active)
@@ -148,16 +221,69 @@ class Culqi extends PaymentModule
         );
 
         $newOption->setModuleName($this->name)
-                  ->setCallToActionText($this->trans('Pagar con Tarjeta de credito o debito', array(), 'culqi'))
-                  ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
+                  ->setCallToActionText($this->trans('Pagar con Tarjeta', array(), 'culqi'))
                   ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'))
-                  ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
+                  ->setLogo(Media::getMediaPath($this->domain.'modules/'.$this->name.'/views/img/logo_cards.png'));;
 
         $payment_options = [
             $newOption,
         ];
 
         return $payment_options;
+    }
+
+    public function hookPaymentReturn($params)
+    {
+        if (!$this->active) {
+            return;
+        }
+
+        $currentState = $params['order']->getCurrentState();
+
+        $in_array = in_array(
+            $currentState,
+            array(
+                Configuration::get('CULQI_STATE_OK'),
+                Configuration::get('CULQI_STATE_PENDING'),
+                Configuration::get('CULQI_STATE_ERROR')
+            )
+        );
+
+        switch ($currentState) {
+            case Configuration::get('CULQI_STATE_OK'):
+                $paymentState['code'] = 'OKS';
+                $paymentState['icon'] = 'done_all';
+                $paymentState['cip'] = '';
+                $paymentState['description'] = 'Pago registrado correctamente';
+                break;
+
+            case Configuration::get('CULQI_STATE_PENDING'):
+                $paymentState['code'] = 'PND';
+                $paymentState['icon'] = 'hourglass_empty';
+                $paymentState['cip'] = Tools::getValue('cip');
+                $paymentState['description'] = 'Pendiente de pago';
+                break;
+
+            default:
+                $paymentState['code'] = 'ERR';
+                $paymentState['icon'] = 'error';
+                $paymentState['cip'] = '';
+                $paymentState['description'] = 'Error de pago';
+                break;
+        }
+
+        if ($in_array) {
+            $this->smarty->assign([
+                'status' =>'ok',
+                'paymentState' => $paymentState,
+            ]);
+        } else {
+            $this->smarty->assign('status', 'failed');
+        }
+
+        $this->context->controller->addJS([$this->_path . 'views/js/confirmation.js']);
+
+        return $this->display(__FILE__, 'confirmation.tpl');
     }
 
     public function checkCurrency($cart)
@@ -180,17 +306,28 @@ class Culqi extends PaymentModule
     }
 
     public function getCulqiInfoCheckout(){
-      $cart = $this->context->cart;
-      return array(
-        "module_dir" => $this->_path,
-        "descripcion" => "Orden de compra ".$cart->id,
-        "orden" => $cart->id,
-        "total" => $cart->getOrderTotal(true, Cart::BOTH),
-        "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
-        "currency" => $this->context->currency->iso_code
-      );
+        $cart = $this->context->cart;
+        $orderCulqi = $this->orderCulqi();
+
+        return [
+            "module_dir" => $this->_path,
+            'logo' => $this->domain.'img/'.Configuration::get('PS_LOGO'),
+            "descripcion" => "Orden de compra ".$cart->id,
+            "orden" => $cart->id,
+            "orden" => $cart->id,
+            'order_culqi' => $orderCulqi,
+            "total" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
+            "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
+            "currency" => $this->context->currency->iso_code
+        ];
     }
 
+    /**
+     * @deprecated
+     *
+     * No se debe elminar el id_order_state por que pueden haber pedidos con ese método de pago y estarán corruptos
+     * si llegan a eliminarlo.
+     */
     public function uninstallStates()
     {
         if (Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value
@@ -205,18 +342,27 @@ class Culqi extends PaymentModule
         return false;
     }
 
+    /**
+     *
+     * Elimina los valores generados en el módilo
+     *
+     * @return bool
+     */
     public function uninstall()
     {
         if (!parent::uninstall()
-        || !Configuration::deleteByName('CULQI_STATE_OK')
-        || !Configuration::deleteByName('CULQI_STATE_ERROR')
         || !Configuration::deleteByName('CULQI_LLAVE_SECRETA')
         || !Configuration::deleteByName('CULQI_LLAVE_PUBLICA')
-        || !$this->uninstallStates())
+        || !Configuration::deleteByName('CULQI_WEBHOOK_CATCH_LOG'))
+        // || !$this->uninstallStates())
             return false;
         return true;
     }
 
+    /**
+     *
+     * Valida los campos de la configuración del módulo en el backoffice antes de guardar.
+     */
     private function _postValidation()
     {
         if (Tools::isSubmit('btnSubmit'))
@@ -231,11 +377,6 @@ class Culqi extends PaymentModule
               $this->_postErrors[] = $this->l('El campo código de comercio es requerido.');
             }
         }
-    }
-
-    private function _displayInfo()
-    {
-        return $this->display(__FILE__, 'info.tpl');
     }
 
     public function getContent()
@@ -256,16 +397,21 @@ class Culqi extends PaymentModule
             }
         }
 
-        $this->_html .= $this->_displayInfo();
         $this->_html .= $this->renderForm();
 
         return $this->_html;
     }
 
+    /**
+     *
+     * Crea los estados de pago en las tablas de Prestashop, en caso
+     * ya existan no las generará
+     *
+     * @return void
+     */
     private function createStates()
     {
-        if (!Configuration::get('CULQI_STATE_OK'))
-        {
+        if (!Configuration::get('CULQI_STATE_OK')) {
             $order_state = new OrderState();
             $order_state->name = array();
             foreach (Language::getLanguages() as $language) {
@@ -283,12 +429,46 @@ class Culqi extends PaymentModule
             $order_state->add();
             Configuration::updateValue('CULQI_STATE_OK', (int)$order_state->id);
         }
-        if (!Configuration::get('CULQI_STATE_ERROR'))
-        {
+
+        if (!Configuration::get('CULQI_STATE_PENDING')) {
             $order_state = new OrderState();
             $order_state->name = array();
             foreach (Language::getLanguages() as $language) {
-              $order_state->name[$language['id_lang']] = 'Incorrecto';
+                $order_state->name[$language['id_lang']] = 'Pendiente de pago';
+            }
+            $order_state->send_email = false;
+            $order_state->color = '#d3f237';
+            $order_state->module_name = 'culqi';
+            $order_state->hidden = false;
+            $order_state->delivery = false;
+            $order_state->logable = false;
+            $order_state->invoice = false;
+            $order_state->add();
+            Configuration::updateValue('CULQI_STATE_PENDING', (int)$order_state->id);
+        }
+
+        if (!Configuration::get('CULQI_STATE_EXPIRED')) {
+            $order_state = new OrderState();
+            $order_state->name = array();
+            foreach (Language::getLanguages() as $language) {
+                $order_state->name[$language['id_lang']] = 'Orden expirada';
+            }
+            $order_state->send_email = false;
+            $order_state->color = '#9ea095';
+            $order_state->module_name = 'culqi';
+            $order_state->hidden = false;
+            $order_state->delivery = false;
+            $order_state->logable = false;
+            $order_state->invoice = false;
+            $order_state->add();
+            Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$order_state->id);
+        }
+
+        if (!Configuration::get('CULQI_STATE_ERROR')) {
+            $order_state = new OrderState();
+            $order_state->name = array();
+            foreach (Language::getLanguages() as $language) {
+                $order_state->name[$language['id_lang']] = 'Incorrecto';
             }
             $order_state->send_email = false;
             $order_state->color = '#FF2843';
@@ -302,9 +482,11 @@ class Culqi extends PaymentModule
         }
     }
 
-
     /**
-     * Admin Zone
+     *
+     * Genera la vista "Configuración" dentro del módulo de cullqi en Prestashop
+     *
+     * @return array
      */
     public function renderForm()
     {
@@ -326,7 +508,33 @@ class Culqi extends PaymentModule
                         'label' => $this->l('Llave Secreta'),
                         'name' => 'CULQI_LLAVE_SECRETA',
                         'required' => true
-                    )
+                    ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Webhook PagoEfectivo'),
+                        'name' => 'CULQI_WEBHOOK_ORDER_STATUS_CHANGED',
+                        'desc' => 'Copia esta url en el Webhook del panel de Culqi en la opción "order.status.changed"'
+                    ),
+                    array(
+                        'type' => 'switch',
+                        'label' => $this->l('Capturar log de Webservice'),
+                        'desc' => 'Captura todas las respuestas de culqi en un archivo <a target="_blank" href="'. $this->domain.'modules/'.$this->name .'/logs/webhook.txt"> webhook.txt </a> ',
+                        'name' => 'CULQI_WEBHOOK_CATCH_LOG',
+                        'is_bool' => true,
+                        'required' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Yes')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('No')
+                            )
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Guardar'),
@@ -359,20 +567,38 @@ class Culqi extends PaymentModule
     {
         return array(
             'CULQI_LLAVE_SECRETA' => Tools::getValue('CULQI_LLAVE_SECRETA', Configuration::get('CULQI_LLAVE_SECRETA')),
-            'CULQI_LLAVE_PUBLICA' => Tools::getValue('CULQI_LLAVE_PUBLICA', Configuration::get('CULQI_LLAVE_PUBLICA'))
+            'CULQI_LLAVE_PUBLICA' => Tools::getValue('CULQI_LLAVE_PUBLICA', Configuration::get('CULQI_LLAVE_PUBLICA')),
+            'CULQI_WEBHOOK_CATCH_LOG' => Tools::getValue('CULQI_WEBHOOK_CATCH_LOG', Configuration::get('CULQI_WEBHOOK_CATCH_LOG')),
+            'CULQI_WEBHOOK_ORDER_STATUS_CHANGED' => $this->url_return
+
         );
     }
 
+    /**
+     *
+     * Guarda los campos del módulo de culqi
+     *
+     * @return array
+     */
     private function _postProcess()
     {
         if (Tools::isSubmit('btnSubmit'))
         {
             Configuration::updateValue('CULQI_LLAVE_SECRETA', Tools::getValue('CULQI_LLAVE_SECRETA'));
             Configuration::updateValue('CULQI_LLAVE_PUBLICA', Tools::getValue('CULQI_LLAVE_PUBLICA'));
+            Configuration::updateValue('CULQI_WEBHOOK_CATCH_LOG', Tools::getValue('CULQI_WEBHOOK_CATCH_LOG'));
         }
         $this->_html .= $this->displayConfirmation($this->l('Se actualizaron las configuraciones'));
     }
 
+    /**
+     *
+     * Elimina las comas de una cadena de texto
+     *
+     * @param string $amount importe del pago a culqi
+     *
+     * @return string
+     */
     public function removeComma($amount) {
         return str_replace(".","",str_replace(',', '', number_format($amount,2,'.',',')));
     }
