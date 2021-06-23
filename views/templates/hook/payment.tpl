@@ -116,7 +116,11 @@ function culqi() {
 	  $(document).ajaxComplete(function(){
 	      $('body').waitMe('hide');
 	  });
-	  var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+	  var installments = 0;
+	  if(Culqi.token.metadata != undefined) {
+		  installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+	  }
+	  
 	  $.ajax({
 	      url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
 	      data: {
