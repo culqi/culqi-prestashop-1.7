@@ -191,7 +191,7 @@ function fnReplace(url) {
 
 {/literal}
 
-<script defer src="https://www.culqi.com/libs/jquery.culqi.js"></script>
+<script defer src="https://culqi.com/libs/jquery.culqi.js"></script>
 <script>
 $(function () {
 		$("#form-payment").checkout({
