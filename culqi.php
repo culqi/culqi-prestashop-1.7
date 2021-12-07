@@ -269,7 +269,7 @@ class Culqi extends PaymentModule
             $order_state = new OrderState();
             $order_state->name = array();
             foreach (Language::getLanguages() as $language) {
-              $order_state->name[$language['id_lang']] = 'Exitoso';
+              $order_state->name[$language['id_lang']] = 'Pago Aceptado';
             }
             $order_state->send_email = false;
             $order_state->color = '#39CC98';
