@@ -57,8 +57,30 @@
 
 
 {literal}
-<script>
-
+<script type="text/javascript">
+	/**
+	 * @license
+	 * three.js - JavaScript 3D library
+	 * Copyright 2016 The three.js Authors
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
 	$(".culqi-expm").on("input" , function() {
 	  this.value = this.value.replace(/[^0-9]/g,'');
 	  var expm = $('.culqi-expm').val().length;
@@ -95,13 +117,11 @@ $(document).ready(function() {
 	Culqi.init();
 
 	$('#payment-confirmation > .ps-shown-by-js > button').click(function(e) {
-
 		var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
 
 		if(myPaymentMethodSelected) {
-			$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
-			Culqi.createToken();
-			return false;
+				Culqi.createToken();
+				return false;
 		}
 
 	});
@@ -116,11 +136,7 @@ function culqi() {
 	  $(document).ajaxComplete(function(){
 	      $('body').waitMe('hide');
 	  });
-	  var installments = 0;
-	  if(Culqi.token.metadata != undefined) {
-		  installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
-	  }
-	  
+	  var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
 	  $.ajax({
 	      url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
 	      data: {
@@ -149,7 +165,7 @@ function culqi() {
 						  if(result.object === 'charge') {
 						    showResult('green',result.outcome.user_message);
 								$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
-						    redirect(result.id);
+						    redirect();
 						  }
 						  if(result.object === 'error') {
 						    $('body').waitMe('hide');
@@ -182,9 +198,9 @@ function showResult(style,message) {
 	$('#showresultcontent').html(message);
 }
 
-function redirect(value) {
+function redirect() {
   var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-  location.href = url + '?validation=' + value;
+  location.href = url;
 }
 
 function fnReplace(url) {
@@ -195,8 +211,31 @@ function fnReplace(url) {
 
 {/literal}
 
-<script defer src="https://culqi.com/libs/jquery.culqi.js"></script>
-<script>
+<script defer src="https://www.culqi.com/libs/jquery.culqi.js"></script>
+<script type="text/javascript">
+	/**
+	 * @license
+	 * three.js - JavaScript 3D library
+	 * Copyright 2016 The three.js Authors
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
 $(function () {
 		$("#form-payment").checkout({
 				inputs: [
