@@ -230,9 +230,6 @@ class Culqi extends PaymentModule
             $urlapi_3ds = URLAPI_PROD_3DS;
         }
         $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        if($base_url=="http://prestashop-development.culqi.xyz/es/pedido"){
-            $base_url = "https://prestashop-development.culqi.xyz/es/pedido";
-        }
         return array(
             "psversion" => $this->ps_versions_compliancy['max'],
             "module_dir" => $this->_path,
