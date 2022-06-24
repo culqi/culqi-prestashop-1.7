@@ -1498,6 +1498,29 @@
         text-align: center;
     }
 
+    .bootstrap input[type="number"]{
+        display: block;
+        width: 100%;
+        height: 39px;
+        padding: 8px 16px;
+        font-size: 12px;
+        line-height: 1.42857;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #bbcdd2;
+        border-radius: 4px;
+        cursor: not-allowed;
+        background-color: #eee;
+        opacity: 1;
+        font-family: "Open Sans",Helvetica,Arial,"FontAwesome",sans-serif !important;
+        -webkit-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+        -webkit-transition: border-color ease-in-out 0.15s,-webkit-box-shadow ease-in-out 0.15s;
+        transition: border-color ease-in-out 0.15s,-webkit-box-shadow ease-in-out 0.15s;
+        transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+        transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s,-webkit-box-shadow ease-in-out 0.15s;
+    }
+
 </style>
 <div id="contact-popup" style="display: none">
     <form class="contact-form" action="" id="contact-form"
@@ -1643,7 +1666,7 @@
 					    Tiempo de expiración de pago
 					</label>
 					<div class="col-lg-8">
-						<input type="text" name="CULQI_TIMEXP" id="CULQI_TIMEXP" value="{$fields_value.CULQI_TIMEXP|escape:'htmlall':'UTF-8'}" class="">
+						<input type="number" name="CULQI_TIMEXP" id="CULQI_TIMEXP" value="{$fields_value.CULQI_TIMEXP|escape:'htmlall':'UTF-8'}" class="">
                         <span class="form-text text-muted"> Ingresar el número de horas que tendrá el cliente para pagar su orden. Ejem: 24</span>
 					</div>
 				</div>
