@@ -10,6 +10,9 @@ define('CULQI_SDK_VERSION', '1.3.0');
 define('URLAPI_INTEG', 'https://dev-test-panel.culqi.xyz');
 define('URLAPI_PROD', 'https://qa-panel.culqi.xyz');
 
+define('URLAPI_INTEG_3DS', 'https://3ds-development.culqi.xyz/');
+define('URLAPI_PROD_3DS', 'https://3ds-qa.culqi.xyz');
+
 define('URLAPI_ORDERCHARGES_INTEG', 'https://dev-api.culqi.xyz/v2');
 define('URLAPI_CHECKOUT_INTEG', 'https://dev-checkout.culqi.xyz/js/v4');
 define('URLAPI_LOGIN_INTEG', URLAPI_INTEG.'/user/login');

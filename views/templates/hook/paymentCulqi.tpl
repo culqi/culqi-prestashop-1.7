@@ -12,11 +12,10 @@
 		</p>
 	</div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{$enviroment_fronted|escape:'htmlall':'UTF-8'}"></script>
 <script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
-<script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/culqi-3ds.min.js"></script>
+<script type="text/javascript" defer src="{$enviroment_3ds|escape:'htmlall':'UTF-8'}"></script>
 
 
 {literal}
@@ -131,6 +130,7 @@
 	}, false );
 
 	// GENERAR DEVICE ID (INVOCAR APENAS SE DE AL BOTON PAGAR Y ABRA EL CULQI CHECKOUT)
+	Culqi3DS.publicKey = "{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}";
 	var device = await Culqi3DS.generateDevice();
 
 	$(document).ready(function() {
