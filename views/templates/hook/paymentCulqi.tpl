@@ -209,7 +209,7 @@
 			success: function(response) {
 				console.log('response:::', response);
 				Culqi.settings({
-					title: 'Culqi Store',
+					title: '{/literal}{$commerce|escape:'htmlall':'UTF-8'}{literal}',
 					currency: '{/literal}{$currency|escape:'htmlall':'UTF-8'}{literal}',
 					amount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
 					order: response,
@@ -223,7 +223,7 @@
 				console.log('error:::', error);
 				$('#showresult').show();
 				Culqi.settings({
-					title: 'Culqi Store',
+					title: '{/literal}{$commerce|escape:'htmlall':'UTF-8'}{literal}',
 					currency: '{/literal}{$currency|escape:'htmlall':'UTF-8'}{literal}',
 					amount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
 					//order: 'ord_live_mQjOSWvYKnNgotsY', // esto es solo si se tiene habilitada la opción de billeteras, agentes y/o cuetealo
