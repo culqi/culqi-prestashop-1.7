@@ -251,6 +251,7 @@ class Culqi extends PaymentModule
             "currency" => $this->context->currency->iso_code,
             "address" => $address,
             "customer" => $this->context->customer,
+            'commerce' => Configuration::get('PS_SHOP_NAME'),
             "BASE_URL" => $base_url
         );
     }
@@ -510,6 +511,7 @@ class Culqi extends PaymentModule
             'CULQI_NOTPAY' => Tools::getValue('CULQI_NOTPAY', Configuration::get('CULQI_NOTPAY')),
             'CULQI_URL_LOGO' => Tools::getValue('CULQI_URL_LOGO', Configuration::get('CULQI_URL_LOGO')),
             'CULQI_COLOR_PALETTE' => Tools::getValue('CULQI_COLOR_PALETTE', Configuration::get('CULQI_COLOR_PALETTE')),
+            'CULQI_COLOR_PALETTEID' => str_replace('#', '', Tools::getValue('CULQI_COLOR_PALETTE', Configuration::get('CULQI_COLOR_PALETTE'))),
             'CULQI_CHECKED_INTEG' => $checked_integ,
             'CULQI_CHECKED_PROD' => $checked_prod,
             'CULQI_URL_LOGIN'=>$urlapi_login,
@@ -527,7 +529,8 @@ class Culqi extends PaymentModule
             'URLAPI_MERCHANT_PROD' => URLAPI_MERCHANT_PROD,
             'URLAPI_MERCHANTSINGLE_PROD' => URLAPI_MERCHANTSINGLE_PROD,
             'URLAPI_WEBHOOK_PROD' => URLAPI_WEBHOOK_PROD,
-            'CULQI_POST_ERRORS'=>$errors
+            'CULQI_POST_ERRORS'=>$errors,
+            'commerce'=>Configuration::get('PS_SHOP_NAME')
         );
     }
 

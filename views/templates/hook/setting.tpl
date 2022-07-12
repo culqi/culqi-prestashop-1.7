@@ -1110,7 +1110,7 @@
     }
 
     .customcheckout .custom-checkout__body .personalize-logotipo__content .iso-logo__item .check,
-    .customcheckout .custom-checkout__body .personalize-logotipo__content .iso-logo__item .error {
+    .customcheckout .custom-checkout__body .personalize-logotipo__content .iso-logo__item .errorlogo {
     position: absolute;
     left: 50%;
     -webkit-transform: translate(-50%, -8px);
@@ -1133,7 +1133,7 @@
     background-color: #499636;
     }
 
-    .customcheckout .custom-checkout__body .personalize-logotipo__content .iso-logo__item .error {
+    .customcheckout .custom-checkout__body .personalize-logotipo__content .iso-logo__item .errorlogo {
     background-color: #d20808;
     }
 
@@ -1716,7 +1716,7 @@
                                                                 <img id="logo" src="https://culqi-static-files.s3.amazonaws.com/v3/v3-checkout/brand.svg" alt="logo">
                                                             </div>
                                                             <div class="banner-title">
-                                                                Nombre de la empresa
+                                                                {$fields_value.commerce|escape:'htmlall':'UTF-8'}
                                                             </div>
                                                         </div>
                                                         <div class="preview-checkout__amount">
@@ -1880,7 +1880,15 @@
                                             </div>
                                         </div>
                                         <div class="iso-logo__item">
-
+                                            <div class="errorlogo">
+                                                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 1L6 6" stroke="white" stroke-width="1.4"
+                                                          stroke-linecap="round"/>
+                                                    <path d="M6 1L1 6" stroke="white" stroke-width="1.4"
+                                                          stroke-linecap="round"/>
+                                                </svg>
+                                            </div>
                                             <div class="image">
                                                 <img src="https://culqi-static-files.s3.amazonaws.com/v3/v3-checkout/bran-culqi-bg.svg" alt="logo">
                                             </div>
@@ -1921,7 +1929,7 @@
                                         <div class="form__row__col">
                                             <div class="form__group" style="margin-bottom: 0;">
                                                 <div class="form__group-input">
-                                                    <input name="url" id="logo-url" placeholder="https://culqi.image.jpg.com" value="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9anovCoA97NQb66vQtWz2qbH2eRKttKrXg&amp;usqp=CAU" type="url">
+                                                    <input name="url" id="logo-url" placeholder="https://culqi.image.jpg.com" value="{$fields_value.CULQI_URL_LOGO|escape:'htmlall':'UTF-8'}" type="url">
                                                 </div>
                                                 <label id="label-text" for="url">
                                                     Copia la URL de tu logotipo
@@ -2216,11 +2224,11 @@
                 <div class="modal-body">
                 <div class="form-group">
                     <label for="email">Correo electrónico</label>
-                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="ejemplo@culqi.com" value="legy95@gmail.com">
+                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="ejemplo@culqi.com" value="">
                 </div>
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña de CulqiPanel" value="123456789Aa.">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña de CulqiPanel" value="">
                 </div>
                 <div class="form-group d-none" style="display: none">
                     <label for="type_integration">Tipo de Integración</label>
@@ -2702,3 +2710,12 @@
             });
         })
     </script>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery('#{$fields_value.CULQI_COLOR_PALETTEID|escape:'htmlall':'UTF-8'}').click();
+        if(document.querySelector('#CULQI_URL_LOGO').value!=''){
+            document.querySelector('#logo').src=document.querySelector('#CULQI_URL_LOGO').value;
+        }
+
+    });
+</script>
