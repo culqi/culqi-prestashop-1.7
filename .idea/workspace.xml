@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/culqi.php" beforeDir="false" afterPath="$PROJECT_DIR$/culqi.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/templates/hook/setting.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/setting.tpl" afterDir="false" />
-    </list>
+    <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,6 +33,7 @@
       <option name="presentableId" value="Default" />
       <updated>1657634196181</updated>
       <workItem from="1657634198153" duration="3110000" />
+      <workItem from="1657726141581" duration="3000" />
     </task>
     <servers />
   </component>
