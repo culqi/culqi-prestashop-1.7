@@ -98,11 +98,14 @@
 							if(result.object === 'charge') {
 								var card_number = result['source']['card_number'];
 								var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
-								//console.log('result:::', result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type']);
+								var chargeid = result['id'];
+								console.log('result:::', result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type']);
 								showResult('green',result['user_message']);
 
 								var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-								location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand;
+								location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid;
+								//console.log('y aqui va la url');
+								//console.log(url + '?card_n1umber=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid);
 
 							}
 							if(result.object === 'error') {
@@ -132,6 +135,7 @@
 	// GENERAR DEVICE ID (INVOCAR APENAS SE DE AL BOTON PAGAR Y ABRA EL CULQI CHECKOUT)
 	Culqi3DS.publicKey = "{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}";
 	var device = await Culqi3DS.generateDevice();
+	var orderid = '';
 
 	$(document).ready(function() {
 		var validateButtonOrder = setInterval(function(){
@@ -149,7 +153,7 @@
 		Culqi.init();
 
 		console.log('{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}');
-		generateOrder();
+
 
 
 		/* Culqi.settings({
@@ -194,12 +198,11 @@
 
 	$('#buyButton').on('click', function(e) {
 		// Abre el formulario con las opciones de Culqi.settings
-		Culqi.open();
-		$('#showresult').hide();
-		e.preventDefault();
+		generateOrder(e);
+
 	});
 
-	function generateOrder() {
+	function generateOrder(e) {
 
 		$.ajax({
 			url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
@@ -216,8 +219,11 @@
 					culqiclient: 'pretashop',
 					culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
 				});
-
+				orderid = response;
 				console.log(Culqi);
+				Culqi.open();
+				$('#showresult').hide();
+				e.preventDefault();
 			},
 			error: function(error){
 				console.log('error:::', error);
@@ -230,6 +236,10 @@
 					culqiclient: 'pretashop',
 					culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
 				});
+				orderid = 'ungenereted';
+				Culqi.open();
+				$('#showresult').hide();
+				e.preventDefault();
 			}
 		});
 
@@ -355,6 +365,7 @@
 						if(result.object === 'charge') {
 							var card_number = result['source']['card_number'];
 							var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
+							var chargeid = result['id'];
 							//console.log('result:::', result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type']);
 							showResult('green',result['user_message']);
 							//$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
@@ -365,7 +376,7 @@
 								if(!Culqi.isOpen){
 									clearInterval(id);
 									var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-									location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand;
+									location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid;
 								}
 							}, 1000);
 
