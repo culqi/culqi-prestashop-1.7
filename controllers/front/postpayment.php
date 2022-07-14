@@ -18,13 +18,10 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
         $order_payment_collection = $order->getOrderPaymentCollection();
 
         $order_payment = $order_payment_collection[0];
-
-        $order_payment->card_number = Tools::getValue("card_number");
+        $order_payment->card_number = Tools::getValue("card_number").'-'.Tools::getValue("chargeid");
         $order_payment->card_brand = Tools::getValue("card_brand");
-        //$order_payment->card_expiration = Tools::getValue("transaction_id");
-        //$order_payment->card_holder = Tools::getValue("transaction_id");
+        $order_payment->transaction_id = Tools::getValue("orderid");
         $order_payment->update();
-
         Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
 
     }
