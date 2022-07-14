@@ -229,13 +229,11 @@ class Culqi extends PaymentModule
             $urlapi_checkout = URLAPI_CHECKOUT_PROD;
             $urlapi_3ds = URLAPI_PROD_3DS;
         }
-        $https = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+        $https = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : null;
         if(is_null($https)){
             $https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
         }
         $base_url = $https . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-
-        echo var_dump($_SERVER['HTTP_X_FORWARDED_PROTO']);
         return array(
             "psversion" => $this->ps_versions_compliancy['max'],
             "module_dir" => $this->_path,
