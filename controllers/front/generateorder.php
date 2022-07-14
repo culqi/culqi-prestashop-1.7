@@ -17,7 +17,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         $culqiPretashop =  new Culqi();
         $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
 
-        $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_publica'] ));
+        $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta'] ));
         $phone = ($infoCheckout['address'][0]['phone']!='' and !is_null($infoCheckout['address'][0]['phone'])) ? $infoCheckout['address'][0]['phone'] : '999999999';
         $args_order = array(
              
