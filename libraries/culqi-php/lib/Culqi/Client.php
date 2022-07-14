@@ -19,6 +19,7 @@ class Client {
 				'Accept'			=> 'application/json',
 				'Accept-Encoding'	=> '*',
 			];
+			//print_r($headers);
 			
 			$options = [ 'timeout' => 120 ]; 
 

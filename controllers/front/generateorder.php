@@ -7,15 +7,18 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
 
         parent::initContent();
         $this->ajax = false;
 
         $culqiPretashop =  new Culqi();
         $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
-        //var_dump($infoCheckout); exit(1);
-        $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta'] ));
 
+        $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_publica'] ));
+        $phone = ($infoCheckout['address'][0]['phone']!='' and !is_null($infoCheckout['address'][0]['phone'])) ? $infoCheckout['address'][0]['phone'] : '999999999';
         $args_order = array(
              
             'amount' => (int)$infoCheckout['total'],
@@ -26,14 +29,13 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
                 'email' => $infoCheckout['customer']->email,
                 'first_name' => $infoCheckout['customer']->firstname,
                 'last_name' => $infoCheckout['customer']->lastname,
-                'phone_number' => $infoCheckout['address'][0]['phone']
+                'phone_number' => $phone
             ),
             'expiration_date' => time() + 24 * 60 * 60,
             'confirm' => false,
             'enviroment' => $infoCheckout['enviroment_backend']
 
         );
-        
         $culqi_order = $culqi->Orders->create( $args_order );
         //echo var_dump($culqi_order);
 
