@@ -47,7 +47,7 @@ class Culqi extends PaymentModule
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
         $this->version = '3.0.4';
-        $this->controllers = array('chargeajax','postpayment', 'generateorder', 'merchantajax', 'webhook');
+        $this->controllers = array('chargeajax','postpayment', 'generateorder', 'merchantajax', 'webhook', 'registersale');
         $this->author = 'Team Culqi (Juan Ysen, Dennis Landa)';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
@@ -213,7 +213,7 @@ class Culqi extends PaymentModule
     }
 
     public function getCulqiInfoCheckout() {
-
+        //var_dump($this); exit(1);
         $cart = $this->context->cart;
         $address = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "address where id_address=" . $cart->id_address_invoice);
                 
@@ -251,6 +251,7 @@ class Culqi extends PaymentModule
             "agente" => Configuration::get('CULQI_METHODS_AGENTS') == 'yes' ? 'true' : 'false',
             "cuetealo" => Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false',
             "url_logo" => Configuration::get('CULQI_URL_LOGO'),
+            "tiempo_exp" => (Configuration::get('CULQI_TIMEXP') == '' ? 24 : Configuration::get('CULQI_TIMEXP')),
             "color_pallete" => explode('-', $color_palette),
             "currency" => $this->context->currency->iso_code,
             "address" => $address,

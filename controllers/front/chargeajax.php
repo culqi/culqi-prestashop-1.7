@@ -25,8 +25,10 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
             'currency_code' => $infoCheckout['currency'],
             'email' => Tools::getValue("email"),
             'source_id' => Tools::getValue("token_id"),
-            'capture' => false, 'enviroment' => $infoCheckout['enviroment_backend'],
-            'antifraud_details' => array('device_finger_print_id'=>Tools::getValue("device"))
+            'capture' => true, 
+            'enviroment' => $infoCheckout['enviroment_backend'],
+            'antifraud_details' => array('device_finger_print_id'=>Tools::getValue("device")),
+            'metadata' => ["pts_order_id" => (string)$infoCheckout['orden'], "sponsor" => "prestashop"],
       );
 
       if(Tools::getValue("parameters3DS")!==FALSE){
