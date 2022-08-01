@@ -18,7 +18,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
         $postBody = file_get_contents("php://input");
         $postBody = json_decode($postBody, true);
-        $order_id = $postBody['data']['id'];
+        $order_id = $postBody['data']['order_id'];
         $order_payment = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "order_payment where transaction_id='" . $order_id . "'");
 
         $order_reference = $order_payment[0]['order_reference'];
@@ -37,9 +37,6 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
             $order->current_state = (int)Configuration::get($state);
             $order->update();
         }
-
-
-
         var_dump('Actualizado!');
         exit(1);
     }

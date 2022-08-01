@@ -1522,6 +1522,9 @@
     }
 
 </style>
+
+<link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css" media="all">
+
 <div id="contact-popup" style="display: none">
     <form class="contact-form" action="" id="contact-form"
           method="post" enctype="multipart/form-data">
@@ -1608,6 +1611,7 @@
 					<div class="col-lg-8">
                         <input type="hidden" id="CULQI_TOKENLOGIN" />
 						<input required="true" type="text" name="CULQI_LLAVE_PUBLICA" id="CULQI_LLAVE_PUBLICA" value="{$fields_value.CULQI_LLAVE_PUBLICA|escape:'htmlall':'UTF-8'}" class="">
+                        <span id="errorpubkey" class="form-text text-muted" style="display: none; color: red; font-size: 0.8rem !important;">La llave pública no pertenece al ambiente de producción</span>
                         <span class="form-text text-muted"> Ingresa tu llave pública. </span>
 					</div>
 				</div>
@@ -1626,6 +1630,7 @@
 					</label>
 					<div class="col-lg-8">
 						<input required="true" type="text" name="CULQI_LLAVE_SECRETA" id="CULQI_LLAVE_SECRETA" value="{$fields_value.CULQI_LLAVE_SECRETA|escape:'htmlall':'UTF-8'}" class="">
+                        <span id="errorseckey" class="form-text text-muted" style="display: none; color: red; font-size: 0.8rem !important;">La llave privada no pertenece al ambiente de producción</span>
                         <span class="form-text text-muted"> Ingresa tu llave privada. </span>
 					</div>
 				</div>
@@ -1666,7 +1671,8 @@
 					    Tiempo de expiración de pago
 					</label>
 					<div class="col-lg-8">
-						<input type="number" name="CULQI_TIMEXP" id="CULQI_TIMEXP" value="{$fields_value.CULQI_TIMEXP|escape:'htmlall':'UTF-8'}" class="">
+						<input type="text" name="CULQI_TIMEXP" id="CULQI_TIMEXP" value="{$fields_value.CULQI_TIMEXP|escape:'htmlall':'UTF-8'}" class="">
+                        <span id="errortimeexp" class="form-text text-muted" style="display: none; color: red; font-size: 0.8rem !important;">El tiempo de expiración debe ser un valor numérico, mayor a 0 y no mayor a 10 dígitos.</span>
                         <span class="form-text text-muted"> Ingresar el número de horas que tendrá el cliente para pagar su orden. Ejem: 24</span>
 					</div>
 				</div>
@@ -1711,7 +1717,7 @@
                                             <div class="content">
                                                 <div class="preview">
                                                     <div class="preview-checkout">
-                                                        <div class="preview-checkout__banner" id="palette-left" style="background: rgb(180, 5, 147);">
+                                                        <div class="preview-checkout__banner" id="palette-left">
                                                             <div class="banner-logo">
                                                                 <img id="logo" src="https://culqi-static-files.s3.amazonaws.com/v3/v3-checkout/brand.svg" alt="logo">
                                                             </div>
@@ -1721,9 +1727,9 @@
                                                         </div>
                                                         <div class="preview-checkout__amount">
                                                             <div class="preview-checkout__amount-contain">
-                                                                <span id="palette-right" name="color" style="color: rgb(211, 44, 181);">S/ 350.00</span>
+                                                                <span id="palette-right" name="color">S/ 350.00</span>
                                                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path id="palette-right" name="svg" d="M18.3335 1.66663H1.66683C1.44582 1.66663 1.23385 1.75442 1.07757 1.9107C0.921293 2.06698 0.833496 2.27895 0.833496 2.49996V9.16663C0.833496 9.38764 0.921293 9.5996 1.07757 9.75588C1.23385 9.91216 1.44582 9.99996 1.66683 9.99996H4.16683V17.5C4.16683 17.721 4.25463 17.9329 4.41091 18.0892C4.56719 18.2455 4.77915 18.3333 5.00016 18.3333H15.0002C15.2212 18.3333 15.4331 18.2455 15.5894 18.0892C15.7457 17.9329 15.8335 17.721 15.8335 17.5V9.99996H18.3335C18.5545 9.99996 18.7665 9.91216 18.9228 9.75588C19.079 9.5996 19.1668 9.38764 19.1668 9.16663V2.49996C19.1668 2.27895 19.079 2.06698 18.9228 1.9107C18.7665 1.75442 18.5545 1.66663 18.3335 1.66663ZM5.8335 16.6666V15C6.27552 15 6.69945 15.1756 7.01201 15.4881C7.32457 15.8007 7.50016 16.2246 7.50016 16.6666H5.8335ZM14.1668 16.6666H12.5002C12.5002 16.2246 12.6758 15.8007 12.9883 15.4881C13.3009 15.1756 13.7248 15 14.1668 15V16.6666ZM14.1668 13.3333C13.2828 13.3333 12.4349 13.6845 11.8098 14.3096C11.1847 14.9347 10.8335 15.7826 10.8335 16.6666H9.16683C9.16683 15.7826 8.81564 14.9347 8.19052 14.3096C7.5654 13.6845 6.71755 13.3333 5.8335 13.3333V6.66663H14.1668V13.3333ZM17.5002 8.33329H15.8335V5.83329C15.8335 5.61228 15.7457 5.40032 15.5894 5.24404C15.4331 5.08776 15.2212 4.99996 15.0002 4.99996H5.00016C4.77915 4.99996 4.56719 5.08776 4.41091 5.24404C4.25463 5.40032 4.16683 5.61228 4.16683 5.83329V8.33329H2.50016V3.33329H17.5002V8.33329ZM10.0002 12.5C10.4946 12.5 10.978 12.3533 11.3891 12.0786C11.8002 11.8039 12.1206 11.4135 12.3099 10.9567C12.4991 10.4999 12.5486 9.99719 12.4521 9.51223C12.3557 9.02728 12.1176 8.58182 11.7679 8.23219C11.4183 7.88256 10.9728 7.64446 10.4879 7.548C10.0029 7.45153 9.50027 7.50104 9.04345 7.69026C8.58664 7.87948 8.19619 8.19991 7.92149 8.61103C7.64678 9.02216 7.50016 9.50551 7.50016 9.99996C7.50016 10.663 7.76355 11.2989 8.23239 11.7677C8.70124 12.2366 9.33712 12.5 10.0002 12.5ZM10.0002 9.16663C10.165 9.16663 10.3261 9.2155 10.4631 9.30707C10.6002 9.39864 10.707 9.52878 10.7701 9.68106C10.8331 9.83333 10.8496 10.0009 10.8175 10.1625C10.7853 10.3242 10.706 10.4727 10.5894 10.5892C10.4729 10.7058 10.3244 10.7851 10.1627 10.8173C10.0011 10.8494 9.83353 10.8329 9.68126 10.7699C9.52899 10.7068 9.39884 10.6 9.30727 10.4629C9.2157 10.3259 9.16683 10.1648 9.16683 9.99996C9.16683 9.77895 9.25463 9.56698 9.41091 9.4107C9.56719 9.25442 9.77915 9.16663 10.0002 9.16663Z" fill="#00A19B" style="fill: rgb(211, 44, 181);"></path>
+                                                                    <path id="palette-right" name="svg" d="M18.3335 1.66663H1.66683C1.44582 1.66663 1.23385 1.75442 1.07757 1.9107C0.921293 2.06698 0.833496 2.27895 0.833496 2.49996V9.16663C0.833496 9.38764 0.921293 9.5996 1.07757 9.75588C1.23385 9.91216 1.44582 9.99996 1.66683 9.99996H4.16683V17.5C4.16683 17.721 4.25463 17.9329 4.41091 18.0892C4.56719 18.2455 4.77915 18.3333 5.00016 18.3333H15.0002C15.2212 18.3333 15.4331 18.2455 15.5894 18.0892C15.7457 17.9329 15.8335 17.721 15.8335 17.5V9.99996H18.3335C18.5545 9.99996 18.7665 9.91216 18.9228 9.75588C19.079 9.5996 19.1668 9.38764 19.1668 9.16663V2.49996C19.1668 2.27895 19.079 2.06698 18.9228 1.9107C18.7665 1.75442 18.5545 1.66663 18.3335 1.66663ZM5.8335 16.6666V15C6.27552 15 6.69945 15.1756 7.01201 15.4881C7.32457 15.8007 7.50016 16.2246 7.50016 16.6666H5.8335ZM14.1668 16.6666H12.5002C12.5002 16.2246 12.6758 15.8007 12.9883 15.4881C13.3009 15.1756 13.7248 15 14.1668 15V16.6666ZM14.1668 13.3333C13.2828 13.3333 12.4349 13.6845 11.8098 14.3096C11.1847 14.9347 10.8335 15.7826 10.8335 16.6666H9.16683C9.16683 15.7826 8.81564 14.9347 8.19052 14.3096C7.5654 13.6845 6.71755 13.3333 5.8335 13.3333V6.66663H14.1668V13.3333ZM17.5002 8.33329H15.8335V5.83329C15.8335 5.61228 15.7457 5.40032 15.5894 5.24404C15.4331 5.08776 15.2212 4.99996 15.0002 4.99996H5.00016C4.77915 4.99996 4.56719 5.08776 4.41091 5.24404C4.25463 5.40032 4.16683 5.61228 4.16683 5.83329V8.33329H2.50016V3.33329H17.5002V8.33329ZM10.0002 12.5C10.4946 12.5 10.978 12.3533 11.3891 12.0786C11.8002 11.8039 12.1206 11.4135 12.3099 10.9567C12.4991 10.4999 12.5486 9.99719 12.4521 9.51223C12.3557 9.02728 12.1176 8.58182 11.7679 8.23219C11.4183 7.88256 10.9728 7.64446 10.4879 7.548C10.0029 7.45153 9.50027 7.50104 9.04345 7.69026C8.58664 7.87948 8.19619 8.19991 7.92149 8.61103C7.64678 9.02216 7.50016 9.50551 7.50016 9.99996C7.50016 10.663 7.76355 11.2989 8.23239 11.7677C8.70124 12.2366 9.33712 12.5 10.0002 12.5ZM10.0002 9.16663C10.165 9.16663 10.3261 9.2155 10.4631 9.30707C10.6002 9.39864 10.707 9.52878 10.7701 9.68106C10.8331 9.83333 10.8496 10.0009 10.8175 10.1625C10.7853 10.3242 10.706 10.4727 10.5894 10.5892C10.4729 10.7058 10.3244 10.7851 10.1627 10.8173C10.0011 10.8494 9.83353 10.8329 9.68126 10.7699C9.52899 10.7068 9.39884 10.6 9.30727 10.4629C9.2157 10.3259 9.16683 10.1648 9.16683 9.99996C9.16683 9.77895 9.25463 9.56698 9.41091 9.4107C9.56719 9.25442 9.77915 9.16663 10.0002 9.16663Z" fill="#00A19B"></path>
                                                                 </svg>
 
                                                             </div>
@@ -1731,11 +1737,11 @@
                                                         <div class="preview-checkout__container">
                                                             <div class="preview-checkout__container-menu">
                                                                 <ul>
-                                                                    <li id="palette-right" name="color" style="color: rgb(211, 44, 181);">
-                                                                    <span class="barra" id="palette-right" name="bg" style="background: rgb(211, 44, 181);"></span>
+                                                                    <li id="palette-right" name="color">
+                                                                    <span class="barra" id="palette-right" name="bg" ></span>
                                                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                             <g clip-path="url(#clip0_478_2813)">
-                                                                                <path fill-rule="evenodd" clip-rule="evenodd" id="palette-right" name="svg" d="M3.94475 4.5H16.0552C17.0276 4.5 17.9116 5.38 18 6.436V13.564C18 14.62 17.116 15.5 16.0552 15.5H3.94475C2.88398 15.5 2 14.62 2 13.564V6.436C2 5.38 2.88398 4.5 3.94475 4.5ZM16.0552 5.644H3.94475C3.50276 5.644 3.14917 5.996 3.14917 6.436V6.964H16.8508V6.436C16.8508 5.996 16.4972 5.644 16.0552 5.644ZM3.94475 14.268H16.0552C16.4088 14.268 16.7624 13.916 16.7624 13.564V8.108H3.14917V13.476C3.14917 13.916 3.50276 14.268 3.94475 14.268ZM4.20989 11.892H6.68503V13.036H4.20989V11.892Z" fill="#00A19B" style="fill: rgb(211, 44, 181);"></path>
+                                                                                <path fill-rule="evenodd" clip-rule="evenodd" id="palette-right" name="svg" d="M3.94475 4.5H16.0552C17.0276 4.5 17.9116 5.38 18 6.436V13.564C18 14.62 17.116 15.5 16.0552 15.5H3.94475C2.88398 15.5 2 14.62 2 13.564V6.436C2 5.38 2.88398 4.5 3.94475 4.5ZM16.0552 5.644H3.94475C3.50276 5.644 3.14917 5.996 3.14917 6.436V6.964H16.8508V6.436C16.8508 5.996 16.4972 5.644 16.0552 5.644ZM3.94475 14.268H16.0552C16.4088 14.268 16.7624 13.916 16.7624 13.564V8.108H3.14917V13.476C3.14917 13.916 3.50276 14.268 3.94475 14.268ZM4.20989 11.892H6.68503V13.036H4.20989V11.892Z" fill="#00A19B"></path>
                                                                             </g>
                                                                             <defs>
                                                                                 <clipPath id="clip0_478_2813">
@@ -1840,7 +1846,7 @@
                                             <div class="form__row dobble">
                                                 <div class="form__row__col">
                                                     <div class="form__group" style="margin-bottom: 0;">
-                                                        <button class="btn btn-green" id="palette-right" name="bg" style="background: rgb(211, 44, 181); color: rgb(255, 255, 255);">
+                                                        <button class="btn btn-green" id="palette-right" name="bg" style="background-color:#00A19B; color: #FFFFFF;">
                                                             Pagar S/ 350.00
                                                         </button>
                                                     </div>
@@ -2237,9 +2243,14 @@
                     <option value="1">Live</option>
                     </select>
                 </div>
+                <div class="form-group">
+                <span id="errorlogin" class="form-text text-muted" style="display: none; color: red; font-size: 0.8rem !important;">El usuario ingresado no existe.</span>
                 </div>
+                </div>
+                
                 <div class="modal-footer">
-                <button type="submit" name="submit" class="btn btn-primary" style='width:100%'>Iniciar Sesión</button>
+                <button type="submit" name="submit" class="btn btn-primary" style='width:100%; background: #00a19b'>Iniciar Sesión</button>
+                <button type="button" onclick="jQuery('#modalLogin').modal('toggle')" name="button" class="btn btn-primary" style='width:100%; background: #808080;'>Cerrar</button>
                 </div>
             </form>
             </div>
@@ -2269,6 +2280,8 @@
         </div>
     </div>
 
+<script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
+
     <script type="text/javascript">
         /**
          * @license
@@ -2293,13 +2306,68 @@
          * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
          * THE SOFTWARE.
          */
+
+         
+
         jQuery(document).ready(function () {
+
             var post = "{$fields_value.CULQI_POST|escape:'htmlall':'UTF-8'}";
             var errors = "{$fields_value.CULQI_POST_ERRORS|escape:'htmlall':'UTF-8'}";
             if(post==1 && errors==0){
                 jQuery('#contact-popup').show()
             }
             jQuery('#module_form').submit(function (e) {
+
+                /* */
+                var llavepublica = jQuery('#CULQI_LLAVE_PUBLICA').val().split('_');
+                var llaveprivada = jQuery('#CULQI_LLAVE_SECRETA').val().split('_');
+                var timexp = jQuery('#CULQI_TIMEXP').val();
+                var hasError = '0';
+
+                jQuery('#errorpubkey').html('');
+                jQuery('#errorseckey').html('');
+                jQuery('#errortimeexp').html('');
+                jQuery('#errorpubkey').css('display','none');
+                jQuery('#errorseckey').css('display','none');
+                jQuery('#errortimeexp').css('display','none');
+
+                if(jQuery('#integracion').is(':checked')){
+                    if(!(llavepublica.length==3 && llavepublica[1]=='test')){
+                        jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de integración');
+                        jQuery('#errorpubkey').css('display','block');
+                        //alert('Las llaves ingresadas no pertenecen al ambiente de integración');
+                        //e.preventDefault();
+                        hasError = '1'; 
+                    }
+                    if(!(llaveprivada.length==3 && llaveprivada[1]=='test')) {
+                        jQuery('#errorseckey').html('La llave privada no pertenece al ambiente de integración');
+                        jQuery('#errorseckey').css('display','block');
+                        hasError = '1';
+                    }
+                }
+                if(jQuery('#produccion').is(':checked')){
+                    if(!(llavepublica.length==3 && llavepublica[1]=='live')){
+                        jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de producción');
+                        hasError = '1';
+                    }
+                    if(!(llaveprivada.length==3 && llaveprivada[1]=='live')){
+                        jQuery('#errorseckey').html('La llave privada no pertenece al ambiente de producción');
+                        hasError = '1';
+                    }
+                }
+                console.log('timexp:::', timexp);
+                if(!(timexp=='' || (timexp>0 && timexp.length <= 10 && timexp.length > 0))){
+                    //alert('El tiempo de expiración no es correcto, verifique.');
+                    //e.preventDefault();
+                    jQuery('#errortimeexp').html('El tiempo de expiración debe ser un valor numérico, mayor a 0 y no mayor a 10 dígitos.');
+                    jQuery('#errortimeexp').css('display','block');c
+                    hasError = '1';
+                }
+
+                if(hasError == '1') {
+                    e.preventDefault();
+                }
+
                 var urlwebhook = "{$fields_value.URLAPI_WEBHOOK_INTEG|escape:'htmlall':'UTF-8'}";
                 if(jQuery('#produccion').is(':checked')){
                     urlwebhook = "{$fields_value.URLAPI_WEBHOOK_PROD|escape:'htmlall':'UTF-8'}";
@@ -2323,6 +2391,8 @@
                             "version": 2
                         }
                     };
+                    
+
                     jQuery.ajax(settings).done(function (response) {
                         var valid = 1;
                         for(let i = 0; i < response.data.length; i++) {
@@ -2370,10 +2440,12 @@
                 }, {});
 
                 console.log('databody:::', databody);
+                run_waitMe();
                 fullculqi_login(databody);
             });
 
             function fullculqi_login(data) {
+                jQuery('#errorlogin').css('display','none');
                 var urllogin = "{$fields_value.URLAPI_LOGIN_INTEG|escape:'htmlall':'UTF-8'}";
                 if(jQuery('#produccion').is(':checked')){
                     urllogin = "{$fields_value.URLAPI_LOGIN_PROD|escape:'htmlall':'UTF-8'}";
@@ -2389,10 +2461,25 @@
                 };
                 console.log('settings:::', settings);
                 jQuery.ajax(settings).done(function (response) {
+                    
                     console.log('response:::', response);
-                    window.culqi_token = response.data;
+                    //window.culqi_token = response.data;
                     console.log('window.culqi_token:::', window.culqi_token);
-                    culqiWoGetMerchants(window.culqi_token);
+                    //culqiWoGetMerchants(window.culqi_token);
+
+                    if(typeof(response.message) != "undefined" && response.message !== null){
+                        jQuery('#errorlogin').css('display','block');
+                        jQuery('#errorlogin').html(response.message);
+                    }else{
+                        window.culqi_token = response.data;
+                        culqiWoGetMerchants(url_merchant);
+                    }
+
+                }).complete(function() {
+                    $('body').waitMe('hide');
+                }).error(function() {
+                    jQuery('#errorlogin').css('display','block');
+                    $('body').waitMe('hide');
                 });
             }
 
@@ -2422,11 +2509,13 @@
                     jQuery("#modalList").modal("show");
                 })
                 .error(function (error) {
+                    jQuery('#errorlogin').css('display','block');
                     console.log('error:::', error);
                 });
             };
 
             const getMerchant = (id) => {
+                run_waitMe();
                 console.log('getMerchant');
                 var urlmerchantsingle = "{$fields_value.URLAPI_MERCHANTSINGLE_INTEG|escape:'htmlall':'UTF-8'}";
                 if(jQuery('#produccion').is(':checked')){
@@ -2451,12 +2540,18 @@
                     window.culqi_settings["private_key"] = response.data[0].key;
                     renderSettings();
                     jQuery("#modalList").modal("hide");
+                })
+                .complete(function() {
+                    $('body').waitMe('hide');
+                })
+                .error(function() {
+                    $('body').waitMe('hide');
                 });
                 return false;
             };
 
             const renderSettings = () => {
-            console.log(window.culqi_settings);
+                console.log(window.culqi_settings);
 
                 if (jQuery("#public_key").length) {
                 jQuery("#public_key").val(window.culqi_settings["public_key"]);
@@ -2478,6 +2573,7 @@
 
             const renderMerchants = (merchants) => {
                 let html = "";
+                
                 merchants.forEach((merchant) => {
                 html += `
                     <li>
@@ -2526,41 +2622,13 @@
                     event.preventDefault();
                 });
             };
-        });
-
-
-    </script>
-
-    <script type="text/javascript">
-        /**
-         * @license
-         * three.js - JavaScript 3D library
-         * Copyright 2016 The three.js Authors
-         *
-         * Permission is hereby granted, free of charge, to any person obtaining a copy
-         * of this software and associated documentation files (the "Software"), to deal
-         * in the Software without restriction, including without limitation the rights
-         * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-         * copies of the Software, and to permit persons to whom the Software is
-         * furnished to do so, subject to the following conditions:
-         *
-         * The above copyright notice and this permission notice shall be included in
-         * all copies or substantial portions of the Software.
-         *
-         * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-         * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-         * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-         * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-         * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-         * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-         * THE SOFTWARE.
-         */
-        document.addEventListener('DOMContentLoaded', () => {
+            
             const setUrlLogo = ''; // Al iniciar estará vacío, una vez personalizado el checkout esta variable tendrá seteado el url de logo ingresado
             const setPrimaryColor = ''; // Al iniciar estará vacío, una vez personalizado el checkout esta variable tendrá seteado el color ingresado
             const setSecondaryColor = ''; // Al iniciar estará vacío, una vez personalizado el checkout esta variable tendrá seteado el color ingresado
-            const setColors = (setPrimaryColor != '' ? setPrimaryColor.slice(1) : '') + '-' + (setSecondaryColor != '' ? setSecondaryColor.slice(1) : '');
-
+            //const setColors = (setPrimaryColor != '' ? setPrimaryColor.slice(1) : '') + '-' + (setSecondaryColor != '' ? setSecondaryColor.slice(1) : '');
+            const setColors = "{$fields_value.CULQI_COLOR_PALETTE|escape:'htmlall':'UTF-8'}";
+            console.log('setColors:::', setColors);
             const btnOpen = document.querySelector('#open-modal')
             const overlay = document.querySelector('#overlay')
 
@@ -2598,6 +2666,9 @@
             }
 
             const configColors = palette => {
+                console.log('setcolors::');
+                console.log(palette[0]);
+                console.log(palette[1]);
                 paletteLeft.style.background = '#' + palette[0];
                 paletteRight.forEach(item => {
                 switch (item.getAttribute('name')) {
@@ -2619,7 +2690,8 @@
             if (setUrlLogo != '' && setUrlLogo != null && setUrlLogo != undefined) {
                 inputLogo.src = setColors;
             }
-
+            console.log('2683');
+            
             if (setColors != '' && setColors != null && setColors != undefined) {
                 inputColor.forEach(el => {
                 if (el.id == setColors) {
@@ -2709,14 +2781,60 @@
             btnOpen.addEventListener('click', () => {
                 overlay.classList.add('active')
             });
+
+        });
+
+
+    </script>
+
+    <script type="text/javascript">
+        /**
+         * @license
+         * three.js - JavaScript 3D library
+         * Copyright 2016 The three.js Authors
+         *
+         * Permission is hereby granted, free of charge, to any person obtaining a copy
+         * of this software and associated documentation files (the "Software"), to deal
+         * in the Software without restriction, including without limitation the rights
+         * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+         * copies of the Software, and to permit persons to whom the Software is
+         * furnished to do so, subject to the following conditions:
+         *
+         * The above copyright notice and this permission notice shall be included in
+         * all copies or substantial portions of the Software.
+         *
+         * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+         * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+         * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+         * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+         * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+         * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+         * THE SOFTWARE.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            
+
+            
         })
     </script>
-<script type="text/javascript">
-    jQuery(document).ready(function(){
-        jQuery('#{$fields_value.CULQI_COLOR_PALETTEID|escape:'htmlall':'UTF-8'}').click();
-        if(document.querySelector('#CULQI_URL_LOGO').value!=''){
-            document.querySelector('#logo').src=document.querySelector('#CULQI_URL_LOGO').value;
-        }
+    
+    <script type="text/javascript">
+    
+        jQuery(document).ready(function(){
+            jQuery('#{$fields_value.CULQI_COLOR_PALETTEID|escape:'htmlall':'UTF-8'}').click();
+            if(document.querySelector('#CULQI_URL_LOGO').value!=''){
+                document.querySelector('#logo').src=document.querySelector('#CULQI_URL_LOGO').value;
+            }
 
-    });
-</script>
+        });
+
+        function run_waitMe() {
+            console.log('run_waitMe');
+            $('body').waitMe({
+                effect: 'bounce',
+                text: 'Cargando. Espere por favor',
+                bg: 'rgba(255,255,255,0.7)',
+                color:'#000000'
+            });
+        }
+    </script>
