@@ -14,6 +14,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         parent::initContent();
         $this->ajax = false;
 
+        
         $culqiPretashop =  new Culqi();
         $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
         //var_dump($infoCheckout['tiempo_exp']); exit(1);
