@@ -55,7 +55,7 @@
 
 		if (event.origin === window.location.origin) {
 			const { parameters3DS, error } = event.data;
-			console.log('data3ds');
+			console.log('data3ds58');
 			console.log(event.data);
 			if (parameters3DS) {
 				console.log(Culqi);
@@ -98,6 +98,7 @@
 							if(data.constructor == Object) {
 								result = JSON.parse(JSON.stringify(data));
 							}
+							console.log('result.object:::101', result.object);
 							if(result.object === 'charge') {
 								console.log('mostrando loading');
 								run_waitMe();
@@ -124,15 +125,20 @@
 					error: function(error, textStatus, xhr) {
 						showResult('red',error['user_message']);
 						$('#showresult').show();
-						Culqi.close();
+						//Culqi.close();
 						console.log('error:::', error);
+						e.preventDefault();
 					}
 				});
 			}
 
 			if (error) {
 				console.log('error3DS:::');
+				showResult('red',error);
+				$('#showresult').show();
+				Culqi.close();
 				console.log(error);
+
 			}
 		}
 	}, false );
@@ -285,6 +291,7 @@
 			$(document).ajaxStart(function(){
 				run_waitMe();
 			});
+			
 			$(document).ajaxComplete(function(){
 				$('body').waitMe('hide');
 			});
@@ -297,21 +304,21 @@
 			console.log('aqui se registra la venta');
 
 			$.ajax({
-			url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'registersale', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
-			data: { order_id: culqi_order_id },
-			type: "POST",
-			dataType: 'json',
-			success: function(response) {
-				console.log('response:::', response);
+				url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'registersale', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
+				data: { order_id: culqi_order_id },
+				type: "POST",
+				dataType: 'json',
+				success: function(response) {
+					console.log('response:::', response);
 				
-				ps_order_id = response;
+					ps_order_id = response;
 				
-			},
-			error: function(error){
-				console.log('error:::', error);
-				e.preventDefault();
-			}
-		});
+				},
+				error: function(error){
+					console.log('error:::', error);
+					e.preventDefault();
+				}
+			});
 
 
 			if(Culqi.token==null){
@@ -363,6 +370,7 @@
 					console.log('statuscode::',xhr.status);
 					console.log('data:::', data);
 					console.log('xCulqi:::', Culqi);
+					console.log('data.action_code:::', data.action_code);
 					if(data.action_code=='REVIEW'){
 						Culqi.close();
 						Culqi3DS.settings = {
@@ -378,6 +386,7 @@
 						console.log("{/literal}{$BASE_URL|escape:'htmlall':'UTF-8'}{literal}");
 						Culqi3DS.initAuthentication(token);
 					}else{
+						
 						var result = "";
 
 						if(data.constructor == String) {
@@ -386,6 +395,7 @@
 						if(data.constructor == Object) {
 							result = JSON.parse(JSON.stringify(data));
 						}
+						console.log('result.object:::', result.object);
 						if(result.object === 'charge') {
 							console.log('mostrando loading');
 							run_waitMe();
@@ -410,9 +420,9 @@
 						}
 						if(result.object === 'error') {
 							$('body').waitMe('hide');
-							$('#showresult').show();
 							Culqi.close();
 							showResult('red',result['user_message']);
+							$('#showresult').show();
 						}
 					}
 				},

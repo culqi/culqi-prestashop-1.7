@@ -2463,7 +2463,7 @@
                 jQuery.ajax(settings).done(function (response) {
                     
                     console.log('response:::', response);
-                    //window.culqi_token = response.data;
+                    window.culqi_token = response.data;
                     console.log('window.culqi_token:::', window.culqi_token);
                     //culqiWoGetMerchants(window.culqi_token);
 
@@ -2472,7 +2472,7 @@
                         jQuery('#errorlogin').html(response.message);
                     }else{
                         window.culqi_token = response.data;
-                        culqiWoGetMerchants(url_merchant);
+                        culqiWoGetMerchants(window.culqi_token);
                     }
 
                 }).complete(function() {
