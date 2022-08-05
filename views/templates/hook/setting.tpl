@@ -2230,11 +2230,11 @@
                 <div class="modal-body">
                 <div class="form-group">
                     <label for="email">Correo electrónico</label>
-                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="ejemplo@culqi.com" value="">
+                    <input required="true" type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="ejemplo@culqi.com" value="">
                 </div>
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña de CulqiPanel" value="">
+                    <input required="true" type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña de CulqiPanel" value="">
                 </div>
                 <div class="form-group d-none" style="display: none">
                     <label for="type_integration">Tipo de Integración</label>
@@ -2250,7 +2250,7 @@
                 
                 <div class="modal-footer">
                 <button type="submit" name="submit" class="btn btn-primary" style='width:100%; background: #00a19b'>Iniciar Sesión</button>
-                <button type="button" onclick="jQuery('#modalLogin').modal('toggle')" name="button" class="btn btn-primary" style='width:100%; background: #808080;'>Cerrar</button>
+                <button type="button" onclick="jQuery('#errorlogincpanelculqi').html('');  jQuery('#modalLogin').modal('toggle')" name="button" class="btn btn-primary" style='width:100%; background: #808080;'>Cerrar</button>
                 </div>
             </form>
             </div>
