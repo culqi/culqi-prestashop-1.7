@@ -1425,7 +1425,7 @@
 
     @media screen and (max-width: 782px){
         .customcheckout{
-            display: none;
+            //display: none;
         }
     }
 
@@ -2348,25 +2348,30 @@
                 if(jQuery('#produccion').is(':checked')){
                     if(!(llavepublica.length==3 && llavepublica[1]=='live')){
                         jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de producción');
+                        jQuery('#errorpubkey').css('display','block');
                         hasError = '1';
                     }
                     if(!(llaveprivada.length==3 && llaveprivada[1]=='live')){
                         jQuery('#errorseckey').html('La llave privada no pertenece al ambiente de producción');
+                        jQuery('#errorseckey').css('display','block');
                         hasError = '1';
                     }
                 }
-                console.log('timexp:::', timexp);
+                
+                console.log('timexp2:::', timexp);
                 if(!(timexp=='' || (timexp>0 && timexp.length <= 10 && timexp.length > 0))){
-                    //alert('El tiempo de expiración no es correcto, verifique.');
+                    
                     //e.preventDefault();
                     jQuery('#errortimeexp').html('El tiempo de expiración debe ser un valor numérico, mayor a 0 y no mayor a 10 dígitos.');
-                    jQuery('#errortimeexp').css('display','block');c
+                    //alert('El tiempo de expiración no es correcto, verifique.');
+                    jQuery('#errortimeexp').css('display','block');
                     hasError = '1';
                 }
-
+                console.log('hasError:::', hasError);
                 if(hasError == '1') {
                     e.preventDefault();
                 }
+                //alert('hi');
 
                 var urlwebhook = "{$fields_value.URLAPI_WEBHOOK_INTEG|escape:'htmlall':'UTF-8'}";
                 if(jQuery('#produccion').is(':checked')){

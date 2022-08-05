@@ -12,7 +12,7 @@ class Client {
 	public function request( $method, $url, $api_key, $data = NULL, $secure_url = false ) {
 		try {
 			$url_params = is_array($data) ? '?' . http_build_query($data) : '';
-			//var_dump($data); exit(1);
+			//var_dump($data);
 			$headers = [
 				'Authorization'		=> sprintf( 'Bearer %s', $api_key ),
 				'Content-Type'		=> 'application/json',
@@ -44,6 +44,7 @@ class Client {
 
 			} else if($method == "POST") {
 				$response = \Requests::post($data['enviroment']  . $url, $headers, json_encode($data), $options);
+				//echo var_dump($response);
 			} else if($method == "PATCH") {
 				$response = \Requests::patch($data['enviroment']  . $url, $headers, json_encode($data), $options);
 			} else if($method == "DELETE") {
