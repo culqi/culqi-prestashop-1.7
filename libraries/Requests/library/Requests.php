@@ -377,7 +377,7 @@ class Requests {
 			$transport = self::get_transport($capabilities);
 		}
 		$response = $transport->request($url, $headers, $data, $options);
-
+        //echo var_dump
 		$options['hooks']->dispatch('requests.before_parse', array(&$response, $url, $headers, $data, $type, $options));
 
 		return self::parse_response($response, $url, $headers, $data, $options);

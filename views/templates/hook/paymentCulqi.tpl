@@ -255,8 +255,6 @@
 
 	}
 
-	
-
 	function showResult(style,message) {
 		$('#showresult').removeClass('hide');
 		$('#showresultcontent').attr('class', '');
@@ -285,6 +283,7 @@
 	function culqi() {
 
 		console.log('yCulqi:::', Culqi);
+		var ps_order_id = '';
 
 		if(Culqi.order) {
 
@@ -298,7 +297,7 @@
 
 			run_waitMe();
 			var culqi_order_id = Culqi.order.id;
-			var ps_order_id = '';
+			
 			console.log('culqi_order_id:::', culqi_order_id);
 
 			console.log('aqui se registra la venta');
@@ -310,7 +309,6 @@
 				dataType: 'json',
 				success: function(response) {
 					console.log('response:::', response);
-				
 					ps_order_id = response;
 				
 				},
@@ -354,85 +352,113 @@
 			var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
 			console.log('installments:::', installments);
 
+			console.log('aqui se registra la venta');
+
 			$.ajax({
-				url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
-				data: {
-					ajax: true,
-					action: 'displayAjax',
-					token_id: Culqi.token.id,
-					installments: installments,
-					email: Culqi.token.email,
-					device: device
-				},
+				url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'registersale', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
+				data: { order_id: culqi_order_id },
 				type: "POST",
 				dataType: 'json',
-				success: function(data, textStatus, xhr) {
-					console.log('statuscode::',xhr.status);
-					console.log('data:::', data);
-					console.log('xCulqi:::', Culqi);
-					console.log('data.action_code:::', data.action_code);
-					if(data.action_code=='REVIEW'){
-						Culqi.close();
-						Culqi3DS.settings = {
-							charge: {
-								totalAmount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
-								returnUrl: "{/literal}{$BASE_URL|escape:'htmlall':'UTF-8'}{literal}" //URL DEL CHECKOUT DEL COMERCIO
-							},
-							card: {
-								email: email,
-							}
-						};
-						console.log('abriendo3DS');
-						console.log("{/literal}{$BASE_URL|escape:'htmlall':'UTF-8'}{literal}");
-						Culqi3DS.initAuthentication(token);
-					}else{
-						
-						var result = "";
+				success: function(response) {
+					console.log('response:::', response);
+					ps_order_id = response;
 
-						if(data.constructor == String) {
-							result = JSON.parse(data);
-						}
-						if(data.constructor == Object) {
-							result = JSON.parse(JSON.stringify(data));
-						}
-						console.log('result.object:::', result.object);
-						if(result.object === 'charge') {
-							console.log('mostrando loading');
-							run_waitMe();
-							var card_number = result['source']['card_number'];
-							var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
-							var chargeid = result['id'];
-							//console.log('result:::', result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type']);
-							showResult('green',result['user_message']);
-							//$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
-							//redirect();
 
-							var id = setInterval(function(){
-								console.log('result:::', result);
-								if(!Culqi.isOpen){
-									clearInterval(id);
-									
-									var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-									location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid;
+					console.log('ps_order_id:::', ps_order_id);
+					$.ajax({
+						url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'chargeajax', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
+						data: {
+							ajax: true,
+							action: 'displayAjax',
+							token_id: Culqi.token.id,
+							installments: installments,
+							email: Culqi.token.email,
+							device: device,
+							ps_order_id: ps_order_id
+						},
+						type: "POST",
+						dataType: 'json',
+						success: function(data, textStatus, xhr) {
+							console.log('statuscode::',xhr.status);
+							console.log('data:::', data);
+							console.log('xCulqi:::', Culqi);
+							console.log('data.action_code:::', data.action_code);
+							if(data.action_code=='REVIEW'){
+								Culqi.close();
+								Culqi3DS.settings = {
+									charge: {
+										totalAmount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
+										returnUrl: "{/literal}{$BASE_URL|escape:'htmlall':'UTF-8'}{literal}" //URL DEL CHECKOUT DEL COMERCIO
+									},
+									card: {
+										email: email,
+									}
+								};
+								console.log('abriendo3DS');
+								console.log("{/literal}{$BASE_URL|escape:'htmlall':'UTF-8'}{literal}");
+								Culqi3DS.initAuthentication(token);
+							}else{
+								
+								var result = "";
+
+								if(data.constructor == String) {
+									result = JSON.parse(data);
 								}
-							}, 1000);
+								if(data.constructor == Object) {
+									result = JSON.parse(JSON.stringify(data));
+								}
+								console.log('result.object:::', result.object);
+								if(result.object === 'charge') {
+									console.log('mostrando loading');
+									run_waitMe();
+									var card_number = result['source']['card_number'];
+									var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
+									var chargeid = result['id'];
+									//console.log('result:::', result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type']);
+									showResult('green',result['user_message']);
+									//$('#payment-confirmation > .ps-shown-by-js > button').prop("disabled",true);
+									//redirect();
 
-						}
-						if(result.object === 'error') {
-							$('body').waitMe('hide');
-							Culqi.close();
-							showResult('red',result['user_message']);
+									//var id = setInterval(function(){
+										//console.log('result:::', result);
+										//if(!Culqi.isOpen){
+											//clearInterval(id);
+											
+											var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
+											location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid;
+										//}
+									//}, 1000);
+
+								}
+								if(result.object === 'error') {
+									$('body').waitMe('hide');
+									Culqi.close();
+									showResult('red',result['user_message']);
+									$('#showresult').show();
+								}
+							}
+						},
+						error: function(error, textStatus, xhr) {
+							console.log('error:::', error);
+							showResult('red',error['user_message']);
 							$('#showresult').show();
+							Culqi.close();
 						}
-					}
+					});
+
+
+
+
+
+
 				},
-				error: function(error, textStatus, xhr) {
+				error: function(error){
 					console.log('error:::', error);
-					showResult('red',error['user_message']);
-					$('#showresult').show();
-					Culqi.close();
+					e.preventDefault();
 				}
 			});
+			
+
 		} else {
 
 			console.log(Culqi.error);
