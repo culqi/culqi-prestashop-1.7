@@ -29,7 +29,8 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             //'description' => $infoCheckout['descripcion'],
             'description' => 'Venta desde Plugin Prestashop',
             //'order_number' => (string)$infoCheckout['orden'] . $expiration_date,
-            'order_number' => 'pts-' . $expiration_date.date('Ymdihs'),
+            //'order_number' => 'pts-' . $expiration_date.date('Ymdihs'),
+            'order_number' => 'pts-' . time(),
             'client_details' => array(
                 'email' => $infoCheckout['customer']->email,
                 'first_name' => $infoCheckout['customer']->firstname,

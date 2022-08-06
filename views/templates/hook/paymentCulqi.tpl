@@ -10,7 +10,7 @@
 	</div>
 	<div class="row">
 		<p id="showresult" class="text-center" style="margin-top: 2em; text-align: center; display: none;">
-			<b id="showresultcontent" class="text-danger"></b>
+			<b id="showresultcontent" class="text-danger" style="color:red; font-size: 13px;"></b>
 		</p>
 	</div>
 </div>
@@ -64,10 +64,12 @@
 				console.log('Se ha creado un token: ' + token);
 
 				$(document).ajaxStart(function(){
+					console.log('run_waitMe 67');
 					run_waitMe();
 				});
 				$(document).ajaxComplete(function(){
-					$('body').waitMe('hide');
+					//console.log('close loading 71');
+					//$('body').waitMe('hide');
 				});
 
 				var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
@@ -101,7 +103,8 @@
 							console.log('result.object:::101', result.object);
 							if(result.object === 'charge') {
 								console.log('mostrando loading');
-								run_waitMe();
+								//console.log('run_waitMe 105');
+								//run_waitMe();
 								var card_number = result['source']['card_number'];
 								var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
 								var chargeid = result['id'];
@@ -110,11 +113,15 @@
 
 								var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpayment', [], true)|escape:'htmlall':'UTF-8'}{literal}");
 								location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid;
+								//console.log('se redirigio a la otra pagina FIN');
+
+								//NO
 								//console.log('y aqui va la url');
 								//console.log(url + '?card_n1umber=' + card_number + '&card_brand=' + card_brand + '&orderid='+ orderid + '&chargeid=' + chargeid);
 
 							}
 							if(result.object === 'error') {
+								console.log('close loading 121');
 								$('body').waitMe('hide');
 								$('#showresult').show();
 								Culqi.close();
@@ -128,6 +135,10 @@
 						//Culqi.close();
 						console.log('error:::', error);
 						e.preventDefault();
+					},
+					beforeSend: function(){
+						console.log('run_waitMe 135');
+						run_waitMe();
 					}
 				});
 			}
@@ -136,6 +147,8 @@
 				console.log('error3DS:::');
 				showResult('red',error);
 				$('#showresult').show();
+				console.log('close loading 147');
+				$('body').waitMe('hide');
 				Culqi.close();
 				console.log(error);
 
@@ -256,10 +269,19 @@
 	}
 
 	function showResult(style,message) {
+
+		var new_message = ''
+
+		if (message == '') {
+			new_message = 'ERROR CULQI';
+		} else {
+			new_message = message;
+		}
+
 		$('#showresult').removeClass('hide');
 		$('#showresultcontent').attr('class', '');
 		$('#showresultcontent').addClass(style);
-		$('#showresultcontent').html(message);
+		$('#showresultcontent').html(new_message);
 	}
 
 	function fnReplace(url) {
@@ -288,14 +310,15 @@
 		if(Culqi.order) {
 
 			$(document).ajaxStart(function(){
-				run_waitMe();
+				//run_waitMe();
 			});
 			
 			$(document).ajaxComplete(function(){
-				$('body').waitMe('hide');
+				//$('body').waitMe('hide');
 			});
 
-			run_waitMe();
+			//console.log('loading 311');
+			//run_waitMe();
 			var culqi_order_id = Culqi.order.id;
 			
 			console.log('culqi_order_id:::', culqi_order_id);
@@ -322,18 +345,19 @@
 			if(Culqi.token==null){
 				var id = setInterval(function(){
 					if(!Culqi.isOpen){
+						console.log('loading 339');
 						run_waitMe();
 						clearInterval(id);
 						var orderid = Culqi.order['id'];
 						var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpaymentpending', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-						location.href = url + '?transaction_id=' + orderid;
+						location.href = url + '?ps_order_id=' + ps_order_id;
 						//break;
 					}
 				}, 1000);
 			}else{
 				var orderid = Culqi.order['id'];
 				var url = fnReplace("{/literal}{$link->getModuleLink('culqi', 'postpaymentpending', [], true)|escape:'htmlall':'UTF-8'}{literal}");
-				location.href = url + '?transaction_id=' + orderid;
+				location.href = url + '?ps_order_id=' + ps_order_id;
 			}
 		} else if (Culqi.token) {
 
@@ -343,19 +367,18 @@
 			console.log('Se ha creado un token: ' + token);
 
 			$(document).ajaxStart(function(){
-				run_waitMe();
+				//console.log('run_waitMe 349');
+				//run_waitMe();
 			});
 			$(document).ajaxComplete(function(){
-				$('body').waitMe('hide');
+				//console.log('close loading 360');
+				//$('body').waitMe('hide');
 			});
 
 			var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
 			console.log('installments:::', installments);
 
 			console.log('aqui se registra la venta');
-
-			
-
 
 					console.log('ps_order_id:::', ps_order_id);
 					$.ajax({
@@ -402,6 +425,7 @@
 								console.log('result.object:::', result.object);
 								if(result.object === 'charge') {
 									console.log('mostrando loading');
+									console.log('run_waitMe 405');
 									run_waitMe();
 									var card_number = result['source']['card_number'];
 									var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
@@ -423,6 +447,7 @@
 
 								}
 								if(result.object === 'error') {
+									console.log('close loading 436');
 									$('body').waitMe('hide');
 									Culqi.close();
 									showResult('red',result['user_message']);
@@ -432,6 +457,7 @@
 						},
 						error: function(error, textStatus, xhr) {
 							console.log('error:::434', error);
+							console.log('close loading 446');
 							$('body').waitMe('hide');
 							$('#showresult').show();
 							Culqi.close();
@@ -447,6 +473,7 @@
 
 			console.log(Culqi.error);
 			console.log('error token');
+			console.log('close loading 462')
 			$('body').waitMe('hide');
 			if(Culqi.error) {
 				showResult('red',Culqi.error.user_message);
@@ -458,7 +485,7 @@
 
 		
 	function run_waitMe() {
-		console.log('run_waitMe');
+		//console.log('run_waitMe');
 		$('body').waitMe({
 			effect: 'bounce',
 			text: 'Cargando. Espere por favor',
