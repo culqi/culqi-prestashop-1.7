@@ -354,14 +354,7 @@
 
 			console.log('aqui se registra la venta');
 
-			$.ajax({
-				url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'registersale', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
-				data: { order_id: culqi_order_id },
-				type: "POST",
-				dataType: 'json',
-				success: function(response) {
-					console.log('response:::', response);
-					ps_order_id = response;
+			
 
 
 					console.log('ps_order_id:::', ps_order_id);
@@ -373,8 +366,7 @@
 							token_id: Culqi.token.id,
 							installments: installments,
 							email: Culqi.token.email,
-							device: device,
-							ps_order_id: ps_order_id
+							device: device
 						},
 						type: "POST",
 						dataType: 'json',
@@ -439,8 +431,8 @@
 							}
 						},
 						error: function(error, textStatus, xhr) {
-							console.log('error:::', error);
-							showResult('red',error['user_message']);
+							console.log('error:::434', error);
+							$('body').waitMe('hide');
 							$('#showresult').show();
 							Culqi.close();
 						}
@@ -449,14 +441,6 @@
 
 
 
-
-
-				},
-				error: function(error){
-					console.log('error:::', error);
-					e.preventDefault();
-				}
-			});
 			
 
 		} else {
@@ -478,8 +462,8 @@
 		$('body').waitMe({
 			effect: 'bounce',
 			text: 'Cargando. Espere por favor',
-			bg: 'rgba(255,255,255,0.7)',
-			color:'#000000'
+			bg: 'rgba(0,0,0, 0.7)',
+			color:'#ffffff'
 		});
 	}
 </script>

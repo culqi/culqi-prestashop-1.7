@@ -1584,7 +1584,7 @@
                         ¡Ahorra tiempo configurando tu Culqi checkout! Inicia sesión con tu cuenta de CulqiPanel
                     </label>
                     <div class="col-lg-8">
-                        <button id="pretashop_culqi_login_button" type="button" class="btnlogin" data-toggle="modal" data-target="#modalLogin" style="padding: 10px 20px">
+                        <button id="pretashop_culqi_login_button" type="button" class="btnlogin" data-toggle="modal" data-target="#modalLogin" onclick="jQuery('#errorlogin').html(''); " style="padding: 10px 20px">
                             <div style="display: initial">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: -4px; margin-right: 5px">
                                     <path d="M7.99463 8.66086C6.58697 8.66086 5.44795 7.52184 5.44795 6.11418C5.44795 4.70653 6.59772 3.55676 8.00537 3.55676C9.41303 3.55676 10.5628 4.70653 10.5628 6.11418C10.5628 7.52184 9.40228 8.66086 7.99463 8.66086ZM7.99463 4.95367C7.36065 4.95367 6.83412 5.46946 6.83412 6.11418C6.83412 6.75891 7.3499 7.27469 7.99463 7.27469C8.63936 7.27469 9.15514 6.75891 9.15514 6.11418C9.15514 5.46946 8.63936 4.95367 7.99463 4.95367Z" fill="#3E4B61"/>
@@ -2250,7 +2250,7 @@
                 
                 <div class="modal-footer">
                 <button type="submit" name="submit" class="btn btn-primary" style='width:100%; background: #00a19b'>Iniciar Sesión</button>
-                <button type="button" onclick="jQuery('#errorlogincpanelculqi').html('');  jQuery('#modalLogin').modal('toggle')" name="button" class="btn btn-primary" style='width:100%; background: #808080;'>Cerrar</button>
+                <button type="button" onclick="jQuery('#errorlogincpanelculqi').html(''); jQuery('#modalLogin').modal('toggle')" name="button" class="btn btn-primary" style='width:100%; background: #808080;'>Cerrar</button>
                 </div>
             </form>
             </div>
@@ -2439,6 +2439,7 @@
                 e.preventDefault();
                 const data = jQuery(this).serializeArray();
                 console.log('data:::', data);
+                
 
                 const databody = data.reduce((acc, curVal) => {
                 return {  ...acc, [curVal.name]: curVal.value };
@@ -2450,7 +2451,11 @@
             });
 
             function fullculqi_login(data) {
+
+                console.log(jQuery('#errorlogin'));
+                jQuery('#errorlogin').html('');
                 jQuery('#errorlogin').css('display','none');
+                
                 var urllogin = "{$fields_value.URLAPI_LOGIN_INTEG|escape:'htmlall':'UTF-8'}";
                 if(jQuery('#produccion').is(':checked')){
                     urllogin = "{$fields_value.URLAPI_LOGIN_PROD|escape:'htmlall':'UTF-8'}";

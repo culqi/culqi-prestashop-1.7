@@ -14,6 +14,7 @@ class CulqiPostpaymentpendingModuleFrontController extends ModuleFrontController
         
         $cart = $this->context->cart;
         $customer = new Customer($cart->id_customer);
+
         //$this->module->validateOrder((int)$cart->id, Configuration::get('CULQI_STATE_PENDING'), (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer->secure_key);
 
         //Actualizando el transaction id
