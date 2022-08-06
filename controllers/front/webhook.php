@@ -69,11 +69,15 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
             case 'refund.creation.succeeded':
                 
                 Logger::addLog('entro -> refund.creation.succeeded');
-                $metadata = $data["metadata"];
-                var_dump($metadata); exit(1);
+                //$metadata = $data["metadata"];
+                //var_dump($metadata); exit(1);
                 //Logger::addLog('$metadata' . serialize($metadata));
-                $order_id = (int)$metadata["pts_order_id"];
-                $charge_id = (int)$metadata["_culqi_charge_id"];
+                //$order_id = (int)$metadata["pts_order_id"];
+                //var_dump($data["chargeId"]);
+                $charge_id = $data["chargeId"];
+                Logger::addLog('$charge_id_1' . $charge_id);
+                Logger::addLog('$charge_id_2' . $data->chargeId);
+                //Logger::addLog('$metadata' . $metadata);
 
                 $order_payment = Db::getInstance()->ExecuteS("SELECT distinct * FROM " . _DB_PREFIX_ . "order_payment where transaction_id='". $charge_id . "'");
                 $order_reference = $order_payment[0]["order_reference"];
@@ -81,8 +85,9 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                 $findorder = Db::getInstance()->ExecuteS("SELECT distinct * FROM " . _DB_PREFIX_ . "orders where reference='". $order_reference . "'");
                 $id = $findorder[0]['id_order'];
                 
+                $state_refund = 7;
                 $order = new Order($id);
-                $order->current_state = (int)Configuration::get(7); // Cod 7 Reembolsado
+                $order->current_state = (int)$state_refund; // Cod 7 Reembolsado
                 $order->update();
 
 
@@ -125,6 +130,6 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         
         
         //var_dump('Actualizado!');
-        exit(1);
+        //exit(1);
     }
 }
