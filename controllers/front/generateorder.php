@@ -42,6 +42,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             'enviroment' => $infoCheckout['enviroment_backend'],
             'metadata' => ["pts_order_id" => (string)$infoCheckout['orden'], "sponsor" => "prestashop"]
         );
+        //var_dump($args_order); exit(1);
         $culqi_order = $culqi->Orders->create( $args_order );
         //echo var_dump($culqi_order);
 

@@ -2843,8 +2843,8 @@
             $('body').waitMe({
                 effect: 'bounce',
                 text: 'Cargando. Espere por favor',
-                bg: 'rgba(255,255,255,0.7)',
-                color:'#000000'
+                bg: 'rgba(0,0,0,0.7)',
+                color:'#fff'
             });
         }
     </script>

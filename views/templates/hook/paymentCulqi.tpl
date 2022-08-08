@@ -319,10 +319,9 @@
 
 			//console.log('loading 311');
 			//run_waitMe();
-			var culqi_order_id = Culqi.order.id;
 			
+			var culqi_order_id = Culqi.order.id;
 			console.log('culqi_order_id:::', culqi_order_id);
-
 			console.log('aqui se registra la venta');
 
 			$.ajax({
