@@ -2481,6 +2481,7 @@
                         jQuery('#errorlogin').css('display','block');
                         jQuery('#errorlogin').html(response.message);
                     }else{
+                        jQuery("#modalLogin").modal("hide");
                         window.culqi_token = response.data;
                         culqiWoGetMerchants(window.culqi_token);
                     }

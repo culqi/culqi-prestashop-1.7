@@ -23,7 +23,6 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
         $order_payment->transaction_id = Tools::getValue("chargeid");
         $order_payment->update();
         Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
-
     }
 
 }
