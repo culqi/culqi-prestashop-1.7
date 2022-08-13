@@ -362,7 +362,8 @@
 				location.href = url + '?ps_order_id=' + ps_order_id;
 			}
 		} else if (Culqi.token) {
-
+			Culqi.close();
+			run_waitMe();
 			var token = Culqi.token.id;
 			var email = Culqi.token.email;
 			console.log(email)
@@ -401,7 +402,7 @@
 							console.log('xCulqi:::', Culqi);
 							console.log('data.action_code:::', data.action_code);
 							if(data.action_code=='REVIEW'){
-								Culqi.close();
+								$('body').waitMe('hide');
 								Culqi3DS.settings = {
 									charge: {
 										totalAmount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},

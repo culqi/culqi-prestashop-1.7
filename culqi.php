@@ -7,14 +7,14 @@ if (!defined('_PS_VERSION_'))
 
 define('CULQI_SDK_VERSION', '1.3.0');
 
-define('URLAPI_INTEG', 'https://dev-test-panel.culqi.xyz');
+define('URLAPI_INTEG', 'https://qa-test-panel.culqi.xyz');
 define('URLAPI_PROD', 'https://qa-panel.culqi.xyz');
 
-define('URLAPI_INTEG_3DS', 'https://3ds-development.culqi.xyz/');
+define('URLAPI_INTEG_3DS', 'https://3ds-qa.culqi.xyz/');
 define('URLAPI_PROD_3DS', 'https://3ds-qa.culqi.xyz');
 
-define('URLAPI_ORDERCHARGES_INTEG', 'https://dev-api.culqi.xyz/v2');
-define('URLAPI_CHECKOUT_INTEG', 'https://dev-checkout.culqi.xyz/js/v4');
+define('URLAPI_ORDERCHARGES_INTEG', 'https://qa-api.culqi.xyz/v2');
+define('URLAPI_CHECKOUT_INTEG', 'https://qa-checkout.culqi.xyz/js/v4');
 define('URLAPI_LOGIN_INTEG', URLAPI_INTEG.'/user/login');
 define('URLAPI_MERCHANT_INTEG', URLAPI_INTEG.'/secure/merchant/');
 define('URLAPI_MERCHANTSINGLE_INTEG', URLAPI_INTEG.'/secure/keys/?merchant=');
@@ -178,19 +178,24 @@ class Culqi extends PaymentModule
           $this->getCulqiInfoCheckout()
         );
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
+        if($this->getConfigFieldsValues()['CULQI_ENABLED']=='yes'){
+            $newOption->setModuleName($this->name)
+                ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
+                ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
+                //->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'));;
+                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqi.tpl'));;
+            //->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
 
-        $newOption->setModuleName($this->name)
-                  ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
-                  ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                  //->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'));;
-                  ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqi.tpl'));;
-                  //->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
+            $payment_options = [
+                $newOption,
+            ];
 
-        $payment_options = [
-            $newOption,
-        ];
+            return $payment_options;
+        }else{
+            return false;
+        }
 
-        return $payment_options;
+
     }
 
     public function checkCurrency($cart)
