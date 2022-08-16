@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/culqi.php" beforeDir="false" afterPath="$PROJECT_DIR$/culqi.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/templates/hook/setting.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/setting.tpl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +58,9 @@
       <workItem from="1660137087139" duration="70000" />
       <workItem from="1660255128394" duration="1021000" />
       <workItem from="1660260888174" duration="650000" />
-      <workItem from="1660417886139" duration="2551000" />
+      <workItem from="1660417886139" duration="2800000" />
+      <workItem from="1660571489779" duration="456000" />
+      <workItem from="1660670717966" duration="669000" />
     </task>
     <servers />
   </component>
