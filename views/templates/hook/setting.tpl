@@ -2304,14 +2304,13 @@
      * THE SOFTWARE.
      */
     jQuery(document).ready(function () {
+        var sendsubmit = 0;
         var post = "{$fields_value.CULQI_POST|escape:'htmlall':'UTF-8'}";
         var errors = "{$fields_value.CULQI_POST_ERRORS|escape:'htmlall':'UTF-8'}";
         if(post==1 && errors==0){
             jQuery('#contact-popup').show()
         }
         jQuery('#module_form').submit(function (e) {
-
-            /* */
             console.log('hi save');
             var llavepublica = jQuery('#CULQI_LLAVE_PUBLICA').val().split('_');
             var llaveprivada = jQuery('#CULQI_LLAVE_SECRETA').val().split('_');
@@ -2354,25 +2353,47 @@
 
             console.log('timexp2:::', timexp);
             if(!(timexp=='' || (timexp>0 && timexp.length <= 10 && timexp.length > 0))){
-
                 //e.preventDefault();
                 jQuery('#errortimeexp').html('El tiempo de expiración debe ser un valor numérico, mayor a 0 y no mayor a 10 dígitos.');
                 //alert('El tiempo de expiración no es correcto, verifique.');
                 jQuery('#errortimeexp').css('display','block');
                 hasError = '1';
             }
+            console.log('hasError:::', hasError);
 
             if(!(jQuery('#CULQI_METHODS_TARJETA').is(':checked') || jQuery('#CULQI_METHODS_BANCAMOVIL').is(':checked') || jQuery('#CULQI_METHODS_AGENTS').is(':checked') || jQuery('#CULQI_METHODS_WALLETS').is(':checked') || jQuery('#CULQI_METHODS_QUOTEBCP').is(':checked'))){
                 jQuery('#errorpaymentmethod').css('display','block');
                 hasError = '1';
             }
 
-            console.log('hasError:::', hasError);
             if(hasError == '1') {
                 e.preventDefault();
+                return false;
             }
             //alert('hi');
+            console.log(sendsubmit);
 
+            sendWebhook();
+            e.preventDefault();
+        });
+
+        jQuery("#modal_login_form_culqi").submit(function (e) {
+
+            e.preventDefault();
+            const data = jQuery(this).serializeArray();
+            console.log('data:::', data);
+
+            const databody = data.reduce((acc, curVal) => {
+                return {  ...acc, [curVal.name]: curVal.value };
+            }, {});
+
+            console.log('databody:::', databody);
+            run_waitMe();
+            fullculqi_login(databody);
+        });
+
+        function sendWebhook(){
+            console.log('jaji');
             var urlwebhook = "{$fields_value.URLAPI_WEBHOOK_INTEG|escape:'htmlall':'UTF-8'}";
             if(jQuery('#produccion').is(':checked')){
                 urlwebhook = "{$fields_value.URLAPI_WEBHOOK_PROD|escape:'htmlall':'UTF-8'}";
@@ -2424,26 +2445,16 @@
                         };
                         jQuery.ajax(settings).done(function (response) {
                             console.log(response);
+                            $('#module_form').unbind('submit').submit();
                         });
+                    }else{
+                        $('#module_form').unbind('submit').submit();
                     }
                 });
+            }else{
+                $('#module_form').unbind('submit').submit();
             }
-        });
-
-        jQuery("#modal_login_form_culqi").submit(function (e) {
-
-            e.preventDefault();
-            const data = jQuery(this).serializeArray();
-            console.log('data:::', data);
-
-            const databody = data.reduce((acc, curVal) => {
-                return {  ...acc, [curVal.name]: curVal.value };
-            }, {});
-
-            console.log('databody:::', databody);
-            run_waitMe();
-            fullculqi_login(databody);
-        });
+        }
 
         function fullculqi_login(data) {
 
