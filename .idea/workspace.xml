@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/templates/hook/setting.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/setting.tpl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -64,7 +65,8 @@
       <workItem from="1660862715287" duration="1045000" />
       <workItem from="1660923102951" duration="297000" />
       <workItem from="1661202258092" duration="815000" />
-      <workItem from="1661531837122" duration="330000" />
+      <workItem from="1661531837122" duration="392000" />
+      <workItem from="1661969458818" duration="392000" />
     </task>
     <servers />
   </component>

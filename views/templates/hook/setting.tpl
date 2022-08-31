@@ -2311,7 +2311,6 @@
             jQuery('#contact-popup').show()
         }
         jQuery('#module_form').submit(function (e) {
-            console.log('hi save');
             var llavepublica = jQuery('#CULQI_LLAVE_PUBLICA').val().split('_');
             var llaveprivada = jQuery('#CULQI_LLAVE_SECRETA').val().split('_');
             var timexp = jQuery('#CULQI_TIMEXP').val();
@@ -2350,16 +2349,12 @@
                     hasError = '1';
                 }
             }
-
-            console.log('timexp2:::', timexp);
             if(!(timexp=='' || (timexp>0 && timexp.length <= 10 && timexp.length > 0))){
-                //e.preventDefault();
                 jQuery('#errortimeexp').html('El tiempo de expiración debe ser un valor numérico, mayor a 0 y no mayor a 10 dígitos.');
-                //alert('El tiempo de expiración no es correcto, verifique.');
+
                 jQuery('#errortimeexp').css('display','block');
                 hasError = '1';
             }
-            console.log('hasError:::', hasError);
 
             if(!(jQuery('#CULQI_METHODS_TARJETA').is(':checked') || jQuery('#CULQI_METHODS_BANCAMOVIL').is(':checked') || jQuery('#CULQI_METHODS_AGENTS').is(':checked') || jQuery('#CULQI_METHODS_WALLETS').is(':checked') || jQuery('#CULQI_METHODS_QUOTEBCP').is(':checked'))){
                 jQuery('#errorpaymentmethod').css('display','block');
@@ -2370,8 +2365,6 @@
                 e.preventDefault();
                 return false;
             }
-            //alert('hi');
-            console.log(sendsubmit);
 
             sendWebhook();
             e.preventDefault();
@@ -2381,19 +2374,16 @@
 
             e.preventDefault();
             const data = jQuery(this).serializeArray();
-            console.log('data:::', data);
 
             const databody = data.reduce((acc, curVal) => {
                 return {  ...acc, [curVal.name]: curVal.value };
             }, {});
 
-            console.log('databody:::', databody);
             run_waitMe();
             fullculqi_login(databody);
         });
 
         function sendWebhook(){
-            console.log('jaji');
             var urlwebhook = "{$fields_value.URLAPI_WEBHOOK_INTEG|escape:'htmlall':'UTF-8'}";
             if(jQuery('#produccion').is(':checked')){
                 urlwebhook = "{$fields_value.URLAPI_WEBHOOK_PROD|escape:'htmlall':'UTF-8'}";
@@ -2474,12 +2464,9 @@
                 },
                 data: JSON.stringify(data),
             };
-            console.log('settings:::', settings);
             jQuery.ajax(settings).done(function (response) {
                 console.log('response:::', response);
                 window.culqi_token = response.data;
-                console.log('window.culqi_token:::', window.culqi_token);
-                //culqiWoGetMerchants(window.culqi_token);
 
                 if(typeof(response.message) != "undefined" && response.message !== null){
                     jQuery('#errorlogin').css('display','block');
@@ -2499,7 +2486,6 @@
         }
 
         const culqiWoGetMerchants = (token) => {
-            console.log('culqiWoGetMerchants');
             var urlmerchant = "{$fields_value.URLAPI_MERCHANT_INTEG|escape:'htmlall':'UTF-8'}";
             if(jQuery('#produccion').is(':checked')){
                 urlmerchant = "{$fields_value.URLAPI_MERCHANT_PROD|escape:'htmlall':'UTF-8'}";
@@ -2513,8 +2499,6 @@
                     "Authorization": "Bearer " + token,
                 },
             };
-
-            console.log('settings:::', settings);
 
             jQuery.ajax(settings)
                 .done(function (response) {
@@ -2531,7 +2515,6 @@
 
         const getMerchant = (id) => {
             run_waitMe();
-            console.log('getMerchant');
             var urlmerchantsingle = "{$fields_value.URLAPI_MERCHANTSINGLE_INTEG|escape:'htmlall':'UTF-8'}";
             if(jQuery('#produccion').is(':checked')){
                 urlmerchantsingle = "{$fields_value.URLAPI_MERCHANTSINGLE_PROD|escape:'htmlall':'UTF-8'}";
@@ -2547,12 +2530,9 @@
                 },
             };
 
-            console.log('settings:::', settings);
-
             jQuery.ajax(settings)
                 .done(function (response) {
                     window.culqi_settings["private_key"] = '';
-                    console.log('response data seckeys:::', response.data);
                     for(var v=0; v<response.data.length; v++){
                         if(response.data[v].active){
                             window.culqi_settings["private_key"] = response.data[v].key;
@@ -2571,7 +2551,6 @@
         };
 
         const renderSettings = () => {
-            console.log(window.culqi_settings);
 
             if (jQuery("#public_key").length) {
                 jQuery("#public_key").val(window.culqi_settings["public_key"]);
@@ -2587,8 +2566,6 @@
             jQuery("#CULQI_TOKENLOGIN").val(window.culqi_token);
 
             window.culqi_settings = null;
-
-            console.log(window.culqi_settings);
         };
 
         const renderMerchants = (merchants) => {
@@ -2789,7 +2766,6 @@
             overlay.classList.remove('active');
             jQuery('#CULQI_URL_LOGO').val(styleConfig.urlLogo);
             jQuery('#CULQI_COLOR_PALETTE').val(styleConfig.primaryColor+'-'+styleConfig.secondaryColor);
-            console.log('styleConfig: ', styleConfig)
         });
 
         Array.from(btnClose).forEach(el => {
@@ -2849,7 +2825,6 @@
     });
 
     function run_waitMe() {
-        console.log('run_waitMe');
         $('body').waitMe({
             effect: 'bounce',
             text: 'Cargando. Espere por favor',
