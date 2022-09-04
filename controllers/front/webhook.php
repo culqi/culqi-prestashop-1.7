@@ -10,11 +10,6 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
     public function displayAjax()
     {
-        /* ini_set('display_startup_errors', 1);
-        ini_set('display_errors', 1);
-        error_reporting(-1); */
-
-        //$charge_id = 'ord_live_Q2uzw1DkUSQsBxBW';
 
         Logger::addLog('Inicio weebhook');
 

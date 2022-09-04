@@ -14,8 +14,6 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
 
   public function displayAjax()
   {
-      error_reporting(E_ALL);
-      ini_set('display_errors', '1');
     $culqiPretashop =  new Culqi();
     $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
 
