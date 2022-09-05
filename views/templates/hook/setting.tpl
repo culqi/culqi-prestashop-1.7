@@ -1446,7 +1446,8 @@
     position: relative;
   }
 
-  .customcheckout .form__group-input .opacity {
+  .customcheckout .form__group-input .opacity,
+  .customcheckout .form__group .opacity {
     opacity: 0.5 !important;
   }
 
