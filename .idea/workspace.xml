@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/chargeajax.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/chargeajax.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/generateorder.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/generateorder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/webhook.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/webhook.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,6 +67,8 @@
       <workItem from="1661531837122" duration="392000" />
       <workItem from="1661969458818" duration="419000" />
       <workItem from="1662255008628" duration="115000" />
+      <workItem from="1662484906700" duration="75000" />
+      <workItem from="1662485976695" duration="1443000" />
     </task>
     <servers />
   </component>
