@@ -370,8 +370,8 @@ class Culqi extends PaymentModule
         }
         if (!Configuration::get('CULQI_STATE_PENDING')) {
             $txt_state = 'En espera de pago por Culqi';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
-            if ((int)$orderstate[0]['id_order_state'] == null) {
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
                 $order_state = new OrderState();
                 $order_state->name = array();
                 foreach (Language::getLanguages() as $language) {
@@ -389,13 +389,14 @@ class Culqi extends PaymentModule
                 $order_state->add();
                 Configuration::updateValue('CULQI_STATE_PENDING', (int)$order_state->id);
             } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
                 Configuration::updateValue('CULQI_STATE_PENDING', (int)$orderstate[0]['id_order_state']);
             }
         }
         if (!Configuration::get('CULQI_STATE_ERROR')) {
             $txt_state = 'Incorrecto - Culqi';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
-            if ((int)$orderstate[0]['id_order_state'] == null) {
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
                 $order_state = new OrderState();
                 $order_state->name = array();
                 foreach (Language::getLanguages() as $language) {
@@ -411,13 +412,14 @@ class Culqi extends PaymentModule
                 $order_state->add();
                 Configuration::updateValue('CULQI_STATE_ERROR', (int)$order_state->id);
             } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
                 Configuration::updateValue('CULQI_STATE_ERROR', (int)$orderstate[0]['id_order_state']);
             }
         }
         if (!Configuration::get('CULQI_STATE_EXPIRED')) {
             $txt_state = 'Expirado por Culqi';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
-            if ((int)$orderstate[0]['id_order_state'] == null) {
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
                 $order_state = new OrderState();
                 $order_state->name = array();
                 foreach (Language::getLanguages() as $language) {
@@ -433,10 +435,17 @@ class Culqi extends PaymentModule
                 $order_state->add();
                 Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$order_state->id);
             } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
                 Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$orderstate[0]['id_order_state']);
             }
         }
     }
+    
+    private function queryGetStates($txt_state)
+    {
+		$query = "SELECT count(*) as filas FROM  " . _DB_PREFIX_ . "order_state a,  " . _DB_PREFIX_ . "order_state_lang b WHERE b.id_order_state = a.id_order_state AND a.deleted = 0 AND name='" . $txt_state . "'";
+		return $query;
+	}
 
     /**
      * Admin Zone
