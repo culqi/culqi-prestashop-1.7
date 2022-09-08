@@ -443,9 +443,9 @@ class Culqi extends PaymentModule
     
     private function queryGetStates($txt_state)
     {
-		$query = "SELECT count(*) as filas FROM  " . _DB_PREFIX_ . "order_state a,  " . _DB_PREFIX_ . "order_state_lang b WHERE b.id_order_state = a.id_order_state AND a.deleted = 0 AND name='" . $txt_state . "'";
-		return $query;
-	}
+	$query = "SELECT count(*) as filas FROM  " . _DB_PREFIX_ . "order_state a,  " . _DB_PREFIX_ . "order_state_lang b WHERE b.id_order_state = a.id_order_state AND a.deleted = 0 AND name='" . $txt_state . "'";
+	return $query;
+    }
 
     /**
      * Admin Zone
