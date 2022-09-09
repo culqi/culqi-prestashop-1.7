@@ -29,7 +29,7 @@ define('URLAPI_WEBHOOK_PROD', URLAPI_PROD.'/secure/events');
 
 
 /**
- * Calling dependencies
+ * Calling dependencies .
  */
 include_once dirname(__FILE__).'/libraries/Requests/library/Requests.php';
 
