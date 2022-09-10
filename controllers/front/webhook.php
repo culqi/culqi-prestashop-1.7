@@ -33,7 +33,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         if (empty($amount) || empty($currencyCode) || empty($state)) {
             exit("Error: valores de la orden incorrectos");
         }
-
+        /*
         if(Tools::strlen($cartID) < 1){
             exit("Error: Valores personalizados incorrectos");
         }
@@ -43,8 +43,8 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         } else {
             exit("Error: El carrito no existe");
         }
-
-        if ($ObjCart->orderExists() > 0 ) {
+        */
+        //if ($ObjCart->orderExists() > 0 ) {
             if ($postBody["object"] != 'event')
                 return;
 
@@ -98,6 +98,6 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                     $order->update();
                     break;
             }
-        }
+        //}
     }
 }
