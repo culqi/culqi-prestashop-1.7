@@ -23,14 +23,9 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         $amount = trim($data['amount']);
         $order_number = trim($data['order_number']);
         $id = trim($data['id']);
-        $metadata = $data['metadata'];
         //$cartID = $metadata['cart_id'];
 
         //error_log($cartID);
-
-        if (empty($metadata)) {
-            exit("Error: Metadata vacia");
-        }
 
         if (empty($amount)) {
             exit("Error: No envió el amount");
@@ -45,6 +40,12 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                 case 'order.status.changed':
 
                     Logger::addLog('entro -> order.status.changed');
+
+                    $metadata = $data['metadata'];
+
+                    if (empty($metadata)) {
+                        exit("Error: Metadata vacia");
+                    }
 
                     if (empty($id) || empty($order_number) || empty($currencyCode) || empty($state)) {
                         exit("Error: order_id, order_number, currency_code o state vacios");
@@ -78,6 +79,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                 case 'refund.creation.succeeded':
 
                     Logger::addLog('entro -> refund.creation.succeeded');
+                    
                     $charge_id = $data["chargeId"];
 
                     if (empty($charge_id)) {
