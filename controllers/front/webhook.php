@@ -21,29 +21,21 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         $currencyCode = trim($data['currency_code']);
         $state = trim($data['state']);
         $amount = trim($data['amount']);
+        $order_number = trim($data['order_number']);
+        $id = trim($data['id']);
         $metadata = $data['metadata'];
-        $cartID = $metadata['cart_id'];
+        //$cartID = $metadata['cart_id'];
 
-        error_log($cartID);
+        //error_log($cartID);
 
         if (empty($metadata)) {
             exit("Error: Metadata vacia");
         }
 
-        if (empty($amount) || empty($currencyCode) || empty($state)) {
-            exit("Error: valores de la orden incorrectos");
-        }
-        /*
-        if(Tools::strlen($cartID) < 1){
-            exit("Error: Valores personalizados incorrectos");
+        if (empty($amount)) {
+            exit("Error: No envió el amount");
         }
 
-        if (Validate::isLoadedObject(new Cart($cartID))) {
-            $ObjCart = new Cart($cartID);
-        } else {
-            exit("Error: El carrito no existe");
-        }
-        */
         //if ($ObjCart->orderExists() > 0 ) {
             if ($postBody["object"] != 'event')
                 return;
@@ -54,7 +46,11 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
                     Logger::addLog('entro -> order.status.changed');
 
-                    $metadata = $data["metadata"];
+                    if (empty($id) || empty($order_number) || empty($currencyCode) || empty($state)) {
+                        exit("Error: order_id, order_number, currency_code o state vacios");
+                    }
+
+                    //$metadata = $data["metadata"];
 
                     $order_id = (int)$metadata["pts_order_id"];
 
@@ -83,6 +79,11 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
                     Logger::addLog('entro -> refund.creation.succeeded');
                     $charge_id = $data["chargeId"];
+
+                    if (empty($charge_id)) {
+                        exit("Error: No envió el chargeId");
+                    }
+
                     Logger::addLog('$charge_id_1' . $charge_id);
                     Logger::addLog('$charge_id_2' . $data->chargeId);
 
