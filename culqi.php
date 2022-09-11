@@ -46,7 +46,7 @@ class Culqi extends PaymentModule
     {
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.4';
+        $this->version = '3.0.0';
         $this->controllers = array('chargeajax', 'postpayment', 'generateorder', 'merchantajax', 'webhook', 'registersale');
         $this->author = 'Culqi';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
