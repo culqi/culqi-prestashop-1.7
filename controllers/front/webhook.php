@@ -102,5 +102,6 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                     break;
             }
         //}
+        echo "Operación satisfactoria";
     }
 }
