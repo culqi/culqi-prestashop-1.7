@@ -28,7 +28,8 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         //error_log($cartID);
 
         if (empty($amount)) {
-            exit("Error: No envió el amount");
+            echo json_encode(['success'=>'false', 'msj'=>'No envió el amount']);
+            exit();
         }
 
         //if ($ObjCart->orderExists() > 0 ) {
@@ -67,13 +68,14 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                     if ($stateRequest == 'expired') {
                         $state = 'CULQI_STATE_EXPIRED';
                     }
-
                     if ($stateRequest != 'pending') {
                         $order = new Order($id);
+                        $history = new OrderHistory();
+                        $history->id_order = (int)$order->id;
+                        $history->changeIdOrderState((int)Configuration::get($state), (int)($order->id));
                         $order->current_state = (int)Configuration::get($state);
                         $order->update();
                     }
-
                     break;
 
                 case 'refund.creation.succeeded':
@@ -97,11 +99,14 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
                     $state_refund = 7;
                     $order = new Order($id);
+                    $history = new OrderHistory();
+                    $history->id_order = (int)$order->id;
+                    $history->changeIdOrderState((int)$state_refund, (int)($order->id));
                     $order->current_state = (int)$state_refund;
                     $order->update();
                     break;
             }
         //}
-        echo "Operación satisfactoria";
+        echo json_encode(['success'=>'true', 'msj'=>'Operación exitosa']);
     }
 }
