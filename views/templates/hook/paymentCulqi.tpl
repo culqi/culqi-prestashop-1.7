@@ -188,7 +188,7 @@
     });
 
     function generateOrder(e) {
-        if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} ||  {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
+        if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
                 data: {},
