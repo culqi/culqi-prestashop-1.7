@@ -71,8 +71,8 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                     if ($stateRequest != 'pending') {
                         $order = new Order($id);
                         $history = new OrderHistory();
-                        $history->id_order = (int)$id;
-                        $history->changeIdOrderState((int)Configuration::get($state), (int)($id));
+                        $history->id_order = (int)$order->id;
+                        $history->changeIdOrderState((int)Configuration::get($state), (int)($order->id));
                         $order->current_state = (int)Configuration::get($state);
                         $order->update();
                     }
@@ -100,8 +100,8 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                     $state_refund = 7;
                     $order = new Order($id);
                     $history = new OrderHistory();
-                    $history->id_order = (int)$id;
-                    $history->changeIdOrderState((int)$state_refund, (int)($id));
+                    $history->id_order = (int)$order->id;
+                    $history->changeIdOrderState((int)$state_refund, (int)($order->id));
                     $order->current_state = (int)$state_refund;
                     $order->update();
                     break;

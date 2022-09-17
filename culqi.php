@@ -465,7 +465,6 @@ class Culqi extends PaymentModule
                 )
             ),
         );
-
         $helper = new HelperForm();
         $helper->show_toolbar = false;
         $helper->table = $this->table;
@@ -483,7 +482,6 @@ class Culqi extends PaymentModule
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id
         );
-
         return $helper->generateForm(array($fields_form));
     } */
 
