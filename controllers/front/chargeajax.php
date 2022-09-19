@@ -20,7 +20,10 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
     $amount_cart = $infoCheckout['total'];
     $currency_cart = $infoCheckout['currency'];
     $enviroment_cart = $infoCheckout['enviroment_backend'];
-
+    $address = $infoCheckout['address'];
+      $country = $infoCheckout['country'];
+      $firstname = $infoCheckout['firstname'];
+      $lastname = $infoCheckout['lastname'];
     //$order_id = Tools::getValue("ps_order_id");
     //var_dump($infoCheckout); exit(1);
     $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta'] ));
@@ -43,7 +46,15 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
             'source_id' => Tools::getValue("token_id"),
             'capture' => true, 
             'enviroment' => $enviroment_cart,
-            'antifraud_details' => array('device_finger_print_id'=>Tools::getValue("device")),
+            'antifraud_details' => array(
+                'firt_name'=>$firstname,
+                'last_name'=>$lastname,
+                'address'=>$address[0]['address1'],
+                'address_city'=>$address[0]['city'],
+                'country_code'=>$country[0]['iso_code'],
+                'phone_number'=>$address[0]['phone'],
+                'device_finger_print_id'=>Tools::getValue("device")
+            ),
             'metadata' => ["pts_order_id" => (string)$cart->id, "sponsor" => "prestashop"],
       );
 

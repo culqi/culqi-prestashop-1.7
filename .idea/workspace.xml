@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/webhook.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/webhook.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/front/chargeajax.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/chargeajax.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/culqi.php" beforeDir="false" afterPath="$PROJECT_DIR$/culqi.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -81,5 +81,16 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/controllers/front/chargeajax.php</url>
+          <line>45</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
