@@ -21,9 +21,9 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
     $currency_cart = $infoCheckout['currency'];
     $enviroment_cart = $infoCheckout['enviroment_backend'];
     $address = $infoCheckout['address'];
-      $country = $infoCheckout['country'];
-      $firstname = $infoCheckout['firstname'];
-      $lastname = $infoCheckout['lastname'];
+    $country = $infoCheckout['country'];
+    $firstname = $infoCheckout['firstname'];
+    $lastname = $infoCheckout['lastname'];
     //$order_id = Tools::getValue("ps_order_id");
     //var_dump($infoCheckout); exit(1);
     $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta'] ));
@@ -47,7 +47,7 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
             'capture' => true, 
             'enviroment' => $enviroment_cart,
             'antifraud_details' => array(
-                'firt_name'=>$firstname,
+                'first_name'=>$firstname,
                 'last_name'=>$lastname,
                 'address'=>$address[0]['address1'],
                 'address_city'=>$address[0]['city'],
