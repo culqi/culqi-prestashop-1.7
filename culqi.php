@@ -212,13 +212,13 @@ class Culqi extends PaymentModule
 
     public function getCulqiInfoCheckout()
     {
-        //var_dump($this); exit(1);
-        $cart = $this->context->cart;
-        $address = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "address where id_address=" . $cart->id_address_invoice);
 
+        $cart = $this->context->cart;
+
+        $address = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "address where id_address=" . $cart->id_address_invoice);
+        $country = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "country where id_country=" . $address[0]['id_country']);
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $color_palette = Configuration::get('CULQI_COLOR_PALETTE');
-
 
         $urlapi_ordercharges = URLAPI_ORDERCHARGES_INTEG;
         $urlapi_checkout = URLAPI_CHECKOUT_INTEG;
@@ -257,7 +257,10 @@ class Culqi extends PaymentModule
             "address" => $address,
             "customer" => $this->context->customer,
             'commerce' => Configuration::get('PS_SHOP_NAME'),
-            "BASE_URL" => $base_url
+            "BASE_URL" => $base_url,
+            "firstname" => $this->context->customer->firstname,
+            "lastname" => $this->context->customer->lastname,
+            'country'=>$country
         );
     }
 
