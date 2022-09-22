@@ -55,7 +55,7 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
             if (isset($address[0]['phone']) and !empty($address[0]['phone']) and !is_null($address[0]['phone']) and $address[0]['phone'] != '') {
                 $antifraud_charges['phone_number'] = $address[0]['phone'];
             }
-            $antifraud_charges['device_finger_print_id'] = $post_data['device'];
+            $antifraud_charges['device_finger_print_id'] = Tools::getValue("device");
             // ENVIAMOS A GENERAR EL CARGO DE CULQI
             $args_charge = array(
                 'amount' => (int)$amount_cart,
