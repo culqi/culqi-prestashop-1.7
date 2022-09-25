@@ -65,7 +65,7 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
                 'capture' => true,
                 'enviroment' => $enviroment_cart,
                 'antifraud_details' => $antifraud_charges,
-                'metadata' => ["pts_order_id" => (string)$cart->id, "sponsor" => "prestashop"],
+                'metadata' => ["order_id" => (string)$cart->id, "sponsor" => "prestashop"],
             );
 
             if (Tools::getValue("parameters3DS") !== FALSE) {
