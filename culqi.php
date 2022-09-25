@@ -65,6 +65,7 @@ class Culqi extends PaymentModule
     public function install()
     {
         $this->createStates();
+        $this->clearCache();
 
         return (
             parent::install() &&
@@ -83,6 +84,14 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_URL_LOGO', '') &&
             Configuration::updateValue('CULQI_COLOR_PALETTE', '')
         );
+    }
+
+    private function clearCache()
+    {
+        Tools::clearSmartyCache();
+		Tools::clearXMLCache();
+		Tools::clearCache();
+		Tools::generateIndex();
     }
 
     private function getAddress($address)
