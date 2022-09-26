@@ -1,5 +1,8 @@
 <?php
 
+include_once dirname(__FILE__, 3) . '/libraries/culqi-php/lib/culqi.php';
+include_once dirname(__FILE__, 3) . '/culqi.php';
+
 class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 {	
 
