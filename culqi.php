@@ -127,7 +127,6 @@ class Culqi extends PaymentModule
         $smarty->assign('culqi_error_pago', $mensaje);
     }
 
-    /* Se crea un Cargo con la nueva api v2 de Culqi PHP */
     public function charge($token_id, $installments)
     {
 
@@ -450,52 +449,6 @@ class Culqi extends PaymentModule
     /**
      * Admin Zone
      */
-    /* public function renderForm()
-    {
-        $fields_form = array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->l('CONFIGURACIONES GENERALES CULQI'),
-                    'icon' => 'icon-money'
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Llave Pública'),
-                        'name' => 'CULQI_LLAVE_PUBLICA',
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Llave Secreta'),
-                        'name' => 'CULQI_LLAVE_SECRETA',
-                        'required' => true
-                    )
-                ),
-                'submit' => array(
-                    'title' => $this->l('Guardar'),
-                )
-            ),
-        );
-        $helper = new HelperForm();
-        $helper->show_toolbar = false;
-        $helper->table = $this->table;
-        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
-        $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-        $this->fields_form = array();
-        $helper->id = (int)Tools::getValue('id_carrier');
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'btnSubmit';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFieldsValues(),
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
-        );
-        return $helper->generateForm(array($fields_form));
-    } */
 
     public function renderForm()
     {

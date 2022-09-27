@@ -25,7 +25,6 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
         $order_payment->card_brand = Tools::getValue("card_brand");
         $order_payment->transaction_id = Tools::getValue("chargeid");
         $order_payment->update();
-        //
         $culqiPretashop =  new Culqi();
         $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
         $enviroment_cart = $infoCheckout['enviroment_backend'];
