@@ -47,7 +47,7 @@ class Culqi extends PaymentModule
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
         $this->version = '3.0.0';
-        $this->controllers = array('chargeajax', 'postpayment', 'generateorder', 'merchantajax', 'webhook', 'registersale');
+        $this->controllers = array('chargeajax', 'postpayment', 'generateorder', 'webhook', 'registersale');
         $this->author = 'Culqi';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
@@ -186,10 +186,7 @@ class Culqi extends PaymentModule
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                //->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/payment.tpl'));;
                 ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqi.tpl'));;
-            //->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/logo_cards.png'));;
-
             $payment_options = [
                 $newOption,
             ];
@@ -515,7 +512,6 @@ class Culqi extends PaymentModule
             'CULQI_URL_MERCHANT' => $urlapi_merchant,
             'CULQI_URL_MERCHANTSINGLE' => $urlapi_merchantsingle,
             'CULQI_URL_WEBHOOK' => $urlapi_webhook,
-            'CULQI_URL_MERCHANTSINGLE_CULQI' => $this->context->link->getModuleLink($this->name, 'merchantajax', array(), true),
             'CULQI_URL_WEBHOOK_PS' => $this->context->link->getModuleLink($this->name, 'webhook', array(), true),
             'CULQI_POST' => $post,
             'URLAPI_LOGIN_INTEG' => URLAPI_LOGIN_INTEG,

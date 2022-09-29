@@ -3,18 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9d8b4443-ee51-49d3-b613-d6acd1db067c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/chargeajax.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/chargeajax.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/generateorder.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/generateorder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/merchantajax.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/merchantajax.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/postpayment.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/postpayment.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/postpaymentpending.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/postpaymentpending.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/registersale.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/registersale.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/front/webhook.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/front/webhook.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/front/merchantajax.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/culqi.php" beforeDir="false" afterPath="$PROJECT_DIR$/culqi.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/paymentCulqi.tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/templates/hook/setting.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/views/templates/hook/setting.tpl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/templates/hook/payment.tpl" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,11 +80,23 @@
       <workItem from="1663866850377" duration="702000" />
       <workItem from="1663867753776" duration="72000" />
       <workItem from="1663943038893" duration="976000" />
-      <workItem from="1664289785784" duration="627000" />
+      <workItem from="1664289785784" duration="1098000" />
+      <workItem from="1664464255896" duration="575000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
