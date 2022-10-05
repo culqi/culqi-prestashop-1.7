@@ -86,10 +86,10 @@ Contamos con las siguientes versiones:
   <tbody class="bg-transparent divide-y divide-culqi-gray-ultra-light dark:divide-culqi-plate-light">
     <tr class="whitespace-nowrap font-normal font-Archivo  text-culqi-plate-dark dark:text-white-gray">
       <td class = "px-3 py-4 font-bold text-sm">
-        <img src="https://docs.culqi.com/images/plugins/prestashop.svg" alt="woocommerce" /></br>
+        <img src="https://docs.culqi.com/images/plugins/prestashop.svg" alt="prestashop" /></br>
       </td>
       <td class = "px-3 py-4 font-bold text-sm">
-        2.6.11+
+        1.7.0+
       </td>
       <td class = "px-3 py-4 text-sm">
         <a href='https://github.com/culqi/culqi-prestashop-1.7/releases/download/v3.0.0/culqi.zip'>
