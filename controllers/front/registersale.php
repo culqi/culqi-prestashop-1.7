@@ -16,7 +16,8 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $this->module->validateOrder((int)$cart->id, Configuration::get('CULQI_STATE_PENDING'), (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer->secure_key);
 
         $id_order = Order::getOrderByCartId($this->context->cart->id);
-        if($id_order!=null)
+        
+        if(Tools::getValue("order_id")!=null)
         {
             $order = new Order($id_order);
             $order_payment_collection = $order->getOrderPaymentCollection();
