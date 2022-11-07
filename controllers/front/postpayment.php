@@ -25,7 +25,7 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
             $order_payment = $order_payment_collection[0];
             $order_payment->card_number = Tools::getValue("card_number");
             $order_payment->card_brand = Tools::getValue("card_brand");
-            $order_payment->transaction_id = Tools::getValue("chargeid");
+            $order_payment->transaction_id = $chargeid;
             $order_payment->update();
             $culqiPretashop =  new Culqi();
             $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
@@ -37,7 +37,7 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
             );
 
             try{
-                $culqi_charge = $culqi->Charges->update( Tools::getValue("chargeid"), $args_charge );
+                $culqi_charge = $culqi->Charges->update( $chargeid, $args_charge );
             }catch (Exception $e){
                 echo '<script type="text/javascript">console.log("Error en el update de cargo!"); </script>';
             }
