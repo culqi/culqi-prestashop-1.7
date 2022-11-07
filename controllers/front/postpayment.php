@@ -11,7 +11,7 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
         parent::initContent();
         $this->ajax = false;
         $chargeid = Tools::getValue("chargeid");
-        if($chargeid!=null){
+        if($chargeid!=null and !empty($chargeid) and !is_null($chargeid) and $chargeid != ''){
         
             $cart = $this->context->cart;
             $customer = new Customer($cart->id_customer);
@@ -43,7 +43,7 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
             }
 
             Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
-            }
+        }
     }
 
 }
