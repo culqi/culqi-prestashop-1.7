@@ -475,6 +475,7 @@ class Culqi extends PaymentModule
     }
 
     public function generate_username() {
+        error_log('Dentro a generate username');
         $username_bd = Tools::getValue('CULQI_USERNAME', Configuration::get('CULQI_USERNAME'));
         if($username_bd == '' || $username_bd == null){
             return bin2hex(random_bytes(5));
