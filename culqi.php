@@ -454,8 +454,6 @@ class Culqi extends PaymentModule
     public function renderForm()
     {
         $config = $this->getConfigFieldsValues();
-        error_log(print_r($config, true));
-        //var_dump(Tools::getAdminTokenLite('AdminModules')); exit(1);
         $this->context->smarty->assign(array(
             'currentIndex' => $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name,
             'token' => Tools::getAdminTokenLite('AdminModules'),
@@ -497,7 +495,6 @@ class Culqi extends PaymentModule
     }
     public function getConfigFieldsValues()
     {
-        error_log('dentro a getConfigFieldsValues');
         $checked_integ = 'checked="true"';
         $checked_prod = '';
         $urlapi_login = URLAPI_LOGIN_INTEG;

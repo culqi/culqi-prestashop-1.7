@@ -10,12 +10,10 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
     public function displayAjax()
     {
-
         Logger::addLog('Inicio weebhook');
-
         $postBody = file_get_contents("php://input");
         $headers = getallheaders();
-		$headers = $headers['Authorization'];
+        $headers = $headers['Authorization'];
         $authorization = substr($headers,6);
         $credenciales = base64_decode($authorization);
         $credenciales = explode( ':', $credenciales );
@@ -66,8 +64,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
                 $state = 'CULQI_STATE_OK';
                 $stateRequest = $data["state"];
-                error_log('entro aqui'. $stateRequest);
-                Logger::addLog('$state ' . $stateRequest);
+                 Logger::addLog('$state ' . $stateRequest);
 
                 if ($stateRequest == 'expired') {
                     $state = 'CULQI_STATE_EXPIRED';
