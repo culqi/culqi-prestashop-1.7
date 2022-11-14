@@ -14,6 +14,9 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         $postBody = file_get_contents("php://input");
         $headers = getallheaders();
         $headers = $headers['Authorization'];
+        if(!isset($headers)){
+        	exit("Error: No autorizado");
+        }
         $authorization = substr($headers,6);
         $credenciales = base64_decode($authorization);
         $credenciales = explode( ':', $credenciales );
@@ -32,7 +35,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         $id = trim($data['id']);		
         $settings = $this->module->getConfigFieldsValues();
         $username_bd = $settings['CULQI_USERNAME'];
-		$password_bd = $settings['CULQI_PASSWORD']; 
+        $password_bd = $settings['CULQI_PASSWORD']; 
 
         if( $username != $username_bd || $password != $password_bd ){
 			exit("Error: Crendenciales Incorrectas");
@@ -98,7 +101,6 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
                 $this->updateOrderAndcreateOrderHistoryState($id, $state_refund);
                 break;
         }
-        error_log('llego aqui si no');
         echo json_encode(['success' => 'true', 'msj' => 'Operación exitosa']);
     }
 
