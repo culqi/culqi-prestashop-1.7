@@ -15,7 +15,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
         $headers = getallheaders();
         $headers = $headers['Authorization'];
         if(!isset($headers)){
-        	exit("Error: No autorizado");
+        	exit("Error: Cabecera Authorization no presente");
         }
         $authorization = substr($headers,6);
         $credenciales = base64_decode($authorization);
