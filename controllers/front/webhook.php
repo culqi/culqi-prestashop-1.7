@@ -10,20 +10,36 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
     public function displayAjax()
     {
-
         Logger::addLog('Inicio weebhook');
-
         $postBody = file_get_contents("php://input");
+        $headers = getallheaders();
+        $headers = $headers['Authorization'];
+        if(!isset($headers)){
+        	exit("Error: Cabecera Authorization no presente");
+        }
+        $authorization = substr($headers,6);
+        $credenciales = base64_decode($authorization);
+        $credenciales = explode( ':', $credenciales );
+        $username = $credenciales[0];
+        $password = $credenciales[1];
+        if(!isset($username) or !isset($password)){
+        	exit("Error: No autorizado");
+        }
         $postBody = json_decode($postBody, true);
         $data = json_decode($postBody["data"], true);
         Logger::addLog('$data ' . serialize($data));
-
         $currencyCode = trim($data['currency_code']);
         $state = trim($data['state']);
         $amount = trim($data['amount']);
         $order_number = trim($data['order_number']);
-        $id = trim($data['id']);
+        $id = trim($data['id']);		
+        $settings = $this->module->getConfigFieldsValues();
+        $username_bd = $settings['CULQI_USERNAME'];
+        $password_bd = $settings['CULQI_PASSWORD']; 
 
+        if( $username != $username_bd || $password != $password_bd ){
+			exit("Error: Crendenciales Incorrectas");
+		}
         if (empty($amount)) {
             echo json_encode(['success' => 'false', 'msj' => 'No envió el amount']);
             exit();
@@ -51,7 +67,7 @@ class CulqiWebHookModuleFrontController extends ModuleFrontController
 
                 $state = 'CULQI_STATE_OK';
                 $stateRequest = $data["state"];
-                Logger::addLog('$state ' . $stateRequest);
+                 Logger::addLog('$state ' . $stateRequest);
 
                 if ($stateRequest == 'expired') {
                     $state = 'CULQI_STATE_EXPIRED';
