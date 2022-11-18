@@ -1,4 +1,7 @@
 <style>
+    .plugin-version{
+            margin-top: -25px;
+    }
     #woocommerce_culqi_login_button {
         background: #ffffff;
         border: 1px solid #d4d8dd;
@@ -1661,6 +1664,7 @@
     <div class="panel" id="fieldset_0">
         <div class="panel-heading">
             <i class="icon-money"></i>CONFIGURACIONES GENERALES CULQI
+            <div class="plugin-version text-right">v{$fields_value.CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}</div>
         </div>
 
         <div class="form-wrapper">
