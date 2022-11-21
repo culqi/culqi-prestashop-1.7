@@ -131,13 +131,10 @@
     }, false);
 
     Culqi3DS.publicKey = "{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}";
-//    var device = await Culqi3DS.generateDevice();
-    const device = Promise.resolve(Culqi3DS.generateDevice());
-    device.then(value => {
-      $('#buyButton').on('click', function (e) {
-        $('#buyButton').attr('disabled', true);
-        generateOrder(e, value);
-      });
+    //var device = await Culqi3DS.generateDevice();
+    const device_aux = Promise.resolve(Culqi3DS.generateDevice());
+    device_aux.then(value => {
+      window.device = value;
     }).catch(err => {
       console.log(err);
     });
@@ -191,7 +188,12 @@
         });
     });
 
-    function generateOrder(e, device) {
+    $('#buyButton').on('click', function (e) {
+        $('#buyButton').attr('disabled', true);
+        generateOrder(e);
+    });
+
+    function generateOrder(e) {
         if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
@@ -419,4 +421,4 @@
         });
     }
 </script>
-{/literal}
+{/literal}al}
