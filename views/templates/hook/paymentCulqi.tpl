@@ -131,12 +131,16 @@
     }, false);
 
     Culqi3DS.publicKey = "{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}";
-    var device = await Culqi3DS.generateDevice();
-    /*async function generateDevice(){
-        const device = await Culqi3DS.generateDevice();
-        return device;
-    }
-    var device = generateDevice();*/
+    //var device = await Culqi3DS.generateDevice();
+    const device_aux = Promise.resolve(Culqi3DS.generateDevice());
+    device_aux.then(value => {
+      $('#buyButton').on('click', function (e) {
+            $('#buyButton').attr('disabled', true);
+            generateOrder(e, value);
+      });
+    }).catch(err => {
+      console.log(err);
+    });
     var orderid = '';
 
     $(document).ready(function () {
@@ -187,12 +191,8 @@
         });
     });
 
-    $('#buyButton').on('click', function (e) {
-        $('#buyButton').attr('disabled', true);
-        generateOrder(e);
-    });
-
-    function generateOrder(e) {
+    function generateOrder(e, device) {
+        window.device = device;
         if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
