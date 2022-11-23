@@ -1,13 +1,26 @@
+<style type="text/css">
+	.div-culqi-center {
+		justify-content: center;
+		text-align: center;
+		align-items: center;
+	}
+	.culqi-payment-logos {
+		max-width: 300px;
+	}
+</style>
+
 <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css"
       media="all">
 
 <div class="row culqi_payment">
     <div class="row">
-        <div class="col-md-4 col-xs-1"></div>
-        <div class="col-md-4 col-xs-10">
-            <button id="buyButton" class="btn btn-success"> Pagar</button>
-        </div>
-        <div class="col-md-4 col-xs-1"></div>
+		<div class="row div-culqi-center">
+			<img class="culqi-payment-logos" src="{$module_dir|escape:'htmlall':'UTF-8'}logo_cards.png" alt="" />
+		 </div>
+		<br>
+		<div class="row div-culqi-center">
+			<button id="buyButton" class="btn btn-success"> Pagar</button>
+		</div>
     </div>
     <div class="row">
         <p id="showresult" class="text-center" style="margin-top: 2em; text-align: center; display: none;">
