@@ -69,6 +69,7 @@ class Culqi extends PaymentModule
 
         return (
             parent::install() &&
+            $this->registerHook('header') &&
             $this->registerHook('paymentOptions') &&
             Configuration::updateValue('CULQI_ENABLED', '') &&
             Configuration::updateValue('CULQI_ENVIROMENT', '') &&
@@ -85,6 +86,25 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_PASSWORD', '') &&
             Configuration::updateValue('CULQI_URL_LOGO', '') &&
             Configuration::updateValue('CULQI_COLOR_PALETTE', '')
+        );
+    }
+
+    public function hookHeader()
+    {
+        $this->context->controller->registerJavascript(
+            'culqiv4', // Unique ID
+            URLAPI_CHECKOUT_INTEG, // JS path
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0) // Arguments
+        );
+        $this->context->controller->registerJavascript(
+            'culqiwaitme', // Unique ID
+            $this->_path.'views/js/waitMe.min.js', // JS path
+            array('position' => 'bottom', 'priority' => 0) // Arguments
+        );
+        $this->context->controller->registerJavascript(
+            'culqi3ds', // Unique ID
+            URLAPI_INTEG_3DS, // JS path
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0) // Arguments
         );
     }
 
@@ -226,6 +246,13 @@ class Culqi extends PaymentModule
         $country = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "country where id_country=" . $address[0]['id_country']);
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $color_palette = Configuration::get('CULQI_COLOR_PALETTE');
+        if(count(explode('-', $color_palette)) > 1) {
+            $color_arr = explode('-', $color_palette);
+        } else {
+            $color_arr = [];
+            $color_arr[0] = "";
+            $color_arr[1] = "";
+        }
 
         $urlapi_ordercharges = URLAPI_ORDERCHARGES_INTEG;
         $urlapi_checkout = URLAPI_CHECKOUT_INTEG;
@@ -259,7 +286,7 @@ class Culqi extends PaymentModule
             "cuetealo" => Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false',
             "url_logo" => Configuration::get('CULQI_URL_LOGO'),
             "tiempo_exp" => (Configuration::get('CULQI_TIMEXP') == '' ? 24 : Configuration::get('CULQI_TIMEXP')),
-            "color_pallete" => explode('-', $color_palette),
+            "color_pallete" => $color_arr,
             "currency" => $this->context->currency->iso_code,
             "address" => $address,
             "customer" => $this->context->customer,

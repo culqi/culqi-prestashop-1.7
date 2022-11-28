@@ -28,12 +28,6 @@
         </p>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script src="{$enviroment_fronted|escape:'htmlall':'UTF-8'}"></script>
-<script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
-<script type="text/javascript" defer src="{$enviroment_3ds|escape:'htmlall':'UTF-8'}"></script>
-
 
 {literal}
 
@@ -174,12 +168,12 @@
         Culqi.options({
             lang: 'auto',
             paymentMethods: {
-                tarjeta: {/literal}{$tarjeta|escape:'htmlall':'UTF-8'}{literal},
-                bancaMovil: {/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal},
-                yape: {/literal}{$yape|escape:'htmlall':'UTF-8'}{literal},
-                agente: {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal},
-                billetera: {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal},
-                cuotealo: {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}
+                tarjeta: '{/literal}{$tarjeta|escape:'htmlall':'UTF-8'}{literal}',
+                bancaMovil: '{/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal}',
+                yape: '{/literal}{$yape|escape:'htmlall':'UTF-8'}{literal}',
+                agente: '{/literal}{$agente|escape:'htmlall':'UTF-8'}{literal}',
+                billetera: '{/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal}',
+                cuotealo: '{/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}'
             },
             installments: true,
             style: {
