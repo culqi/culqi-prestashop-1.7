@@ -92,19 +92,19 @@ class Culqi extends PaymentModule
     public function hookHeader()
     {
         $this->context->controller->registerJavascript(
-            'culqiv4', // Unique ID
-            URLAPI_CHECKOUT_INTEG, // JS path
-            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0) // Arguments
+            'culqiv4',
+            $this->getCulqiInfoCheckout()['enviroment_fronted'],
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
         );
         $this->context->controller->registerJavascript(
-            'culqiwaitme', // Unique ID
-            $this->_path.'views/js/waitMe.min.js', // JS path
-            array('position' => 'bottom', 'priority' => 0) // Arguments
+            'culqiwaitme',
+            $this->_path.'views/js/waitMe.min.js',
+            array('position' => 'bottom', 'priority' => 0)
         );
         $this->context->controller->registerJavascript(
-            'culqi3ds', // Unique ID
-            URLAPI_INTEG_3DS, // JS path
-            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0) // Arguments
+            'culqi3ds',
+            $this->getCulqiInfoCheckout()['enviroment_3ds'],
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
         );
     }
 
