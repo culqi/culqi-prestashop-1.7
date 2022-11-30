@@ -104,7 +104,7 @@ class Culqi extends PaymentModule
         $this->context->controller->registerJavascript(
             'culqiwaitme',
             $this->_path.'views/js/waitMe.min.js',
-            array('position' => 'bottom', 'priority' => 0)
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
         );
         $this->context->controller->registerJavascript(
             'culqi3ds',
