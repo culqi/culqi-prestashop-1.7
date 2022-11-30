@@ -93,7 +93,7 @@ class Culqi extends PaymentModule
     {
         $this->context->controller->registerJavascript(
             'culqiv4',
-            $this->getCulqiInfoCheckout()['enviroment_fronted'],
+            $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
             array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
         );
         $this->context->controller->registerJavascript(
@@ -103,7 +103,7 @@ class Culqi extends PaymentModule
         );
         $this->context->controller->registerJavascript(
             'culqi3ds',
-            $this->getCulqiInfoCheckout()['enviroment_3ds'],
+            $this->getCulqiInfoCheckout(true)['enviroment_3ds'],
             array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
         );
     }
@@ -237,8 +237,23 @@ class Culqi extends PaymentModule
         return false;
     }
 
-    public function getCulqiInfoCheckout()
+    public function getCulqiInfoCheckout($is_header = false)
     {
+        $urlapi_ordercharges = URLAPI_ORDERCHARGES_INTEG;
+        $urlapi_checkout = URLAPI_CHECKOUT_INTEG;
+        $urlapi_3ds = URLAPI_INTEG_3DS;
+        if (Configuration::get('CULQI_ENVIROMENT') == 'prod') {
+            $urlapi_ordercharges = URLAPI_ORDERCHARGES_PROD;
+            $urlapi_checkout = URLAPI_CHECKOUT_PROD;
+            $urlapi_3ds = URLAPI_PROD_3DS;
+        }
+
+        if($is_header) {
+            return array(
+                "enviroment_fronted" => $urlapi_checkout,
+                "enviroment_3ds" => $urlapi_3ds,
+            );
+        }
 
         $cart = $this->context->cart;
 
@@ -254,14 +269,6 @@ class Culqi extends PaymentModule
             $color_arr[1] = "";
         }
 
-        $urlapi_ordercharges = URLAPI_ORDERCHARGES_INTEG;
-        $urlapi_checkout = URLAPI_CHECKOUT_INTEG;
-        $urlapi_3ds = URLAPI_INTEG_3DS;
-        if (Configuration::get('CULQI_ENVIROMENT') == 'prod') {
-            $urlapi_ordercharges = URLAPI_ORDERCHARGES_PROD;
-            $urlapi_checkout = URLAPI_CHECKOUT_PROD;
-            $urlapi_3ds = URLAPI_PROD_3DS;
-        }
         $https = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : null;
         if (is_null($https)) {
             $https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
