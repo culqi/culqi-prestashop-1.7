@@ -29,9 +29,10 @@
     </div>
 </div>
 
+
 {literal}
 
-<script type="text/javascript">
+<script type="module">
     /**
      * @license
      * three.js - JavaScript 3D library

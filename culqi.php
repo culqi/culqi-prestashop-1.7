@@ -92,6 +92,11 @@ class Culqi extends PaymentModule
     public function hookHeader()
     {
         $this->context->controller->registerJavascript(
+            'culqjquery3',
+            $this->getCulqiInfoCheckout(true)['jquery'],
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+        );
+        $this->context->controller->registerJavascript(
             'culqiv4',
             $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
             array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
@@ -252,6 +257,7 @@ class Culqi extends PaymentModule
             return array(
                 "enviroment_fronted" => $urlapi_checkout,
                 "enviroment_3ds" => $urlapi_3ds,
+                "jquery" => 'https://code.jquery.com/jquery-3.6.0.min.js'
             );
         }
 
