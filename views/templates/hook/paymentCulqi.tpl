@@ -31,7 +31,7 @@
 
 {literal}
 
-<script type="module">
+<script type="text/javascript">
     /**
      * @license
      * three.js - JavaScript 3D library
