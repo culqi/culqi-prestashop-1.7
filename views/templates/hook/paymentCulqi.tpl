@@ -75,14 +75,13 @@
             $("#btn_place_order").attr("data-payment", "culqi");
             $("[data-payment=culqi]").removeAttr("id");
             $("[data-payment=culqi]").addClass("custom_btn_onepage_culqi");
-            console.log("1112223333");
         } else {
             $("[data-payment=culqi]").attr("id", "btn_place_order");
             $("[data-payment=culqi]").removeClass("custom_btn_onepage_culqi");
             $("#btn_place_order").removeAttr("data-payment");
         }
     }
-    
+
     $(document).ready(function () {
         const paymentMethodRadio = $('input[type=radio][name=payment-option]');        
         var checkDiv = setInterval(function() {
@@ -92,7 +91,6 @@
                 onepageCheckoutCulqi(paymentMethodRadio.filter(":checked").val());
                 $("[data-payment=culqi]").click(function(event) {
                     if(paymentMethodRadio.filter(":checked").val() == "culqi") {
-                        console.log("tetstststs");
                         $(this).attr("disabled", true);
                         $("#buyButton").click();                                    
                     }
