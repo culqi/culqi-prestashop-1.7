@@ -91,8 +91,7 @@
                 onepageCheckoutCulqi(paymentMethodRadio.filter(":checked").val());
                 $("[data-payment=culqi]").click(function(event) {
                     if(paymentMethodRadio.filter(":checked").val() == "culqi") {
-                        $(this).attr("disabled", true);
-                        $("#buyButton").click();                                    
+                        $("#buyButton").click();                               
                     }
                 });
                 }
@@ -191,9 +190,12 @@
     const device_aux = Promise.resolve(Culqi3DS.generateDevice());
     device_aux.then(value => {
       $('#buyButton').on('click', function (e) {
-            $('#buyButton').attr('disabled', true);
-            $("[data-payment=culqi]").attr('disabled', true);
-            generateOrder(e, value);
+            var vaidate_opc_aux = $("#form_onepagecheckoutps").submit();
+            if(AppOPC.is_valid_all_form) {
+                $('#buyButton').attr('disabled', true);
+                $("[data-payment=culqi]").attr('disabled', true);
+                generateOrder(e, value);
+            }
       });
     }).catch(err => {
       console.log(err);
@@ -256,10 +258,17 @@
 
     function generateOrder(e, device) {
         window.device = device;
+        /*if($("#" + name).length == 0) {
+          //it doesn't exist
+        }*/
         if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
-                data: {},
+                data: {
+                    "customer_firstname": $("#customer_firstname").val(),
+                    "customer_lastname": $("#customer_lastname").val(),
+                    "customer_email": $("#customer_email").val()
+                },
                 type: "POST",
                 dataType: 'json',
                 success: function (response) {
