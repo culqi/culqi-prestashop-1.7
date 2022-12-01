@@ -21,9 +21,9 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             'description' => 'Venta desde Plugin Prestashop',
             'order_number' => 'pts-' . time(),
             'client_details' => array(
-                'email' => $_POST["customer_email"] ?: $infoCheckout['customer']->email,
-                'first_name' => $_POST["customer_firstname"] ?: $infoCheckout['customer']->firstname,
-                'last_name' => $_POST["customer_lastname"] ?: $infoCheckout['customer']->lastname,
+                'email' => isset($_POST["customer_email"]) ? $_POST["customer_email"] : $infoCheckout['customer']->email,
+                'first_name' => isset($_POST["customer_firstname"]) ? $_POST["customer_firstname"] : $infoCheckout['customer']->firstname,
+                'last_name' => isset($_POST["customer_lastname"]) ? $_POST["customer_lastname"] : $infoCheckout['customer']->lastname,
                 'phone_number' => $phone
             ),
             'expiration_date' => $expiration_date,

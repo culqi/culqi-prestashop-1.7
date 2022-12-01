@@ -82,6 +82,14 @@
         }
     }
 
+    function validateForm() {
+        if(typeof AppOPC != 'undefined') {
+            return AppOPC.is_valid_all_form;
+        }
+
+        return true;
+    }
+
     $(document).ready(function () {
         const paymentMethodRadio = $('input[type=radio][name=payment-option]');        
         var checkDiv = setInterval(function() {
@@ -191,7 +199,7 @@
     device_aux.then(value => {
       $('#buyButton').on('click', function (e) {
             var vaidate_opc_aux = $("#form_onepagecheckoutps").submit();
-            if(AppOPC.is_valid_all_form) {
+            if(validateForm()) {
                 $('#buyButton').attr('disabled', true);
                 $("[data-payment=culqi]").attr('disabled', true);
                 generateOrder(e, value);
