@@ -13,7 +13,7 @@ Nuestro plugin integra por tí nuestro Checkout v4 y nuestra librería JS 3DS, c
 
 ## Instalación y activación
 
-Descargar el zip (.zip) de nuestro plugin desde [aquí](https://github.com/culqi/culqi-prestashop-1.7/releases/download/v3.0.0/culqi.zip "download") y subirlo como un módulo.
+Descargar el zip (.zip) de nuestro plugin desde [aquí](https://github.com/culqi/culqi-prestashop-1.7/releases/download/vCulqi-Prestashop1.7/culqi.zip "download") y subirlo como un módulo.
 
 ![prestashop](https://docs.culqi.com/images/plugins/prestashop-instalar-zip.png)
 
@@ -91,7 +91,7 @@ Contamos con las siguientes versiones:
         1.7.0+
       </td>
       <td class = "px-3 py-4 text-sm">
-        <a href='https://github.com/culqi/culqi-prestashop-1.7/releases/download/v3.0.0/culqi.zip'>
+        <a href='https://github.com/culqi/culqi-prestashop-1.7/releases/download/vCulqi-Prestashop1.7/culqi.zip'>
           Descargar
         </a>
       </td>
