@@ -7,6 +7,19 @@
 	.culqi-payment-logos {
 		max-width: 300px;
 	}
+    .custom_btn_onepage_culqi {
+        margin-top: 6.4px;
+        background: #005cb9;
+        color: white;
+        padding: 0px 20px;
+        height: 40px;
+        font-size: 20px;
+        border: 0;
+    }
+    .custom_btn_onepage_culqi:hover {
+        opacity: 0.8;
+        background-color: #005cb9;
+    }
 </style>
 
 <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css"
@@ -28,7 +41,6 @@
         </p>
     </div>
 </div>
-
 
 {literal}
 
@@ -56,6 +68,44 @@
      * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
      * THE SOFTWARE.
      */
+
+    /**** ONE PAGE CHECKOOUT COMPATIBILITY ******/
+    function onepageCheckoutCulqi(paymentMethod) {
+        if(paymentMethod == "culqi") {
+            $("#btn_place_order").attr("data-payment", "culqi");
+            $("[data-payment=culqi]").removeAttr("id");
+            $("[data-payment=culqi]").addClass("custom_btn_onepage_culqi");
+            console.log("1112223333");
+        } else {
+            $("[data-payment=culqi]").attr("id", "btn_place_order");
+            $("[data-payment=culqi]").removeClass("custom_btn_onepage_culqi");
+            $("#btn_place_order").removeAttr("data-payment");
+        }
+    }
+    
+    $(document).ready(function () {
+        const paymentMethodRadio = $('input[type=radio][name=payment-option]');        
+        var checkDiv = setInterval(function() {
+            var my_div_width = $("#btn_place_order").width();
+            if( my_div_width > 0) { 
+                clearInterval(checkDiv);
+                onepageCheckoutCulqi(paymentMethodRadio.filter(":checked").val());
+                $("[data-payment=culqi]").click(function(event) {
+                    if(paymentMethodRadio.filter(":checked").val() == "culqi") {
+                        console.log("tetstststs");
+                        $(this).attr("disabled", true);
+                        $("#buyButton").click();                                    
+                    }
+                });
+                }
+            }, 
+        10);
+        paymentMethodRadio.change(function() {
+            onepageCheckoutCulqi(this.value);
+        });
+    });
+
+    /**** END *****/
     Culqi3DS.options = {
         closeModalAction: () => window.location.reload(true), // ACTION CUANDO SE CIERRA EL MODAL
     };
@@ -144,6 +194,7 @@
     device_aux.then(value => {
       $('#buyButton').on('click', function (e) {
             $('#buyButton').attr('disabled', true);
+            $("[data-payment=culqi]").attr('disabled', true);
             generateOrder(e, value);
       });
     }).catch(err => {
@@ -225,6 +276,7 @@
                     });
                     orderid = response;
                     $('#buyButton').removeAttr('disabled');
+                    $("[data-payment=culqi]").removeAttr('disabled');
                     Culqi.open();
                     $('#showresult').hide();
                     e.preventDefault();
@@ -241,6 +293,7 @@
                     });
                     orderid = 'ungenereted';
                     $('#buyButton').removeAttr('disabled');
+                    $("[data-payment=culqi]").removeAttr('disabled');
                     Culqi.open();
                     $('#showresult').hide();
                     e.preventDefault();
