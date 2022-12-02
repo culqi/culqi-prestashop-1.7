@@ -24,6 +24,10 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
         $firstname = $infoCheckout['firstname'];
         $lastname = $infoCheckout['lastname'];
         $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta']));
+        $phone = ($address[0]['phone']!='' and !is_null($address[0]['phone'])) ? $address[0]['phone'] : false;
+        if(!$phone) {
+            $phone = $address[0]['phone_mobile'] ?: '999999999';
+        }
         try {
             $cart = $this->context->cart;
             $customer = new Customer($cart->id_customer);
@@ -43,9 +47,9 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
             if (isset($country[0]['iso_code']) and !empty($country[0]['iso_code']) and !is_null($country[0]['iso_code']) and $country[0]['iso_code'] != '') {
                 $antifraud_charges['country_code'] = $country[0]['iso_code'];
             }
-            if (isset($address[0]['phone']) and !empty($address[0]['phone']) and !is_null($address[0]['phone']) and $address[0]['phone'] != '') {
-                $antifraud_charges['phone_number'] = $address[0]['phone'];
-            }
+            
+            $antifraud_charges['phone_number'] = $phone;
+
             $antifraud_charges['device_finger_print_id'] = Tools::getValue("device");
             $args_charge = array(
                 'amount' => (int)$amount_cart,

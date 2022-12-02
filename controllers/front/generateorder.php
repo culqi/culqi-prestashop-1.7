@@ -12,7 +12,10 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         $culqiPretashop =  new Culqi();
         $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
         $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta'] ));
-        $phone = ($infoCheckout['address'][0]['phone']!='' and !is_null($infoCheckout['address'][0]['phone'])) ? $infoCheckout['address'][0]['phone'] : '999999999';
+        $phone = ($infoCheckout['address'][0]['phone']!='' and !is_null($infoCheckout['address'][0]['phone'])) ? $infoCheckout['address'][0]['phone'] : false;
+        if(!$phone) {
+            $phone = $infoCheckout['address'][0]['phone_mobile'] ?: '999999999';
+        }
         $expiration_date = time() + (int)$infoCheckout['tiempo_exp'] * 60 * 60;
         $args_order = array(
              
