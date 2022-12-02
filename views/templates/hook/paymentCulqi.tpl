@@ -148,6 +148,11 @@
         10);
         paymentMethodRadio.change(function() {
             onepageCheckoutCulqi(this.value);
+            $("[data-payment=culqi]").click(function(event) {
+                if(paymentMethodRadio.filter(":checked").val() == "culqi") {
+                    $("#buyButton").click();                               
+                }
+            });
         });
     });
 
