@@ -6,6 +6,7 @@
 	}
 	.culqi-payment-logos {
 		max-width: 300px;
+        width: 98%;
 	}
     .custom_btn_onepage_culqi {
         margin-top: 6.4px;
@@ -26,8 +27,8 @@
       media="all">
 
 <div class="row culqi_payment">
-    <div class="row">
-		<div class="row div-culqi-center">
+    <div class="">
+		<div class="div-culqi-center">
 			<img class="culqi-payment-logos" src="{$module_dir|escape:'htmlall':'UTF-8'}logo_cards.png" alt="" />
 		 </div>
 		<br>
