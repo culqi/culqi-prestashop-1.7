@@ -87,7 +87,48 @@
             return AppOPC.is_valid_all_form;
         }
 
-        return true;
+        return null;
+    }
+
+    function createCustomerCulqiPs(e, value) {
+        var invoice_id = '';
+        var fields = Review.getFields();
+
+        if (OnePageCheckoutPS.CONFIGS.OPC_ENABLE_INVOICE_ADDRESS && $('div#onepagecheckoutps #checkbox_create_invoice_address').length > 0){
+            if ($('div#onepagecheckoutps #checkbox_create_invoice_address').is(':checked')){
+                invoice_id = $('#invoice_id').val();
+            }
+        }else{
+            invoice_id = $('#invoice_id').val();
+        }
+        var _extra_data = Review.getFieldsExtra({});
+        var _data = $.extend({}, _extra_data, {
+            'url_call'              : prestashop.urls.pages.order + '?checkout=1&rand=' + new Date().getTime(),
+            'is_ajax'               : true,
+            'dataType'              : 'json',
+            'action'                : (OnePageCheckoutPS.IS_LOGGED ? 'placeOrder' : 'createCustomerAjax'),
+            'id_customer'           : (!$.isEmpty(AppOPC.$opc_step_one.find('#customer_id').val()) ? AppOPC.$opc_step_one.find('#customer_id').val() : ''),
+            'id_address_delivery'   : (!$.isEmpty(AppOPC.$opc_step_one.find('#delivery_id').val()) ? AppOPC.$opc_step_one.find('#delivery_id').val() : ''),
+            'id_address_invoice'    : 0,
+            'is_new_customer'       : (AppOPC.$opc_step_one.find('#checkbox_create_account_guest').is(':checked') ? 0 : 1),
+            'fields_opc'            : JSON.stringify(fields),
+        });
+        var _json = {
+            data: _data,
+            beforeSend: function() {
+                console.log("before send");
+            },
+            success: function(data) {
+                console.log("guardado correctamente");
+                $('#buyButton').attr('disabled', true);
+                $("[data-payment=culqi]").attr('disabled', true);
+                generateOrder(e, value);
+            },
+            complete: function(){
+                console.log("guardado completamente");
+            }
+        };
+        $.makeRequest(_json);
     }
 
     $(document).ready(function () {
@@ -199,10 +240,12 @@
     device_aux.then(value => {
       $('#buyButton').on('click', function (e) {
             var vaidate_opc_aux = $("#form_onepagecheckoutps").submit();
-            if(validateForm()) {
+            if(validateForm() == null) {
                 $('#buyButton').attr('disabled', true);
                 $("[data-payment=culqi]").attr('disabled', true);
                 generateOrder(e, value);
+            } else if(validateForm()) {
+                createCustomerCulqiPs(e, value);
             }
       });
     }).catch(err => {
@@ -272,11 +315,7 @@
         if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
-                data: {
-                    "customer_firstname": $("#customer_firstname").val(),
-                    "customer_lastname": $("#customer_lastname").val(),
-                    "customer_email": $("#customer_email").val()
-                },
+                data: {},
                 type: "POST",
                 dataType: 'json',
                 success: function (response) {
