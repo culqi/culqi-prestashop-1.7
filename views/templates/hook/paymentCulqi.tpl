@@ -6,15 +6,29 @@
 	}
 	.culqi-payment-logos {
 		max-width: 300px;
+        width: 98%;
 	}
+    .custom_btn_onepage_culqi {
+        margin-top: 6.4px;
+        background: #005cb9;
+        color: white;
+        padding: 0px 20px;
+        height: 40px;
+        font-size: 20px;
+        border: 0;
+    }
+    .custom_btn_onepage_culqi:hover {
+        opacity: 0.8;
+        background-color: #005cb9;
+    }
 </style>
 
 <link rel="stylesheet" href="{$module_dir|escape:'htmlall':'UTF-8'}views/css/waitMe.min.css" type="text/css"
       media="all">
 
 <div class="row culqi_payment">
-    <div class="row">
-		<div class="row div-culqi-center">
+    <div class="">
+		<div class="div-culqi-center">
 			<img class="culqi-payment-logos" src="{$module_dir|escape:'htmlall':'UTF-8'}logo_cards.png" alt="" />
 		 </div>
 		<br>
@@ -28,12 +42,6 @@
         </p>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script src="{$enviroment_fronted|escape:'htmlall':'UTF-8'}"></script>
-<script type="text/javascript" defer src="{$module_dir|escape:'htmlall':'UTF-8'}views/js/waitMe.min.js"></script>
-<script type="text/javascript" defer src="{$enviroment_3ds|escape:'htmlall':'UTF-8'}"></script>
-
 
 {literal}
 
@@ -61,6 +69,92 @@
      * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
      * THE SOFTWARE.
      */
+
+    /**** ONE PAGE CHECKOOUT COMPATIBILITY ******/
+    function onepageCheckoutCulqi(paymentMethod) {
+        if(paymentMethod == "culqi") {
+            $("#btn_place_order").attr("data-payment", "culqi");
+            $("[data-payment=culqi]").removeAttr("id");
+            $("[data-payment=culqi]").addClass("custom_btn_onepage_culqi");
+        } else {
+            $("[data-payment=culqi]").attr("id", "btn_place_order");
+            $("[data-payment=culqi]").removeClass("custom_btn_onepage_culqi");
+            $("#btn_place_order").removeAttr("data-payment");
+        }
+    }
+
+    function validateForm() {
+        if(typeof AppOPC != 'undefined') {
+            return AppOPC.is_valid_all_form;
+        }
+
+        return null;
+    }
+
+    function createCustomerCulqiPs(e, value) {
+        var invoice_id = '';
+        var fields = Review.getFields();
+
+        if (OnePageCheckoutPS.CONFIGS.OPC_ENABLE_INVOICE_ADDRESS && $('div#onepagecheckoutps #checkbox_create_invoice_address').length > 0){
+            if ($('div#onepagecheckoutps #checkbox_create_invoice_address').is(':checked')){
+                invoice_id = $('#invoice_id').val();
+            }
+        }else{
+            invoice_id = $('#invoice_id').val();
+        }
+        var _extra_data = Review.getFieldsExtra({});
+        var _data = $.extend({}, _extra_data, {
+            'url_call'              : prestashop.urls.pages.order + '?checkout=1&rand=' + new Date().getTime(),
+            'is_ajax'               : true,
+            'dataType'              : 'json',
+            'action'                : (OnePageCheckoutPS.IS_LOGGED ? 'placeOrder' : 'createCustomerAjax'),
+            'id_customer'           : (!$.isEmpty(AppOPC.$opc_step_one.find('#customer_id').val()) ? AppOPC.$opc_step_one.find('#customer_id').val() : ''),
+            'id_address_delivery'   : (!$.isEmpty(AppOPC.$opc_step_one.find('#delivery_id').val()) ? AppOPC.$opc_step_one.find('#delivery_id').val() : ''),
+            'id_address_invoice'    : 0,
+            'is_new_customer'       : (AppOPC.$opc_step_one.find('#checkbox_create_account_guest').is(':checked') ? 0 : 1),
+            'fields_opc'            : JSON.stringify(fields),
+        });
+        var _json = {
+            data: _data,
+            beforeSend: function() {
+                console.log("before send");
+            },
+            success: function(data) {
+                console.log("guardado correctamente");
+                $('#buyButton').attr('disabled', true);
+                $("[data-payment=culqi]").attr('disabled', true);
+                generateOrder(e, value);
+            },
+            complete: function(){
+                console.log("guardado completamente");
+            }
+        };
+        $.makeRequest(_json);
+    }
+
+    $(document).ready(function () {
+        const paymentMethodRadio = $('input[type=radio][name=payment-option]');        
+        var checkDiv = setInterval(function() {
+            var btnplaceOrderWidth = $("#btn_place_order").width();
+            var btnplaceOrderCustomWidth = $(".custom_btn_onepage_culqi").width();
+            var buyButtonWidth = $("#buyButton").width();
+            if( (btnplaceOrderWidth > 0 || btnplaceOrderCustomWidth > 0) && buyButtonWidth > 0) { 
+                clearInterval(checkDiv);
+                onepageCheckoutCulqi(paymentMethodRadio.filter(":checked").val());
+                $("[data-payment=culqi]").click(function(event) {
+                    if(paymentMethodRadio.filter(":checked").val() == "culqi") {
+                        $("#buyButton").trigger( "click" );                             
+                    }
+                });
+            }
+        }, 
+        10);
+        paymentMethodRadio.change(function() {
+            onepageCheckoutCulqi(this.value);
+        });
+    });
+
+    /**** END *****/
     Culqi3DS.options = {
         closeModalAction: () => window.location.reload(true), // ACTION CUANDO SE CIERRA EL MODAL
     };
@@ -148,8 +242,14 @@
     const device_aux = Promise.resolve(Culqi3DS.generateDevice());
     device_aux.then(value => {
       $('#buyButton').on('click', function (e) {
-            $('#buyButton').attr('disabled', true);
-            generateOrder(e, value);
+            var vaidate_opc_aux = $("#form_onepagecheckoutps").submit();
+            if(validateForm() == null) {
+                $('#buyButton').attr('disabled', true);
+                $("[data-payment=culqi]").attr('disabled', true);
+                generateOrder(e, value);
+            } else if(validateForm()) {
+                createCustomerCulqiPs(e, value);
+            }
       });
     }).catch(err => {
       console.log(err);
@@ -170,16 +270,22 @@
         Culqi.publicKey = '{/literal}{$llave_publica|escape:'htmlall':'UTF-8'}{literal}';
         Culqi.useClasses = true;
         Culqi.init();
+        let tarjeta = ('{/literal}{$tarjeta|escape:'htmlall':'UTF-8'}{literal}' === "true");
+        let bancaMovil = ('{/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal}' === "true");
+        let yape = ('{/literal}{$yape|escape:'htmlall':'UTF-8'}{literal}' === "true");
+        let agente = ('{/literal}{$agente|escape:'htmlall':'UTF-8'}{literal}' === "true");
+        let billetera = ('{/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal}' === "true");
+        let cuotealo = ('{/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}' === "true");
 
         Culqi.options({
             lang: 'auto',
             paymentMethods: {
-                tarjeta: {/literal}{$tarjeta|escape:'htmlall':'UTF-8'}{literal},
-                bancaMovil: {/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal},
-                yape: {/literal}{$yape|escape:'htmlall':'UTF-8'}{literal},
-                agente: {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal},
-                billetera: {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal},
-                cuotealo: {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}
+                tarjeta: tarjeta,
+                bancaMovil: bancaMovil,
+                yape: yape,
+                agente: agente,
+                billetera: billetera,
+                cuotealo: cuotealo
             },
             installments: true,
             style: {
@@ -206,6 +312,9 @@
 
     function generateOrder(e, device) {
         window.device = device;
+        /*if($("#" + name).length == 0) {
+          //it doesn't exist
+        }*/
         if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
@@ -224,6 +333,7 @@
                     });
                     orderid = response;
                     $('#buyButton').removeAttr('disabled');
+                    $("[data-payment=culqi]").removeAttr('disabled');
                     Culqi.open();
                     $('#showresult').hide();
                     e.preventDefault();
@@ -240,6 +350,7 @@
                     });
                     orderid = 'ungenereted';
                     $('#buyButton').removeAttr('disabled');
+                    $("[data-payment=culqi]").removeAttr('disabled');
                     Culqi.open();
                     $('#showresult').hide();
                     e.preventDefault();

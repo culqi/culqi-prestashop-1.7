@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.0.1');
+define('CULQI_PLUGIN_VERSION', '3.0.2');
 
 define('URLAPI_INTEG', 'https://integ-panel.culqi.com');
 define('URLAPI_PROD', 'https://panel.culqi.com');
@@ -69,6 +69,7 @@ class Culqi extends PaymentModule
 
         return (
             parent::install() &&
+            $this->registerHook('header') &&
             $this->registerHook('paymentOptions') &&
             Configuration::updateValue('CULQI_ENABLED', '') &&
             Configuration::updateValue('CULQI_ENVIROMENT', '') &&
@@ -85,6 +86,30 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_PASSWORD', '') &&
             Configuration::updateValue('CULQI_URL_LOGO', '') &&
             Configuration::updateValue('CULQI_COLOR_PALETTE', '')
+        );
+    }
+
+    public function hookHeader()
+    {
+        $this->context->controller->registerJavascript(
+            'culqjquery3',
+            $this->getCulqiInfoCheckout(true)['jquery'],
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+        );
+        $this->context->controller->registerJavascript(
+            'culqiv4',
+            $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+        );
+        $this->context->controller->registerJavascript(
+            'culqiwaitme',
+            $this->_path.'views/js/waitMe.min.js',
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+        );
+        $this->context->controller->registerJavascript(
+            'culqi3ds',
+            $this->getCulqiInfoCheckout(true)['enviroment_3ds'],
+            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
         );
     }
 
@@ -217,16 +242,8 @@ class Culqi extends PaymentModule
         return false;
     }
 
-    public function getCulqiInfoCheckout()
+    public function getCulqiInfoCheckout($is_header = false)
     {
-
-        $cart = $this->context->cart;
-
-        $address = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "address where id_address=" . $cart->id_address_invoice);
-        $country = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "country where id_country=" . $address[0]['id_country']);
-        $total = $cart->getOrderTotal(true, Cart::BOTH);
-        $color_palette = Configuration::get('CULQI_COLOR_PALETTE');
-
         $urlapi_ordercharges = URLAPI_ORDERCHARGES_INTEG;
         $urlapi_checkout = URLAPI_CHECKOUT_INTEG;
         $urlapi_3ds = URLAPI_INTEG_3DS;
@@ -235,6 +252,29 @@ class Culqi extends PaymentModule
             $urlapi_checkout = URLAPI_CHECKOUT_PROD;
             $urlapi_3ds = URLAPI_PROD_3DS;
         }
+
+        if($is_header) {
+            return array(
+                "enviroment_fronted" => $urlapi_checkout,
+                "enviroment_3ds" => $urlapi_3ds,
+                "jquery" => 'https://code.jquery.com/jquery-3.6.0.min.js'
+            );
+        }
+
+        $cart = $this->context->cart;
+
+        $address = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "address where id_address=" . $cart->id_address_invoice);
+        $country = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "country where id_country=" . $address[0]['id_country']);
+        $total = $cart->getOrderTotal(true, Cart::BOTH);
+        $color_palette = Configuration::get('CULQI_COLOR_PALETTE');
+        if(count(explode('-', $color_palette)) > 1) {
+            $color_arr = explode('-', $color_palette);
+        } else {
+            $color_arr = [];
+            $color_arr[0] = "";
+            $color_arr[1] = "";
+        }
+
         $https = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : null;
         if (is_null($https)) {
             $https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
@@ -259,7 +299,7 @@ class Culqi extends PaymentModule
             "cuetealo" => Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false',
             "url_logo" => Configuration::get('CULQI_URL_LOGO'),
             "tiempo_exp" => (Configuration::get('CULQI_TIMEXP') == '' ? 24 : Configuration::get('CULQI_TIMEXP')),
-            "color_pallete" => explode('-', $color_palette),
+            "color_pallete" => $color_arr,
             "currency" => $this->context->currency->iso_code,
             "address" => $address,
             "customer" => $this->context->customer,
