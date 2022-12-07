@@ -36,6 +36,6 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         );
  
         $culqi_order = $culqi->Orders->create( $args_order );
-        die(Tools::jsonEncode($culqi_order->id));
+        die(json_encode($culqi_order->id));
     }
 }

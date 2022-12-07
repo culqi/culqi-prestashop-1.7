@@ -69,7 +69,7 @@ class Culqi extends PaymentModule
 
         return (
             parent::install() &&
-            $this->registerHook('header') &&
+            $this->registerHook('displayHeader') &&
             $this->registerHook('paymentOptions') &&
             Configuration::updateValue('CULQI_ENABLED', '') &&
             Configuration::updateValue('CULQI_ENVIROMENT', '') &&
@@ -89,7 +89,7 @@ class Culqi extends PaymentModule
         );
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $this->context->controller->registerJavascript(
             'culqjquery3',
@@ -262,9 +262,10 @@ class Culqi extends PaymentModule
         }
 
         $cart = $this->context->cart;
-
         $address = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "address where id_address=" . $cart->id_address_invoice);
-        $country = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "country where id_country=" . $address[0]['id_country']);
+        if($address) {
+            $country = Db::getInstance()->ExecuteS("SELECT * FROM " . _DB_PREFIX_ . "country where id_country=" . $address[0]['id_country']);
+        }
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $color_palette = Configuration::get('CULQI_COLOR_PALETTE');
         if(count(explode('-', $color_palette)) > 1) {
@@ -307,7 +308,7 @@ class Culqi extends PaymentModule
             "BASE_URL" => $base_url,
             "firstname" => $this->context->customer->firstname,
             "lastname" => $this->context->customer->lastname,
-            'country'=>$country
+            'country'=>$country ?? "PE"
         );
     }
 
