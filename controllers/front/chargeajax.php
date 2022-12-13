@@ -66,9 +66,9 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
             }
             $culqi_charge = $culqi->Charges->create($args_charge);
         } catch (Exception $e) {
-            die(Tools::jsonEncode($e->getMessage()));
+            die(json_encode($e->getMessage()));
         }
-        die(Tools::jsonEncode($culqi_charge));
+        die(json_encode($culqi_charge));
     }
 
 }

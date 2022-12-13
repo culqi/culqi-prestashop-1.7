@@ -41,7 +41,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 echo '<script type="text/javascript">console.log("Error en el update de cargo!"); </script>';
             }
 
-            die(Tools::jsonEncode($id_order));
+            die(json_encode($id_order));
         }
     }
 
