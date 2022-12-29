@@ -330,6 +330,7 @@
                         order: response,
                         culqiclient: 'prestashop',
                         culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
+                        culqipluginversion: '{/literal}{$CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}{literal}',
                     });
                     orderid = response;
                     $('#buyButton').removeAttr('disabled');
@@ -347,6 +348,7 @@
                         amount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
                         culqiclient: 'prestashop',
                         culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
+                        culqipluginversion: '{/literal}{$CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}{literal}',
                     });
                     orderid = 'ungenereted';
                     $('#buyButton').removeAttr('disabled');
@@ -364,6 +366,7 @@
                 amount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
                 culqiclient: 'prestashop',
                 culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
+                culqipluginversion: '{/literal}{$CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}{literal}',
             });
             orderid = 'ungenereted';
             $('#buyButton').removeAttr('disabled');
