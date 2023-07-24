@@ -1664,7 +1664,7 @@
     <div class="panel" id="fieldset_0">
         <div class="panel-heading">
             <i class="icon-money"></i>CONFIGURACIONES GENERALES CULQI
-            <div class="plugin-version text-right">{$fields_value.CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}</div>
+            <div class="plugin-version text-right">v{$fields_value.CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}</div>
         </div>
 
         <div class="form-wrapper">
