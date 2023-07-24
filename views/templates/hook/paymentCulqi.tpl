@@ -316,6 +316,7 @@
           //it doesn't exist
         }*/
         if ({/literal}{$banca_movil|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$agente|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$billetera|escape:'htmlall':'UTF-8'}{literal} || {/literal}{$cuetealo|escape:'htmlall':'UTF-8'}{literal}) {
+
             $.ajax({
                 url: fnReplace("{/literal}{$link->getModuleLink('culqi', 'generateorder', [], true)|escape:'htmlall':'UTF-8'}{literal}"),
                 data: {},
@@ -323,25 +324,13 @@
                 dataType: 'json',
                 success: function (response) {
                     console.log('response:::', response);
-                    Culqi.settings({
-                        title: '{/literal}{$commerce|escape:'htmlall':'UTF-8'}{literal}',
-                        currency: '{/literal}{$currency|escape:'htmlall':'UTF-8'}{literal}',
-                        amount: {/literal}{$total|escape:'htmlall':'UTF-8'}{literal},
-                        order: response,
-                        culqiclient: 'prestashop',
-                        culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
-                        culqipluginversion: '{/literal}{$CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}{literal}',
-                    });
-                    orderid = response;
-                    $('#buyButton').removeAttr('disabled');
-                    $("[data-payment=culqi]").removeAttr('disabled');
-                    Culqi.open();
-                    $('#showresult').hide();
-                    e.preventDefault();
+                    
                 },
                 error: function (error) {
                     console.log('error:::', error);
+                    
                     $('#showresult').show();
+
                     Culqi.settings({
                         title: '{/literal}{$commerce|escape:'htmlall':'UTF-8'}{literal}',
                         currency: '{/literal}{$currency|escape:'htmlall':'UTF-8'}{literal}',
@@ -350,8 +339,10 @@
                         culqiclientversion: '{/literal}{$psversion|escape:'htmlall':'UTF-8'}{literal}',
                         culqipluginversion: '{/literal}{$CULQI_PLUGIN_VERSION|escape:'htmlall':'UTF-8'}{literal}',
                     });
+
                     orderid = 'ungenereted';
                     $('#buyButton').removeAttr('disabled');
+
                     $("[data-payment=culqi]").removeAttr('disabled');
                     Culqi.open();
                     $('#showresult').hide();
