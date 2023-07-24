@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.0.4');
+define('CULQI_PLUGIN_VERSION', '3.0.5');
 
 define('URLAPI_INTEG', 'https://integ-panel.culqi.com');
 define('URLAPI_PROD', 'https://panel.culqi.com');
@@ -91,26 +91,28 @@ class Culqi extends PaymentModule
 
     public function hookDisplayHeader()
     {
-        $this->context->controller->registerJavascript(
-            'culqjquery3',
-            $this->getCulqiInfoCheckout(true)['jquery'],
-            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
-        );
-        $this->context->controller->registerJavascript(
-            'culqiv4',
-            $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
-            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
-        );
-        $this->context->controller->registerJavascript(
-            'culqiwaitme',
-            $this->_path.'views/js/waitMe.min.js',
-            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
-        );
-        $this->context->controller->registerJavascript(
-            'culqi3ds',
-            $this->getCulqiInfoCheckout(true)['enviroment_3ds'],
-            array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
-        );
+        if (Tools::getValue('controller') === 'order') {
+            $this->context->controller->registerJavascript(
+                'culqjquery3',
+                $this->getCulqiInfoCheckout(true)['jquery'],
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+            );
+            $this->context->controller->registerJavascript(
+                'culqiv4',
+                $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+            );
+            $this->context->controller->registerJavascript(
+                'culqiwaitme',
+                $this->_path.'views/js/waitMe.min.js',
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+            );
+            $this->context->controller->registerJavascript(
+                'culqi3ds',
+                $this->getCulqiInfoCheckout(true)['enviroment_3ds'],
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+            );
+        }
     }
 
     private function clearCache()
@@ -308,7 +310,8 @@ class Culqi extends PaymentModule
             "BASE_URL" => $base_url,
             "firstname" => $this->context->customer->firstname,
             "lastname" => $this->context->customer->lastname,
-            'country'=>$country ?? "PE"
+            'country'=>$country ?? "PE",
+            'CULQI_PLUGIN_VERSION' => CULQI_PLUGIN_VERSION,
         );
     }
 
