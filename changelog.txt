@@ -1,0 +1,18 @@
+2023-07-24 - version 3.0.5
+Fix: js load control
+Fix: Correction of culqipluginversion parameter
+
+2023-01-13 - version 3.0.4
+Fix: prestashop plugin version sent
+
+2022-12-13 - version 3.0.3
+Fix: Compatibility with Prestashop 8
+
+2022-12-02 - version 3.0.2
+Fix: Added compatibility with onepagecheckout plugin
+
+2022-11-22 - version 3.0.1
+Fix: Fixed incompatibility with some browsers when generating the device for 3DS.
+
+2022-09-26 - version 3.0.0
+Fix: first version plug17
