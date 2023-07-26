@@ -93,25 +93,34 @@ class Culqi extends PaymentModule
     {
         if (Tools::getValue('controller') === 'order') {
             $this->context->controller->registerJavascript(
-                'culqjquery3',
-                $this->getCulqiInfoCheckout(true)['jquery'],
-                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
-            );
-            $this->context->controller->registerJavascript(
                 'culqiv4',
                 $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
-                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
             $this->context->controller->registerJavascript(
                 'culqiwaitme',
                 $this->_path.'views/js/waitMe.min.js',
-                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
             $this->context->controller->registerJavascript(
                 'culqi3ds',
                 $this->getCulqiInfoCheckout(true)['enviroment_3ds'],
-                array('server' => 'remote', 'position' => 'bottom', 'priority' => 0)
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
+
+            $data = json_encode($this->getCulqiInfoCheckout());
+
+            $jsCode = "<script>
+                var phpData = {$data};
+            </script>";
+            
+            $this->context->controller->registerJavascript(
+                'culqifunctions',
+                $this->_path.'views/js/culqi.js',
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
+            );
+
+            return $jsCode;
         }
     }
 
@@ -312,6 +321,11 @@ class Culqi extends PaymentModule
             "lastname" => $this->context->customer->lastname,
             'country'=>$country ?? "PE",
             'CULQI_PLUGIN_VERSION' => CULQI_PLUGIN_VERSION,
+            'generate_order_url' => $this->context->link->getModuleLink('culqi', 'generateorder', []),
+            'chargeajax_url' => $this->context->link->getModuleLink('culqi', 'chargeajax', []),
+            'postpayment_url' => $this->context->link->getModuleLink('culqi', 'postpayment', []),
+            'postpaymentpending_url' => $this->context->link->getModuleLink('culqi', 'postpaymentpending', []),
+            'registersale_url' => $this->context->link->getModuleLink('culqi', 'registersale', [])
         );
     }
 
@@ -577,7 +591,7 @@ class Culqi extends PaymentModule
             'CULQI_URL_MERCHANT' => $urlapi_merchant,
             'CULQI_URL_MERCHANTSINGLE' => $urlapi_merchantsingle,
             'CULQI_URL_WEBHOOK' => $urlapi_webhook,
-            'CULQI_URL_WEBHOOK_PS' => $this->context->link->getModuleLink($this->name, 'webhook', array(), true),
+            'CULQI_URL_WEBHOOK_PS' => $this->context->link->getModuleLink($this->name, 'webhook', array()),
             'CULQI_POST' => $post,
             'URLAPI_LOGIN_INTEG' => URLAPI_LOGIN_INTEG,
             'URLAPI_MERCHANT_INTEG' => URLAPI_MERCHANT_INTEG,
