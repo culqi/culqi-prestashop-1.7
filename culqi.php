@@ -108,7 +108,7 @@ class Culqi extends PaymentModule
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
 
-            $data = json_encode($this->getCulqiInfoCheckout());
+            $data = json_encode($this->getCulqiInfoCheckout(false, true));
 
             $jsCode = "<script>
                 var phpData = {$data};
@@ -216,9 +216,6 @@ class Culqi extends PaymentModule
 
         $newOption = new PaymentOption();
 
-        $this->context->smarty->assign(
-            $this->getCulqiInfoCheckout()
-        );
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
         if ($this->getConfigFieldsValues()['CULQI_ENABLED'] == 'yes') {
             $newOption->setModuleName($this->name)
@@ -233,6 +230,8 @@ class Culqi extends PaymentModule
         } else {
             return false;
         }
+
+        return false;
 
 
     }
@@ -253,7 +252,12 @@ class Culqi extends PaymentModule
         return false;
     }
 
-    public function getCulqiInfoCheckout($is_header = false)
+    public function loadCheckoutView($is_header = false) {
+        return [
+            "module_dir" => "culqi"
+        ];
+    }
+    public function getCulqiInfoCheckout($is_header = false, $is_checkout = false)
     {
         $urlapi_ordercharges = URLAPI_ORDERCHARGES_INTEG;
         $urlapi_checkout = URLAPI_CHECKOUT_INTEG;
@@ -292,17 +296,11 @@ class Culqi extends PaymentModule
             $https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
         }
         $base_url = $https . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        return array(
+        
+        $checkout_data =  array(
             "psversion" => $this->ps_versions_compliancy['max'],
-            "module_dir" => $this->_path,
-            "descripcion" => "Orden de compra " . $cart->id,
-            "orden" => $cart->id,
             "total" => $total * 100,
-            "enviroment_backend" => $urlapi_ordercharges,
-            "enviroment_fronted" => $urlapi_checkout,
-            "enviroment_3ds" => $urlapi_3ds,
             "llave_publica" => Configuration::get('CULQI_LLAVE_PUBLICA'),
-            "llave_secreta" => Configuration::get('CULQI_LLAVE_SECRETA'),
             "tarjeta" => Configuration::get('CULQI_METHODS_TARJETA') == 'yes' ? 'true' : 'false',
             "banca_movil" => Configuration::get('CULQI_METHODS_BANCAMOVIL') == 'yes' ? 'true' : 'false',
             "yape" => Configuration::get('CULQI_METHODS_YAPE') == 'yes' ? 'true' : 'false',
@@ -310,16 +308,10 @@ class Culqi extends PaymentModule
             "agente" => Configuration::get('CULQI_METHODS_AGENTS') == 'yes' ? 'true' : 'false',
             "cuetealo" => Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false',
             "url_logo" => Configuration::get('CULQI_URL_LOGO'),
-            "tiempo_exp" => (Configuration::get('CULQI_TIMEXP') == '' ? 24 : Configuration::get('CULQI_TIMEXP')),
             "color_pallete" => $color_arr,
             "currency" => $this->context->currency->iso_code,
-            "address" => $address,
-            "customer" => $this->context->customer,
             'commerce' => Configuration::get('PS_SHOP_NAME'),
             "BASE_URL" => $base_url,
-            "firstname" => $this->context->customer->firstname,
-            "lastname" => $this->context->customer->lastname,
-            'country'=>$country ?? "PE",
             'CULQI_PLUGIN_VERSION' => 'v'.CULQI_PLUGIN_VERSION,
             'generate_order_url' => $this->context->link->getModuleLink('culqi', 'generateorder', []),
             'chargeajax_url' => $this->context->link->getModuleLink('culqi', 'chargeajax', []),
@@ -327,6 +319,28 @@ class Culqi extends PaymentModule
             'postpaymentpending_url' => $this->context->link->getModuleLink('culqi', 'postpaymentpending', []),
             'registersale_url' => $this->context->link->getModuleLink('culqi', 'registersale', [])
         );
+
+        if($is_checkout) {
+            return $checkout_data;
+        }
+
+        $info_checkout = array(
+            "module_dir" => $this->_path,
+            "descripcion" => "Orden de compra " . $cart->id,
+            "orden" => $cart->id,
+            "enviroment_backend" => $urlapi_ordercharges,
+            "enviroment_fronted" => $urlapi_checkout,
+            "enviroment_3ds" => $urlapi_3ds,
+            "llave_secreta" => Configuration::get('CULQI_LLAVE_SECRETA'),
+            "tiempo_exp" => (Configuration::get('CULQI_TIMEXP') == '' ? 24 : Configuration::get('CULQI_TIMEXP')),
+            "address" => $address,
+            "customer" => $this->context->customer,
+            "firstname" => $this->context->customer->firstname,
+            "lastname" => $this->context->customer->lastname,
+            'country'=>$country ?? "PE"
+        );
+
+        return array_merge($checkout_data, $info_checkout);
     }
 
     public function uninstallStates()

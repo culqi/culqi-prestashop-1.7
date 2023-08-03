@@ -25,8 +25,8 @@
 
 <div class="row culqi_payment">
     <div class="">
-		<div class="div-culqi-center">
-			<img class="culqi-payment-logos" src="{$module_dir|escape:'htmlall':'UTF-8'}logo_cards.png" alt="" />
+        <div class="div-culqi-center">
+			<img class="culqi-payment-logos" src="/modules/culqi/logo_cards.png" alt="" />
 		 </div>
 		<br>
 		<div class="row div-culqi-center">

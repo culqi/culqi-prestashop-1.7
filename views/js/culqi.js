@@ -160,7 +160,7 @@ window.addEventListener("message", async function (event) {
                         location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
                     }
                     if (result.object === 'error') {
-                        $('body').waitMe('hide');
+                        $("#loadingloginculqi").remove();
                         $('#showresult').show();
                         Culqi.close();
                         showResult('red', result['user_message']);
@@ -182,7 +182,7 @@ window.addEventListener("message", async function (event) {
         if (error) {
             showResult('red', error);
             $('#showresult').show();
-            $('body').waitMe('hide');
+            $("#loadingloginculqi").remove();
             Culqi.close();
             console.log(error);
         }
@@ -428,7 +428,7 @@ function culqi() {
             success: function (data, textStatus, xhr) {
                 console.log('data:::', data);
                 if (data.action_code == 'REVIEW') {
-                    $('body').waitMe('hide');
+                    $("#loadingloginculqi").remove();
                     Culqi3DS.settings = {
                         charge: {
                             totalAmount: Math.ceil(phpData.total),
@@ -463,7 +463,7 @@ function culqi() {
 
                     }
                     if (result.object === 'error') {
-                        $('body').waitMe('hide');
+                        $("#loadingloginculqi").remove();
                         Culqi.close();
                         showResult('red', result['user_message']);
                         $('#showresult').show();
@@ -472,7 +472,7 @@ function culqi() {
             },
             error: function (error, textStatus, xhr) {
                 console.log('error:::', error);
-                $('body').waitMe('hide');
+                $("#loadingloginculqi").remove();
                 $('#showresult').show();
                 Culqi.close();
             }
@@ -482,7 +482,7 @@ function culqi() {
     } else {
 
         console.log(Culqi.error);
-        $('body').waitMe('hide');
+        $("#loadingloginculqi").remove();
         if (Culqi.error) {
             showResult('red', Culqi.error.user_message);
         }
@@ -491,10 +491,5 @@ function culqi() {
 }
 window.culqi = culqi;
 function run_waitMe() {
-    $('body').waitMe({
-        effect: 'bounce',
-        text: 'Cargando. Espere por favor',
-        bg: 'rgba(0,0,0, 0.7)',
-        color: '#ffffff'
-    });
+    jQuery('body').append('<div id="loadingloginculqi" style="position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; top: 0; text-align: center; justify-content: center; align-content: center; flex-direction: column; color: white; font-size: 14px; display:table-cell; vertical-align:middle;"><div style="position: absolute; width: 100%; top: 50%">Cargando <img style="display: inline-block" width="14" src="https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg" /></div></div>');
 }
