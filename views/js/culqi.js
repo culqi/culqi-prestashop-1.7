@@ -85,8 +85,8 @@ function createCustomerCulqiPs(e, value) {
 }
 
 $(document).ready(function () {
-    const paymentMethodRadio = $('input[type=radio][name=payment-option]');        
     var checkDiv = setInterval(function() {
+        const paymentMethodRadio = $('input[type=radio][name=payment-option]');     
         var btnplaceOrderWidth = $("#btn_place_order").width();
         var btnplaceOrderCustomWidth = $(".custom_btn_onepage_culqi").width();
         var buyButtonWidth = $("#buyButton").width();
@@ -101,9 +101,6 @@ $(document).ready(function () {
         }
     }, 
     10);
-    paymentMethodRadio.change(function() {
-        onepageCheckoutCulqi(this.value);
-    });
 });
 
 /**** END *****/
@@ -193,7 +190,7 @@ Culqi3DS.publicKey = phpData.llave_publica;
 //var device = await Culqi3DS.generateDevice();
 const device_aux = Promise.resolve(Culqi3DS.generateDevice());
 device_aux.then(value => {
-    $('#buyButton').on('click', function (e) {
+    $('#checkout').on('click', '#buyButton', function(e) {
         var vaidate_opc_aux = $("#form_onepagecheckoutps").submit();
         if(validateForm() == null) {
             $('#buyButton').attr('disabled', true);
