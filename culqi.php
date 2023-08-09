@@ -116,7 +116,7 @@ class Culqi extends PaymentModule
             
             $this->context->controller->registerJavascript(
                 'culqifunctions',
-                $this->_path.'views/js/culqi.js',
+                $this->_path.'views/js/culqi.js?_='.time(),
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
 
@@ -221,7 +221,7 @@ class Culqi extends PaymentModule
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqi.tpl'));;
+                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));;
             $payment_options = [
                 $newOption,
             ];
