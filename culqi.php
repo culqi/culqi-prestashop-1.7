@@ -219,7 +219,8 @@ class Culqi extends PaymentModule
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
         if ($this->getConfigFieldsValues()['CULQI_ENABLED'] == 'yes') {
             $newOption->setModuleName($this->name)
-                ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
+                ->setCallToActionText($this->trans('Culqi', array(), 'culqi'))
+                ->setLogo($this->_path.'/culqi-logo.svg')
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
                 ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));;
             $payment_options = [
@@ -232,7 +233,6 @@ class Culqi extends PaymentModule
         }
 
         return false;
-
 
     }
 

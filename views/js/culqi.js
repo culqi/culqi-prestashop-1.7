@@ -490,3 +490,18 @@ window.culqi = culqi;
 function run_waitMe() {
     jQuery('body').append('<div id="loadingloginculqi" style="position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; top: 0; text-align: center; justify-content: center; align-content: center; flex-direction: column; color: white; font-size: 14px; display:table-cell; vertical-align:middle;"><div style="position: absolute; width: 100%; top: 50%">Cargando <img style="display: inline-block" width="14" src="https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg" /></div></div>');
 }
+
+//
+
+$(document).ready(function() {
+    // Add class to radio buttons
+    $('input[name="payment-option"]').each(function() {
+        var container = $(this).closest('.payment-option');
+        var paymentText = container.find('label').find('span');
+        if(paymentText.text() == 'Culqi') {
+            paymentText.hide();
+            paymentText.next().addClass('culqi-logo');
+            paymentText.next().after('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" />');
+        }
+    });
+});
