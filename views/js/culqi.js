@@ -259,6 +259,28 @@ $(document).ready(function () {
     });
 });
 
+function getSettings(order = false) {
+    let args_settings = {
+        title: phpData.commerce,
+        currency: phpData.currency,
+        amount: Math.ceil(phpData.total),
+        culqiclient: 'prestashop',
+        culqiclientversion: phpData.psversion,
+        culqipluginversion: phpData.CULQI_PLUGIN_VERSION
+    };
+
+    if(order) {
+        args_settings.order = order;
+    }
+
+    if(phpData.rsa_id && phpData.rsa_pk) {
+        args_settings.xculqirsaid = phpData.rsa_id;
+        args_settings.rsapublickey = phpData.rsa_pk;
+    }
+
+    Culqi.settings(args_settings);
+}
+
 function generateOrder(e, device) {
     window.device = device;
     /*if($("#" + name).length == 0) {
@@ -272,15 +294,7 @@ function generateOrder(e, device) {
             dataType: 'json',
             success: function (response) {
                 console.log('response:::', response);
-                Culqi.settings({
-                    title: phpData.commerce,
-                    currency: phpData.currency,
-                    amount: Math.ceil(phpData.total),
-                    order: response,
-                    culqiclient: 'prestashop',
-                    culqiclientversion: phpData.psversion,
-                    culqipluginversion: phpData.CULQI_PLUGIN_VERSION,
-                });
+                getSettings(response);
                 orderid = response;
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
@@ -291,14 +305,7 @@ function generateOrder(e, device) {
             error: function (error) {
                 console.log('error:::', error);
                 $('#showresult').show();
-                Culqi.settings({
-                    title: phpData.commerce,
-                    currency: phpData.currency,
-                    amount: Math.ceil(phpData.total),
-                    culqiclient: 'prestashop',
-                    culqiclientversion: phpData.psversion,
-                    culqipluginversion: phpData.CULQI_PLUGIN_VERSION,
-                });
+                getSettings();
                 orderid = 'ungenereted';
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
@@ -309,14 +316,7 @@ function generateOrder(e, device) {
         });
     } else {
         $('#showresult').show();
-        Culqi.settings({
-            title: phpData.commerce,
-            currency: phpData.currency,
-            amount: Math.ceil(phpData.total),
-            culqiclient: 'prestashop',
-            culqiclientversion: phpData.psversion,
-            culqipluginversion: phpData.CULQI_PLUGIN_VERSION,
-        });
+        getSettings();
         orderid = 'ungenereted';
         $('#buyButton').removeAttr('disabled');
         Culqi.open();
