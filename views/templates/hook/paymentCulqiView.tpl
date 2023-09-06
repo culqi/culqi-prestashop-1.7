@@ -7,6 +7,8 @@
 	.culqi-payment-logos {
 		max-width: 300px;
         width: 98%;
+        display: none;
+        height: 24px;
 	}
     .custom_btn_onepage_culqi {
         margin-top: 6.4px;
@@ -21,12 +23,38 @@
         opacity: 0.8;
         background-color: #005cb9;
     }
+    .culqi-img-cards {
+        position: absolute;
+        right: 30px;
+    }
+    .culqi-logo {
+        height: 20px;
+    }
+    .culqi-checkout-text {
+        color: #000;
+        padding: 8px;
+        text-align: left;
+        font-size: 12px;
+        margin-bottom: 0;
+    }
+    #onepagecheckoutps .culqi-payment-logos {
+        display: inline;
+    }
+    body#checkout .additional-information {
+        margin-top: 8px !important;
+    }
+    @media only screen and (max-width: 480px) {
+        .culqi-img-cards {
+            height: 20px;
+        }
+    }
 </style>
 
 <div class="row culqi_payment">
     <div class="">
         <div class="div-culqi-center">
-			<img class="culqi-payment-logos" src="/modules/culqi/logo_cards.png" alt="" />
+			<img class="culqi-payment-logos" src="/modules/culqi/cards.svg" alt="" />
+            <p class="culqi-checkout-text">Acepta pagos con tarjetas de <strong>débito y crédito; Yape, Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas).</p>
 		 </div>
 		<br>
 		<div class="row div-culqi-center">

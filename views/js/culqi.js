@@ -259,6 +259,28 @@ $(document).ready(function () {
     });
 });
 
+function getSettings(order = false) {
+    let args_settings = {
+        title: phpData.commerce,
+        currency: phpData.currency,
+        amount: Math.ceil(phpData.total),
+        culqiclient: 'prestashop',
+        culqiclientversion: phpData.psversion,
+        culqipluginversion: phpData.CULQI_PLUGIN_VERSION
+    };
+
+    if(order) {
+        args_settings.order = order;
+    }
+
+    if(phpData.rsa_id && phpData.rsa_pk) {
+        args_settings.xculqirsaid = phpData.rsa_id;
+        args_settings.rsapublickey = phpData.rsa_pk;
+    }
+
+    Culqi.settings(args_settings);
+}
+
 function generateOrder(e, device) {
     window.device = device;
     /*if($("#" + name).length == 0) {
@@ -272,15 +294,7 @@ function generateOrder(e, device) {
             dataType: 'json',
             success: function (response) {
                 console.log('response:::', response);
-                Culqi.settings({
-                    title: phpData.commerce,
-                    currency: phpData.currency,
-                    amount: Math.ceil(phpData.total),
-                    order: response,
-                    culqiclient: 'prestashop',
-                    culqiclientversion: phpData.psversion,
-                    culqipluginversion: phpData.CULQI_PLUGIN_VERSION,
-                });
+                getSettings(response);
                 orderid = response;
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
@@ -291,14 +305,7 @@ function generateOrder(e, device) {
             error: function (error) {
                 console.log('error:::', error);
                 $('#showresult').show();
-                Culqi.settings({
-                    title: phpData.commerce,
-                    currency: phpData.currency,
-                    amount: Math.ceil(phpData.total),
-                    culqiclient: 'prestashop',
-                    culqiclientversion: phpData.psversion,
-                    culqipluginversion: phpData.CULQI_PLUGIN_VERSION,
-                });
+                getSettings();
                 orderid = 'ungenereted';
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
@@ -309,14 +316,7 @@ function generateOrder(e, device) {
         });
     } else {
         $('#showresult').show();
-        Culqi.settings({
-            title: phpData.commerce,
-            currency: phpData.currency,
-            amount: Math.ceil(phpData.total),
-            culqiclient: 'prestashop',
-            culqiclientversion: phpData.psversion,
-            culqipluginversion: phpData.CULQI_PLUGIN_VERSION,
-        });
+        getSettings();
         orderid = 'ungenereted';
         $('#buyButton').removeAttr('disabled');
         Culqi.open();
@@ -490,3 +490,18 @@ window.culqi = culqi;
 function run_waitMe() {
     jQuery('body').append('<div id="loadingloginculqi" style="position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; top: 0; text-align: center; justify-content: center; align-content: center; flex-direction: column; color: white; font-size: 14px; display:table-cell; vertical-align:middle;"><div style="position: absolute; width: 100%; top: 50%">Cargando <img style="display: inline-block" width="14" src="https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg" /></div></div>');
 }
+
+//
+
+$(document).ready(function() {
+    // Add class to radio buttons
+    $('input[name="payment-option"]').each(function() {
+        var container = $(this).closest('.payment-option');
+        var paymentText = container.find('label').find('span');
+        if(paymentText.text() == 'Culqi') {
+            paymentText.hide();
+            paymentText.next().addClass('culqi-logo');
+            paymentText.next().after('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" />');
+        }
+    });
+});

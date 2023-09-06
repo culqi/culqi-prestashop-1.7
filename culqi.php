@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.0.5');
+define('CULQI_PLUGIN_VERSION', '3.0.6');
 
 define('URLAPI_INTEG', 'https://integ-panel.culqi.com');
 define('URLAPI_PROD', 'https://panel.culqi.com');
@@ -85,7 +85,9 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_USERNAME', '') &&
             Configuration::updateValue('CULQI_PASSWORD', '') &&
             Configuration::updateValue('CULQI_URL_LOGO', '') &&
-            Configuration::updateValue('CULQI_COLOR_PALETTE', '')
+            Configuration::updateValue('CULQI_COLOR_PALETTE', '') && 
+            Configuration::updateValue('CULQI_RSA_ID', '') && 
+            Configuration::updateValue('CULQI_RSA_PK', '')
         );
     }
 
@@ -219,7 +221,8 @@ class Culqi extends PaymentModule
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
         if ($this->getConfigFieldsValues()['CULQI_ENABLED'] == 'yes') {
             $newOption->setModuleName($this->name)
-                ->setCallToActionText($this->trans('Pagar con Culqi', array(), 'culqi'))
+                ->setCallToActionText($this->trans('Culqi', array(), 'culqi'))
+                ->setLogo($this->_path.'/culqi-logo.svg')
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
                 ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));;
             $payment_options = [
@@ -232,7 +235,6 @@ class Culqi extends PaymentModule
         }
 
         return false;
-
 
     }
 
@@ -308,6 +310,8 @@ class Culqi extends PaymentModule
             "agente" => Configuration::get('CULQI_METHODS_AGENTS') == 'yes' ? 'true' : 'false',
             "cuetealo" => Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false',
             "url_logo" => Configuration::get('CULQI_URL_LOGO'),
+            "rsa_id" => Configuration::get('CULQI_RSA_ID'),
+            "rsa_pk" => Configuration::get('CULQI_RSA_PK'),
             "color_pallete" => $color_arr,
             "currency" => $this->context->currency->iso_code,
             'commerce' => Configuration::get('PS_SHOP_NAME'),
@@ -388,6 +392,8 @@ class Culqi extends PaymentModule
             || !Configuration::deleteByName('CULQI_PASSWORD')
             || !Configuration::deleteByName('CULQI_URL_LOGO')
             || !Configuration::deleteByName('CULQI_COLOR_PALETTE')
+            || !Configuration::deleteByName('CULQI_RSA_ID')
+            || !Configuration::deleteByName('CULQI_RSA_PK')
             || !$this->uninstallStates())
             return false;
         return true;
@@ -597,6 +603,8 @@ class Culqi extends PaymentModule
             'CULQI_USERNAME' =>$username,
             'CULQI_PASSWORD' =>$password,
             'CULQI_URL_LOGO' => Tools::getValue('CULQI_URL_LOGO', Configuration::get('CULQI_URL_LOGO')),
+            'CULQI_RSA_ID' => Tools::getValue('CULQI_RSA_ID', Configuration::get('CULQI_RSA_ID')),
+            'CULQI_RSA_PK' => Tools::getValue('CULQI_RSA_PK', Configuration::get('CULQI_RSA_PK')),
             'CULQI_COLOR_PALETTE' => Tools::getValue('CULQI_COLOR_PALETTE', Configuration::get('CULQI_COLOR_PALETTE')),
             'CULQI_COLOR_PALETTEID' => str_replace('#', '', Tools::getValue('CULQI_COLOR_PALETTE', Configuration::get('CULQI_COLOR_PALETTE'))),
             'CULQI_CHECKED_INTEG' => $checked_integ,
@@ -640,6 +648,8 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_PASSWORD', Tools::getValue('CULQI_PASSWORD'));
             Configuration::updateValue('CULQI_URL_LOGO', Tools::getValue('CULQI_URL_LOGO'));
             Configuration::updateValue('CULQI_COLOR_PALETTE', Tools::getValue('CULQI_COLOR_PALETTE'));
+            Configuration::updateValue('CULQI_RSA_ID', Tools::getValue('CULQI_RSA_ID'));
+            Configuration::updateValue('CULQI_RSA_PK', Tools::getValue('CULQI_RSA_PK'));
         }
         $this->_html .= $this->displayConfirmation($this->l('Se actualizaron las configuraciones'));
     }

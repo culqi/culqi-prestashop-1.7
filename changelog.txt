@@ -1,3 +1,6 @@
+2023-09-01 - version 3.0.6
+Fix: Add RSA encrypt
+
 2023-07-24 - version 3.0.5
 Fix: js load control
 Fix: Correction of culqipluginversion parameter
