@@ -587,7 +587,15 @@ $(document).ready(function() {
             if(agente || bancaMovil || billetera || cuotealo)
             {
                 imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/pagoefectivo.svg" style="margin-right: 10px;" />');
-                mensaje = mensaje + "<strong>, Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas)";
+                if(tarjeta == false && yape == false)
+                {
+                    mensaje = mensaje + "<strong>Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas)";
+                }
+                else
+                {
+                    mensaje = mensaje + "<strong>, Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas)";
+                }
+                
             }           
             
             parrafo.innerHTML = mensaje;
