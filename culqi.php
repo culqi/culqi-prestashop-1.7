@@ -122,6 +122,12 @@ class Culqi extends PaymentModule
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
 
+            $this->context->controller->registerJavascript(
+                'sonic',
+                $this->_path.'views/js/mc-sonic.min.js?_='.time(),
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
+            );
+
             return $jsCode;
         }
     }
@@ -215,27 +221,31 @@ class Culqi extends PaymentModule
         if (!$this->checkCurrency($params['cart'])) {
             return;
         }
-
         $newOption = new PaymentOption();
-
+        $config = $this->getConfigFieldsValues();
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
         if ($this->getConfigFieldsValues()['CULQI_ENABLED'] == 'yes') {
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($this->trans('Culqi', array(), 'culqi'))
                 ->setLogo($this->_path.'/culqi-logo.svg')
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));;
+                ->setAdditionalInformation($this->context->smarty->assign(array(
+                    'status_methods_tarjeta_enabled' => $config['CULQI_METHODS_TARJETA'] == 'yes',
+                    'status_methods_bancamovil_enabled' => $config['CULQI_METHODS_BANCAMOVIL'] == 'yes',
+                    'status_methods_yape_enabled' => $config['CULQI_METHODS_YAPE'] == 'yes',
+                    'status_methods_agents_enabled' => $config['CULQI_METHODS_AGENTS'] == 'yes',
+                    'status_methods_wallets_enabled' => $config['CULQI_METHODS_WALLETS'] == 'yes',
+                    'status_methods_quotebcp_enabled' => $config['CULQI_METHODS_QUOTEBCP'] == 'yes'
+                )))
+                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));
             $payment_options = [
                 $newOption,
             ];
-
             return $payment_options;
         } else {
             return false;
         }
-
         return false;
-
     }
 
     public function checkCurrency($cart)
@@ -323,6 +333,23 @@ class Culqi extends PaymentModule
             'postpaymentpending_url' => $this->context->link->getModuleLink('culqi', 'postpaymentpending', []),
             'registersale_url' => $this->context->link->getModuleLink('culqi', 'registersale', [])
         );
+
+
+        $tarjeta = Configuration::get('CULQI_METHODS_TARJETA') == 'yes' ? 'true' : 'false';       
+        $yape = Configuration::get('CULQI_METHODS_TARJETA') == 'yes' ? 'true' : 'false';   
+        $billetera = Configuration::get('CULQI_METHODS_WALLETS') == 'yes' ? 'true' : 'false';
+        $bancaMovil = Configuration::get('CULQI_METHODS_BANCAMOVIL') == 'yes' ? 'true' : 'false';
+        $agente = Configuration::get('CULQI_METHODS_AGENTS') == 'yes' ? 'true' : 'false';
+        $cuetealo = Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false';
+
+        echo '<script>';
+        echo 'document.cookie = "tarjeta=' . $tarjeta . '";';
+        echo 'document.cookie = "yape=' . $yape . '";';
+        echo 'document.cookie = "billetera=' . $billetera . '";';
+        echo 'document.cookie = "bancaMovil=' . $bancaMovil . '";';
+        echo 'document.cookie = "agente=' . $agente . '";';
+        echo 'document.cookie = "cuetealo=' . $cuetealo . '";';
+        echo '</script>';
 
         if($is_checkout) {
             return $checkout_data;
