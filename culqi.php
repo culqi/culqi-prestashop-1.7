@@ -334,23 +334,6 @@ class Culqi extends PaymentModule
             'registersale_url' => $this->context->link->getModuleLink('culqi', 'registersale', [])
         );
 
-
-        $tarjeta = Configuration::get('CULQI_METHODS_TARJETA') == 'yes' ? 'true' : 'false';       
-        $yape = Configuration::get('CULQI_METHODS_TARJETA') == 'yes' ? 'true' : 'false';   
-        $billetera = Configuration::get('CULQI_METHODS_WALLETS') == 'yes' ? 'true' : 'false';
-        $bancaMovil = Configuration::get('CULQI_METHODS_BANCAMOVIL') == 'yes' ? 'true' : 'false';
-        $agente = Configuration::get('CULQI_METHODS_AGENTS') == 'yes' ? 'true' : 'false';
-        $cuetealo = Configuration::get('CULQI_METHODS_QUOTEBCP') == 'yes' ? 'true' : 'false';
-
-        echo '<script>';
-        echo 'document.cookie = "tarjeta=' . $tarjeta . '";';
-        echo 'document.cookie = "yape=' . $yape . '";';
-        echo 'document.cookie = "billetera=' . $billetera . '";';
-        echo 'document.cookie = "bancaMovil=' . $bancaMovil . '";';
-        echo 'document.cookie = "agente=' . $agente . '";';
-        echo 'document.cookie = "cuetealo=' . $cuetealo . '";';
-        echo '</script>';
-
         if($is_checkout) {
             return $checkout_data;
         }

@@ -576,23 +576,69 @@ $(document).ready(function() {
             // Agregar las imágenes SVG al contenedor con margen entre ellas
             if(tarjeta)
             {
-                imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 70px;" />');
-                mensaje = mensaje + "tarjetas de <strong>débito y crédito;</strong> ";
+                if(tarjeta && yape && (agente || bancaMovil || billetera ||cuotealo)){
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 70px;" />');
+                    mensaje = mensaje + "tarjetas de <strong>débito y crédito;</strong> ";
+                }
+
+                else if(tarjeta && yape){
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 40px;" />');
+                    mensaje = mensaje + "tarjetas de <strong>débito y crédito</strong> ";
+                }
+                else if(tarjeta && (agente || bancaMovil || billetera || cuotealo)){
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 40px;" />');
+                    mensaje = mensaje + "tarjetas de <strong>débito y crédito</strong> ";
+                }
+                else if(!agente || !bancaMovil || !billetera ||!cuotealo && !yape)
+                {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 10px;" />');
+                    mensaje = mensaje + "tarjetas de <strong>débito y crédito</strong> ";
+                }
+                else if(!yape)
+                {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 40px;" />');
+                    mensaje = mensaje + "tarjetas de <strong>débito y crédito</strong> ";
+                }              
+                else
+                {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" style="margin-right: 70px;" />');
+                    mensaje = mensaje + "tarjetas de <strong>débito y crédito</strong> ";
+                }
+              
             }
             if(yape)
             {
-                imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/yape.svg" style="margin-right: 40px;" />');
-                mensaje = mensaje + "<strong>Yape</strong>";
+                if(!tarjeta && (!agente || !bancaMovil || !billetera || !cuotealo))
+                {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/yape.svg" style="margin-right: 10px;" />');
+                    mensaje = mensaje + "<strong>Yape</strong>";
+                }
+                else if(!agente || !bancaMovil || !billetera || !cuotealo){
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/yape.svg" style="margin-right: 10px;" />');
+                    mensaje = mensaje + "<strong>Yape</strong>";
+                }
+                else
+                {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/yape.svg" style="margin-right: 40px;" />');
+                    mensaje = mensaje + "<strong>Yape</strong>";
+                }                
+                
             }
             if(agente || bancaMovil || billetera || cuotealo)
             {
-                imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/pagoefectivo.svg" style="margin-right: 10px;" />');
+                
                 if(tarjeta == false && yape == false)
                 {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/pagoefectivo.svg" style="margin-right: 10px;" />');
+                    mensaje = mensaje + "<strong>Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas)";
+                }
+                else if(yape && (agente || bancaMovil || billetera || cuotealo) ){
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/pagoefectivo.svg" style="margin-right: 40px;" />');
                     mensaje = mensaje + "<strong>Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas)";
                 }
                 else
                 {
+                    imageContainer.append('<img class="culqi-img-cards" src="/modules/culqi/pagoefectivo.svg" style="margin-right: 10px;" />');
                     mensaje = mensaje + "<strong>, Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas)";
                 }
                 
