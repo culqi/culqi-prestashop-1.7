@@ -164,28 +164,7 @@ window.addEventListener("message", async function (event) {
 
                         var brand = result['source']['iin']['card_brand'];
                         var url = fnReplace(phpData.postpayment_url);    
-
-                        if(brand.toLowerCase() == "visa")
-                        {                            
-                            $('#loadingloginculqi').remove();
-                            $('#loadingloginculqi').html(`<div style="
-                            width: 20%;
-                            height: 100%;
-                            align-items: center;
-                            justify-content: center;
-                            margin: auto;">
-                            <mc-sonic id="mc-sonic" type="default"  clear-background ></mc-sonic> </div>`);
-                            playSonic();
-                            function playSonic() {
-                                let mc_component = document.getElementById("mc-sonic")
-                                document.addEventListener('sonicCompletion', onCompletion)
-                                mc_component.play()
-                            }
-                            function onCompletion() {
-                                // do your stuff
-                            }
-                           
-                        }
+                        mc_sonic(brand.toLowerCase());
                       
                         console.log("Aca deberia ir la imagen de mastercard: " + result['source']['iin']['card_brand']);
                         setTimeout(() => {
@@ -392,6 +371,29 @@ function redirect() {
 
 }
 
+function mc_sonic(brand){
+    if(brand.toLowerCase() == "visa")
+    {  
+        $('#loadingloginculqi').remove();
+        $('#loadingloginculqi').html(`<div style="
+        width: 20%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        margin: auto;">
+        <mc-sonic id="mc-sonic" type="default"  clear-background ></mc-sonic> </div>`);
+        playSonic();
+        function playSonic() {
+            let mc_component = document.getElementById("mc-sonic")
+            document.addEventListener('sonicCompletion', onCompletion)
+            mc_component.play()
+        }
+        function onCompletion() {
+            // do your stuff
+        }
+    }
+}
+
 // Process to Pay
 function culqi() {
 
@@ -492,27 +494,8 @@ function culqi() {
                         showResult('green', result['user_message']);
 
                         var url = fnReplace(phpData.postpayment_url);
-                        if(brand.toLowerCase() == "visa")
-                        {                            
-                            $('#loadingloginculqi').remove();
-                            $('#loadingloginculqi').html(`<div style="
-                            width: 20%;
-                            height: 100%;
-                            align-items: center;
-                            justify-content: center;
-                            margin: auto;">
-                            <mc-sonic id="mc-sonic" type="default"  clear-background ></mc-sonic> </div>`);
-                            playSonic();
-                            function playSonic() {
-                                let mc_component = document.getElementById("mc-sonic")
-                                document.addEventListener('sonicCompletion', onCompletion)
-                                mc_component.play()
-                            }
-                            function onCompletion() {
-                                // do your stuff
-                            }
-                           
-                        }
+                        mc_sonic(brand.toLowerCase());
+                        
                         console.log("Aca deberia ir la imagen de mastercard: " + result['source']['iin']['card_brand']);
                         setTimeout(() => {
                             location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
