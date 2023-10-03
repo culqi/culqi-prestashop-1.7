@@ -229,14 +229,6 @@ class Culqi extends PaymentModule
                 ->setCallToActionText($this->trans('Culqi', array(), 'culqi'))
                 ->setLogo($this->_path.'/culqi-logo.svg')
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                ->setAdditionalInformation($this->context->smarty->assign(array(
-                    'status_methods_tarjeta_enabled' => $config['CULQI_METHODS_TARJETA'] == 'yes',
-                    'status_methods_bancamovil_enabled' => $config['CULQI_METHODS_BANCAMOVIL'] == 'yes',
-                    'status_methods_yape_enabled' => $config['CULQI_METHODS_YAPE'] == 'yes',
-                    'status_methods_agents_enabled' => $config['CULQI_METHODS_AGENTS'] == 'yes',
-                    'status_methods_wallets_enabled' => $config['CULQI_METHODS_WALLETS'] == 'yes',
-                    'status_methods_quotebcp_enabled' => $config['CULQI_METHODS_QUOTEBCP'] == 'yes'
-                )))
                 ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));
             $payment_options = [
                 $newOption,
