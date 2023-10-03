@@ -162,7 +162,6 @@ window.addEventListener("message", async function (event) {
                         var brand = result['source']['iin']['card_brand']
                         showResult('green', result['user_message']);
 
-                        var brand = result['source']['iin']['card_brand'];
                         var url = fnReplace(phpData.postpayment_url);
                         var success_url = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
                         
@@ -490,7 +489,7 @@ function culqi() {
                     }
                     console.log('result.object:::', result.object);
                     if (result.object === 'charge') {
-                        console.log("Dentro al charge");
+                        console.log("Entro al charge");
                         run_waitMe();
                         var card_number = result['source']['card_number'];
                         var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];

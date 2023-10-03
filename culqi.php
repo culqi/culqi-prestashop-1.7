@@ -222,7 +222,6 @@ class Culqi extends PaymentModule
             return;
         }
         $newOption = new PaymentOption();
-        $config = $this->getConfigFieldsValues();
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
         if ($this->getConfigFieldsValues()['CULQI_ENABLED'] == 'yes') {
             $newOption->setModuleName($this->name)
