@@ -189,7 +189,7 @@ window.addEventListener("message", async function (event) {
                     e.preventDefault();
                 },
                 beforeSend: function () {
-                    run_waitMe();
+                    //run_waitMe();
                 }
             });
         }
@@ -490,7 +490,7 @@ function culqi() {
                     console.log('result.object:::', result.object);
                     if (result.object === 'charge') {
                         console.log("Entro al charge");
-                        run_waitMe();
+                        //run_waitMe();
                         var card_number = result['source']['card_number'];
                         var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
                         var chargeid = result['id'];
