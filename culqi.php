@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.0.6');
+define('CULQI_PLUGIN_VERSION', '3.0.7');
 
 define('URLAPI_INTEG', 'https://integ-panel.culqi.com');
 define('URLAPI_PROD', 'https://panel.culqi.com');
@@ -122,6 +122,12 @@ class Culqi extends PaymentModule
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
 
+            $this->context->controller->registerJavascript(
+                'sonic',
+                $this->_path.'views/js/mc-sonic.min.js?_='.time(),
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
+            );
+
             return $jsCode;
         }
     }
@@ -215,27 +221,22 @@ class Culqi extends PaymentModule
         if (!$this->checkCurrency($params['cart'])) {
             return;
         }
-
         $newOption = new PaymentOption();
-
         //var_dump($this->getCulqiInfoCheckout()); exit(1);
         if ($this->getConfigFieldsValues()['CULQI_ENABLED'] == 'yes') {
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($this->trans('Culqi', array(), 'culqi'))
                 ->setLogo($this->_path.'/culqi-logo.svg')
                 ->setAction($this->context->link->getModuleLink($this->name, 'postpayment', array(), true))
-                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));;
+                ->setAdditionalInformation($this->context->smarty->fetch('module:culqi/views/templates/hook/paymentCulqiView.tpl'));
             $payment_options = [
                 $newOption,
             ];
-
             return $payment_options;
         } else {
             return false;
         }
-
         return false;
-
     }
 
     public function checkCurrency($cart)

@@ -50,10 +50,11 @@
     }
 </style>
 
+
 <div class="row culqi_payment">
     <div class="">
         <div class="div-culqi-center">
-			<img class="culqi-payment-logos" src="/modules/culqi/cards.svg" alt="" />
+			<img class="culqi-payment-logos" alt="" src ="/modules/culqi/cards.svg" />
             <p class="culqi-checkout-text">Acepta pagos con tarjetas de <strong>débito y crédito; Yape, Cuotéalo BCP y PagoEfectivo</strong> (billeteras móviles, agentes y bodegas).</p>
 		 </div>
 		<br>

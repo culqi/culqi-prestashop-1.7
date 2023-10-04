@@ -138,7 +138,7 @@ window.addEventListener("message", async function (event) {
                 type: "POST",
                 dataType: 'json',
                 success: function (data, textStatus, xhr) {
-                    console.log('data:::', data);
+                    console.log('data::::::::::::', data);
                     var result = "";
 
                     if (data.constructor == String) {
@@ -151,10 +151,20 @@ window.addEventListener("message", async function (event) {
                         var card_number = result['source']['card_number'];
                         var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
                         var chargeid = result['id'];
+                        var brand = result['source']['iin']['card_brand']
                         showResult('green', result['user_message']);
 
                         var url = fnReplace(phpData.postpayment_url);
-                        location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
+                        var success_url = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
+                        
+                        console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
+
+                        if (brand.toUpperCase() == "MASTERCARD"){
+                            fn_mc_sonic();
+                            playSonic(success_url);
+                        }else{
+                            location.href = success_url;
+                        }
                     }
                     if (result.object === 'error') {
                         $("#loadingloginculqi").remove();
@@ -171,7 +181,7 @@ window.addEventListener("message", async function (event) {
                     e.preventDefault();
                 },
                 beforeSend: function () {
-                    run_waitMe();
+                    //run_waitMe();
                 }
             });
         }
@@ -356,6 +366,29 @@ function redirect() {
 
 }
 
+function fn_mc_sonic(){  
+    //$('#loadingloginculqi').remove();
+    $('#loadingloginculqi').html(`<div style="
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: auto;">
+    <mc-sonic id="mc-sonic" style="height: 40%;" type="default"  clear-background ></mc-sonic> </div>`);
+}
+
+function playSonic(success_url) {
+    let mc_component = document.getElementById("mc-sonic")
+    document.addEventListener('sonicCompletion', onCompletion(success_url))
+    mc_component.play()
+}
+function onCompletion(success_url) {
+    setTimeout(() => {
+        location.href = success_url;
+    }, 2000);
+}
+
 // Process to Pay
 function culqi() {
 
@@ -423,7 +456,7 @@ function culqi() {
             type: "POST",
             dataType: 'json',
             success: function (data, textStatus, xhr) {
-                console.log('data:::', data);
+                console.log('data:::modificada', data);
                 if (data.action_code == 'REVIEW') {
                     $("#loadingloginculqi").remove();
                     Culqi3DS.settings = {
@@ -448,16 +481,25 @@ function culqi() {
                     }
                     console.log('result.object:::', result.object);
                     if (result.object === 'charge') {
-                        run_waitMe();
+                        console.log("Entro al charge");
+                        //run_waitMe();
                         var card_number = result['source']['card_number'];
                         var card_brand = result['source']['iin']['card_brand'] + ' ' + result['source']['iin']['card_category'] + ' ' + result['source']['iin']['card_type'];
                         var chargeid = result['id'];
+                        var brand = result['source']['iin']['card_brand']
                         showResult('green', result['user_message']);
 
                         var url = fnReplace(phpData.postpayment_url);
-                        location.href = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
+                        var success_url = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
+                        
+                        console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
-
+                        if (brand.toUpperCase() == "MASTERCARD"){
+                            fn_mc_sonic();
+                            playSonic(success_url);
+                        }else{
+                            location.href = success_url;
+                        }
                     }
                     if (result.object === 'error') {
                         $("#loadingloginculqi").remove();
@@ -497,11 +539,49 @@ $(document).ready(function() {
     // Add class to radio buttons
     $('input[name="payment-option"]').each(function() {
         var container = $(this).closest('.payment-option');
+        var labelculqi = container.find('label');
         var paymentText = container.find('label').find('span');
+        let tarjeta = (phpData.tarjeta === "true");
+        let bancaMovil = (phpData.banca_movil === "true");
+        let yape = (phpData.yape === "true");
+        let agente = (phpData.agente === "true");
+        let billetera = (phpData.billetera === "true");
+        let cuotealo = (phpData.cuetealo === "true");
+        var txt_general = 'Acepta pagos con ';
+        var txt = '';
+        var txtPE = '';
         if(paymentText.text() == 'Culqi') {
+            container.css({'display':'inline-flex','justify-content': 'space-between','width' : ' 100%'});
+            labelculqi.css({'display':'inline-flex','justify-content': 'space-between','width' : ' 100%'});
             paymentText.hide();
             paymentText.next().addClass('culqi-logo');
-            paymentText.next().after('<img class="culqi-img-cards" src="/modules/culqi/cards.svg" />');
+            var parrafo = document.querySelector('.culqi-checkout-text');
+            var logos = '';
+            if(tarjeta){
+                logos = logos + '<img  style="margin-right: 5px" src="/modules/culqi/cards.svg" />';
+                txt = txt + 'tarjetas de débito y crédito';
+            }
+            if(yape){
+                logos = logos + '<img style="margin-right: 5px" src="/modules/culqi/yape.svg" />';
+                if(tarjeta) {
+                    txt = txt + ', ';
+                }
+                txt = txt + 'Yape';
+            }
+            if(agente || bancaMovil || billetera || cuotealo){
+                logos = logos + '<img  style="margin-right: 5px" src="/modules/culqi/pagoefectivo.svg" />';
+                if(tarjeta || yape) {
+                    txt = txt + ', ';
+                }
+                txt = txt + 'Cuotéalo BCP y PagoEfectivo';
+                txtPE = ' (billeteras móviles, agentes y bodegas)';
+            }
+            txt = '<strong>' + txt +'</strong>';
+            txt = txt_general + txt + txtPE;
+            txt = txt + '.';
+
+            paymentText.next().after('<span id = "logos_marcas">' + logos + '</span>');
+            parrafo.innerHTML = txt;
         }
     });
 });
