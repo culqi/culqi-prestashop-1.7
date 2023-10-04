@@ -107,15 +107,7 @@ $(document).ready(function () {
 Culqi3DS.options = {
     closeModalAction: () => window.location.reload(true), // ACTION CUANDO SE CIERRA EL MODAL
 };
-function playSonic() {
-    let mc_component = document.getElementById("mc-sonic");
-    document.addEventListener('sonicCompletion', onCompletion);
-    mc_component.play();
-}
 
-function onCompletion() {
-    // Haz lo que necesites hacer cuando se complete la animación
-}
 window.addEventListener("message", async function (event) {
 
     if (event.origin === window.location.origin) {
