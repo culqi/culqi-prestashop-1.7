@@ -367,7 +367,7 @@ function redirect() {
 }
 
 function fn_mc_sonic(){  
-    $('#loadingloginculqi').remove();
+    //$('#loadingloginculqi').remove();
     $('#loadingloginculqi').html(`<div style="
     width: 100%;
     height: 100%;
