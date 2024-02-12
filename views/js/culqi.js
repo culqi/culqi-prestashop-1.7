@@ -122,7 +122,7 @@ window.addEventListener("message", async function (event) {
             $(document).ajaxComplete(function () {
             });
 
-            var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+            var installments = (Culqi.token.metadata == undefined || Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
 
             $.ajax({
                 url: fnReplace(phpData.chargeajax_url),
@@ -442,7 +442,7 @@ function culqi() {
         $(document).ajaxComplete(function () {
         });
 
-        var installments = (Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
+        var installments = (Culqi.token.metadata == undefined || Culqi.token.metadata.installments == undefined) ? 0 : Culqi.token.metadata.installments;
         $.ajax({
             url: fnReplace(phpData.chargeajax_url),
             data: {
