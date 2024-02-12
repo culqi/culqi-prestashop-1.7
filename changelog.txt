@@ -1,3 +1,6 @@
+2023-12-02 - version 3.0.8
+Fix: Fix installments Yape
+
 2023-10-03 - version 3.0.7
 Fix: Add logo mastercard
 
