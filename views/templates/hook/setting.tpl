@@ -2787,8 +2787,10 @@
 
         function sendWebhook() {
             var urlwebhook = "{$fields_value.URLAPI_WEBHOOK_INTEG|escape:'htmlall':'UTF-8'}";
+            var env = 'test';
             if (jQuery('#produccion').is(':checked')) {
                 urlwebhook = "{$fields_value.URLAPI_WEBHOOK_PROD|escape:'htmlall':'UTF-8'}";
+                env = 'live';
             }
             if (jQuery('#CULQI_TOKENLOGIN').val().length > 0) {
                 const settings = {
@@ -2801,7 +2803,8 @@
                     headers: {
                         'Authorization': 'Bearer ' + jQuery('#CULQI_TOKENLOGIN').val(),
                         "Content-Type": "application/json",
-                        "Accept": "*/*"
+                        "Accept": "*/*",
+                        "x-culqi-env": env
                     },
                     data: {
                         "merchant": jQuery('#CULQI_LLAVE_PUBLICA').val(),
@@ -2826,7 +2829,8 @@
                             headers: {
                                 'Authorization': 'Bearer ' + jQuery('#CULQI_TOKENLOGIN').val(),
                                 "Content-Type": "application/json",
-                                "Accept": "*/*"
+                                "Accept": "*/*",
+                                "x-culqi-env": env
                             },
                             data: JSON.stringify({
                                 "merchant": jQuery('#CULQI_LLAVE_PUBLICA').val(),
@@ -2856,8 +2860,10 @@
             jQuery('#errorlogin').css('display', 'none');
 
             var urllogin = "{$fields_value.URLAPI_LOGIN_INTEG|escape:'htmlall':'UTF-8'}";
+            var env = 'test';
             if (jQuery('#produccion').is(':checked')) {
                 urllogin = "{$fields_value.URLAPI_LOGIN_PROD|escape:'htmlall':'UTF-8'}";
+                env = 'live';
             }
             const settings = {
                 url: urllogin,
@@ -2865,6 +2871,7 @@
                 timeout: 0,
                 headers: {
                     "Content-Type": "application/json",
+                    "x-culqi-env": env
                 },
                 data: JSON.stringify(data),
             };
@@ -2891,8 +2898,10 @@
 
         const culqiWoGetMerchants = (token) => {
             var urlmerchant = "{$fields_value.URLAPI_MERCHANT_INTEG|escape:'htmlall':'UTF-8'}";
+            var env = 'test';
             if (jQuery('#produccion').is(':checked')) {
                 urlmerchant = "{$fields_value.URLAPI_MERCHANT_PROD|escape:'htmlall':'UTF-8'}";
+                env = 'live';
             }
             const settings = {
                 url: urlmerchant,
@@ -2901,6 +2910,7 @@
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                     "Authorization": "Bearer " + token,
+                    "x-culqi-env": env,
                 },
             };
 
@@ -2919,8 +2929,10 @@
         const getMerchant = (id) => {
             run_waitMe();
             var urlmerchantsingle = "{$fields_value.URLAPI_MERCHANTSINGLE_INTEG|escape:'htmlall':'UTF-8'}";
+            var env = 'test';
             if (jQuery('#produccion').is(':checked')) {
                 urlmerchantsingle = "{$fields_value.URLAPI_MERCHANTSINGLE_PROD|escape:'htmlall':'UTF-8'}";
+                env = 'live';
             }
             const settings = {
                 url: urlmerchantsingle + id,
@@ -2930,6 +2942,7 @@
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                     "Authorization": "Bearer " + window.culqi_token,
+                    "x-culqi-env": env,
                 },
             };
 
