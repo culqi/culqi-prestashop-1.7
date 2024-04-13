@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.0.7');
+define('CULQI_PLUGIN_VERSION', '3.0.9');
 
 define('URLAPI_INTEG', 'https://ag-plugins.culqi.com');
 define('URLAPI_PROD', 'https://ag-plugins.culqi.com');
