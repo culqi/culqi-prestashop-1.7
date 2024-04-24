@@ -1,3 +1,6 @@
+2024-04-24 - version 3.1.0
+Fix: Migration to checkout custom
+
 2024-04-13 - version 3.0.9
 Fix: Backend plugin integration
 
