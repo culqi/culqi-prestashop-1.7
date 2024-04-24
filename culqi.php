@@ -14,7 +14,7 @@ define('URLAPI_INTEG_3DS', 'https://3ds.culqi.com');
 define('URLAPI_PROD_3DS', 'https://3ds.culqi.com');
 
 define('URLAPI_ORDERCHARGES_INTEG', 'https://api.culqi.com/v2');
-define('URLAPI_CHECKOUT_INTEG', 'https://checkout.culqi.com/js/v4');
+define('URLAPI_CHECKOUT_INTEG', 'https://js.culqi.com/checkout-js');
 
 define('URLAPI_LOGIN_INTEG', URLAPI_INTEG.'/plugins/public/login');
 define('URLAPI_MERCHANT_INTEG', URLAPI_INTEG.'/plugins/public/get_merchants');
@@ -22,7 +22,7 @@ define('URLAPI_MERCHANTSINGLE_INTEG', URLAPI_INTEG.'/plugins/public/get_merchant
 define('URLAPI_WEBHOOK_INTEG', URLAPI_INTEG.'/plugins/public/webhook');
 
 define('URLAPI_ORDERCHARGES_PROD', 'https://api.culqi.com/v2');
-define('URLAPI_CHECKOUT_PROD', 'https://checkout.culqi.com/js/v4');
+define('URLAPI_CHECKOUT_PROD', 'https://js.culqi.com/checkout-js');
 
 define('URLAPI_LOGIN_PROD', URLAPI_PROD.'/plugins/public/login');
 define('URLAPI_MERCHANT_PROD', URLAPI_PROD.'/plugins/public/get_merchants'); 
@@ -113,7 +113,6 @@ class Culqi extends PaymentModule
             );
 
             $data = json_encode($this->getCulqiInfoCheckout(false, true));
-
             $jsCode = "<script>
                 var phpData = {$data};
             </script>";
