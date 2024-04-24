@@ -293,7 +293,7 @@ function setSetting() {
 
 function setClient() {
     const client = {
-        email: undefined
+        email: phpData.email
     };
 
     return client;

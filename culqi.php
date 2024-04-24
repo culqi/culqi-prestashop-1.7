@@ -323,7 +323,8 @@ class Culqi extends PaymentModule
             'chargeajax_url' => $this->context->link->getModuleLink('culqi', 'chargeajax', []),
             'postpayment_url' => $this->context->link->getModuleLink('culqi', 'postpayment', []),
             'postpaymentpending_url' => $this->context->link->getModuleLink('culqi', 'postpaymentpending', []),
-            'registersale_url' => $this->context->link->getModuleLink('culqi', 'registersale', [])
+            'registersale_url' => $this->context->link->getModuleLink('culqi', 'registersale', []),
+            'email'=> $this->context->customer->email
         );
 
         if($is_checkout) {
