@@ -1957,7 +1957,7 @@
                                                     <div class="preview-checkout__banner" id="palette-left">
                                                         <div class="banner-logo">
                                                             <img id="logo"
-                                                                 src="https://culqi-static-files.s3.amazonaws.com/v4/v4-checkout/brand.svg"
+                                                                 src="https://static.culqi.com/v4/v4-checkout/brand.svg"
                                                                  alt="logo">
                                                         </div>
                                                         <div class="banner-title">
@@ -2162,7 +2162,7 @@
 
                                                                 </div>
                                                                 <div class="image">
-                                                                    <img src="https://culqi-static-files.s3.amazonaws.com/v4/v4-checkout/brand.svg"
+                                                                    <img src="https://static.culqi.com/v4/v4-checkout/brand.svg"
                                                                          alt="logo">
                                                                 </div>
                                                             </div>
