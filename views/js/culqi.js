@@ -240,8 +240,6 @@ $(document).ready(function () {
 function setCheckout() {
     const publicKey = setPublicKey();
     const config = setConfig();
-    console.log(publicKey)
-    console.log(config)
     Culqi = new CulqiCheckout(publicKey, config);
     Culqi.culqi = culqi
 }
