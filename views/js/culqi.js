@@ -367,7 +367,7 @@ function generateOrder(e, device) {
             type: "POST",
             dataType: 'json',
             success: function (response) {
-                console.log('response:::', response);
+                console.log('Se genero una orden:::', response);
                 orderid = response;
                 setCheckout();
                 $('#buyButton').removeAttr('disabled');
@@ -377,10 +377,10 @@ function generateOrder(e, device) {
                 e.preventDefault();
             },
             error: function (error) {
-                console.log('error:::', error);
+                console.log('Error al generar orden :::', error);
                 $('#showresult').show();
+                orderid = '';
                 setCheckout();
-                orderid = 'ungenereted';
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
                 Culqi.open();
@@ -390,8 +390,9 @@ function generateOrder(e, device) {
         });
     } else {
         $('#showresult').show();
+        console.log('No se genero orden');
+        orderid = '';
         setCheckout();
-        orderid = 'ungenereted';
         $('#buyButton').removeAttr('disabled');
         Culqi.open();
         $('#showresult').hide();
