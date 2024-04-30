@@ -360,7 +360,7 @@ function generateOrder(e, device) {
     /*if($("#" + name).length == 0) {
         //it doesn't exist
     }*/
-    if (phpData.banca_movil || phpData.agente || phpData.billetera || phpData.cuetealo) {
+    if ((phpData.banca_movil === "true") || (phpData.agente === "true") || (phpData.billetera === "true") || (phpData.cuetealo === "true")) {
         $.ajax({
             url: fnReplace(phpData.generate_order_url),
             data: {},
