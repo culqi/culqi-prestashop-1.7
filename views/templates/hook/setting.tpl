@@ -1904,7 +1904,7 @@
                     <input required="true" type="text" name="CULQI_RSA_ID" id="CULQI_RSA_ID"
                            value="{$fields_value.CULQI_RSA_ID|escape:'htmlall':'UTF-8'}" class="">
                     <span id="errorrsaid" class="form-text text-muted"
-                          style="display: none; color: red; font-size: 0.8rem !important;">Ingrese RSA Id. </span>
+                          style="display: none; color: red; font-size: 0.8rem !important;">Ingrese el RSA Id. </span>
                     <span class="form-text text-muted"> Ingresa tu RSA Id. </span>
                 </div>
             </div>
@@ -1926,7 +1926,7 @@
                 <div class="col-lg-8">
                     <textarea rows="5" required="true" type="text" name="CULQI_RSA_PK" id="CULQI_RSA_PK">{$fields_value.CULQI_RSA_PK|escape:'htmlall':'UTF-8'}</textarea>
                     <span id="errorrsapk" class="form-text text-muted"
-                          style="display: none; color: red; font-size: 0.8rem !important;">Ingresa tu RSA Publickey.</span>
+                          style="display: none; color: red; font-size: 0.8rem !important;">Ingrese el RSA Publickey.</span>
                     <span class="form-text text-muted"> Ingresa tu RSA Publickey. </span>
                 </div>
             </div>
