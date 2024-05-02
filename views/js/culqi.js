@@ -490,7 +490,7 @@ function culqi() {
             if (!Culqi.isOpen) {
                 run_waitMe();
                 clearInterval(id);
-                var orderid = Culqi.order['id'];
+                var orderid = culqi_order_id;
                 var url = fnReplace(phpData.postpaymentpending_url);
                 location.href = url + '?ps_order_id=' + ps_order_id;
             }
