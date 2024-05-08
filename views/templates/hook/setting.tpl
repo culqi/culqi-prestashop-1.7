@@ -2722,7 +2722,18 @@
             jQuery('#errorseckey').css('display', 'none');
             jQuery('#errortimeexp').css('display', 'none');
 
-            if (jQuery('#integracion').is(':checked')) {
+            if (llavepublica.length == 1) {
+                jQuery('#errorpubkey').html('Ingrese su llave pública');
+                jQuery('#errorpubkey').css('display', 'block');
+                hasError = '1';
+            }
+            if (llaveprivada.length == 1) {
+                jQuery('#errorseckey').html('Ingrese su llave privada');
+                jQuery('#errorseckey').css('display', 'block');
+                hasError = '1';
+            }
+
+            if (jQuery('#integracion').is(':checked') && hasError == '0') {
                 if (!(llavepublica.length == 3 && llavepublica[1] == 'test')) {
                     jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de integración');
                     jQuery('#errorpubkey').css('display', 'block');
@@ -2734,7 +2745,7 @@
                     hasError = '1';
                 }
             }
-            if (jQuery('#produccion').is(':checked')) {
+            if (jQuery('#produccion').is(':checked') && hasError == '0') {
                 if (!(llavepublica.length == 3 && llavepublica[1] == 'live')) {
                     jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de producción');
                     jQuery('#errorpubkey').css('display', 'block');
