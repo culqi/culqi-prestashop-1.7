@@ -1904,7 +1904,7 @@
                     <input required="true" type="text" name="CULQI_RSA_ID" id="CULQI_RSA_ID"
                            value="{$fields_value.CULQI_RSA_ID|escape:'htmlall':'UTF-8'}" class="">
                     <span id="errorrsaid" class="form-text text-muted"
-                          style="display: none; color: red; font-size: 0.8rem !important;">RSA Id incorrecto.</span>
+                          style="display: none; color: red; font-size: 0.8rem !important;">Ingrese el RSA Id. </span>
                     <span class="form-text text-muted"> Ingresa tu RSA Id. </span>
                 </div>
             </div>
@@ -1925,8 +1925,8 @@
                 </label>
                 <div class="col-lg-8">
                     <textarea rows="5" required="true" type="text" name="CULQI_RSA_PK" id="CULQI_RSA_PK">{$fields_value.CULQI_RSA_PK|escape:'htmlall':'UTF-8'}</textarea>
-                    <span id="errorrsaid" class="form-text text-muted"
-                          style="display: none; color: red; font-size: 0.8rem !important;">RSA PK incorrecto.</span>
+                    <span id="errorrsapk" class="form-text text-muted"
+                          style="display: none; color: red; font-size: 0.8rem !important;">Ingrese el RSA Publickey.</span>
                     <span class="form-text text-muted"> Ingresa tu RSA Publickey. </span>
                 </div>
             </div>
@@ -1957,7 +1957,7 @@
                                                     <div class="preview-checkout__banner" id="palette-left">
                                                         <div class="banner-logo">
                                                             <img id="logo"
-                                                                 src="https://culqi-static-files.s3.amazonaws.com/v4/v4-checkout/brand.svg"
+                                                                 src="https://static.culqi.com/v4/v4-checkout/brand.svg"
                                                                  alt="logo">
                                                         </div>
                                                         <div class="banner-title">
@@ -2162,7 +2162,7 @@
 
                                                                 </div>
                                                                 <div class="image">
-                                                                    <img src="https://culqi-static-files.s3.amazonaws.com/v4/v4-checkout/brand.svg"
+                                                                    <img src="https://static.culqi.com/v4/v4-checkout/brand.svg"
                                                                          alt="logo">
                                                                 </div>
                                                             </div>
@@ -2722,7 +2722,18 @@
             jQuery('#errorseckey').css('display', 'none');
             jQuery('#errortimeexp').css('display', 'none');
 
-            if (jQuery('#integracion').is(':checked')) {
+            if (llavepublica.length == 1) {
+                jQuery('#errorpubkey').html('Ingrese su llave pública');
+                jQuery('#errorpubkey').css('display', 'block');
+                hasError = '1';
+            }
+            if (llaveprivada.length == 1) {
+                jQuery('#errorseckey').html('Ingrese su llave privada');
+                jQuery('#errorseckey').css('display', 'block');
+                hasError = '1';
+            }
+
+            if (jQuery('#integracion').is(':checked') && hasError == '0') {
                 if (!(llavepublica.length == 3 && llavepublica[1] == 'test')) {
                     jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de integración');
                     jQuery('#errorpubkey').css('display', 'block');
@@ -2734,7 +2745,7 @@
                     hasError = '1';
                 }
             }
-            if (jQuery('#produccion').is(':checked')) {
+            if (jQuery('#produccion').is(':checked') && hasError == '0') {
                 if (!(llavepublica.length == 3 && llavepublica[1] == 'live')) {
                     jQuery('#errorpubkey').html('La llave pública no pertenece al ambiente de producción');
                     jQuery('#errorpubkey').css('display', 'block');
@@ -2757,6 +2768,16 @@
 
             if (!(jQuery('#CULQI_METHODS_TARJETA').is(':checked') || jQuery('#CULQI_METHODS_BANCAMOVIL').is(':checked') || jQuery('#CULQI_METHODS_YAPE').is(':checked') || jQuery('#CULQI_METHODS_AGENTS').is(':checked') || jQuery('#CULQI_METHODS_WALLETS').is(':checked') || jQuery('#CULQI_METHODS_QUOTEBCP').is(':checked'))) {
                 jQuery('#errorpaymentmethod').css('display', 'block');
+                hasError = '1';
+            }
+
+            if (jQuery('#CULQI_RSA_ID').val() === '' && jQuery('#CULQI_RSA_PK').val()){
+                jQuery('#errorrsaid').css('display', 'block');
+                hasError = '1';
+            }
+
+            if (jQuery('#CULQI_RSA_ID').val() && jQuery('#CULQI_RSA_PK').val() === '' ){
+                jQuery('#errorrsapk').css('display', 'block');
                 hasError = '1';
             }
 

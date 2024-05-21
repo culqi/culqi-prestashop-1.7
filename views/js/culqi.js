@@ -24,7 +24,7 @@
 
 /**** ONE PAGE CHECKOOUT COMPATIBILITY ******/
 function onepageCheckoutCulqi(paymentMethod) {
-    if(paymentMethod == "culqi") {
+    if (paymentMethod == "culqi") {
         $("#btn_place_order").attr("data-payment", "culqi");
         $("[data-payment=culqi]").removeAttr("id");
         $("[data-payment=culqi]").addClass("custom_btn_onepage_culqi");
@@ -36,7 +36,7 @@ function onepageCheckoutCulqi(paymentMethod) {
 }
 
 function validateForm() {
-    if(typeof AppOPC != 'undefined') {
+    if (typeof AppOPC != 'undefined') {
         return AppOPC.is_valid_all_form;
     }
 
@@ -47,37 +47,37 @@ function createCustomerCulqiPs(e, value) {
     var invoice_id = '';
     var fields = Review.getFields();
 
-    if (OnePageCheckoutPS.CONFIGS.OPC_ENABLE_INVOICE_ADDRESS && $('div#onepagecheckoutps #checkbox_create_invoice_address').length > 0){
-        if ($('div#onepagecheckoutps #checkbox_create_invoice_address').is(':checked')){
+    if (OnePageCheckoutPS.CONFIGS.OPC_ENABLE_INVOICE_ADDRESS && $('div#onepagecheckoutps #checkbox_create_invoice_address').length > 0) {
+        if ($('div#onepagecheckoutps #checkbox_create_invoice_address').is(':checked')) {
             invoice_id = $('#invoice_id').val();
         }
-    }else{
+    } else {
         invoice_id = $('#invoice_id').val();
     }
     var _extra_data = Review.getFieldsExtra({});
     var _data = $.extend({}, _extra_data, {
-        'url_call'              : prestashop.urls.pages.order + '?checkout=1&rand=' + new Date().getTime(),
-        'is_ajax'               : true,
-        'dataType'              : 'json',
-        'action'                : (OnePageCheckoutPS.IS_LOGGED ? 'placeOrder' : 'createCustomerAjax'),
-        'id_customer'           : (!$.isEmpty(AppOPC.$opc_step_one.find('#customer_id').val()) ? AppOPC.$opc_step_one.find('#customer_id').val() : ''),
-        'id_address_delivery'   : (!$.isEmpty(AppOPC.$opc_step_one.find('#delivery_id').val()) ? AppOPC.$opc_step_one.find('#delivery_id').val() : ''),
-        'id_address_invoice'    : 0,
-        'is_new_customer'       : (AppOPC.$opc_step_one.find('#checkbox_create_account_guest').is(':checked') ? 0 : 1),
-        'fields_opc'            : JSON.stringify(fields),
+        'url_call': prestashop.urls.pages.order + '?checkout=1&rand=' + new Date().getTime(),
+        'is_ajax': true,
+        'dataType': 'json',
+        'action': (OnePageCheckoutPS.IS_LOGGED ? 'placeOrder' : 'createCustomerAjax'),
+        'id_customer': (!$.isEmpty(AppOPC.$opc_step_one.find('#customer_id').val()) ? AppOPC.$opc_step_one.find('#customer_id').val() : ''),
+        'id_address_delivery': (!$.isEmpty(AppOPC.$opc_step_one.find('#delivery_id').val()) ? AppOPC.$opc_step_one.find('#delivery_id').val() : ''),
+        'id_address_invoice': 0,
+        'is_new_customer': (AppOPC.$opc_step_one.find('#checkbox_create_account_guest').is(':checked') ? 0 : 1),
+        'fields_opc': JSON.stringify(fields),
     });
     var _json = {
         data: _data,
-        beforeSend: function() {
+        beforeSend: function () {
             console.log("before send");
         },
-        success: function(data) {
+        success: function (data) {
             console.log("guardado correctamente");
             $('#buyButton').attr('disabled', true);
             $("[data-payment=culqi]").attr('disabled', true);
             generateOrder(e, value);
         },
-        complete: function(){
+        complete: function () {
             console.log("guardado completamente");
         }
     };
@@ -85,22 +85,22 @@ function createCustomerCulqiPs(e, value) {
 }
 
 $(document).ready(function () {
-    var checkDiv = setInterval(function() {
-        const paymentMethodRadio = $('input[type=radio][name=payment-option]');     
+    var checkDiv = setInterval(function () {
+        const paymentMethodRadio = $('input[type=radio][name=payment-option]');
         var btnplaceOrderWidth = $("#btn_place_order").width();
         var btnplaceOrderCustomWidth = $(".custom_btn_onepage_culqi").width();
         var buyButtonWidth = $("#buyButton").width();
-        if( (btnplaceOrderWidth > 0 || btnplaceOrderCustomWidth > 0) && buyButtonWidth > 0) { 
+        if ((btnplaceOrderWidth > 0 || btnplaceOrderCustomWidth > 0) && buyButtonWidth > 0) {
             clearInterval(checkDiv);
             onepageCheckoutCulqi(paymentMethodRadio.filter(":checked").val());
-            $("[data-payment=culqi]").click(function(event) {
-                if(paymentMethodRadio.filter(":checked").val() == "culqi") {
-                    $("#buyButton").trigger( "click" );                             
+            $("[data-payment=culqi]").click(function (event) {
+                if (paymentMethodRadio.filter(":checked").val() == "culqi") {
+                    $("#buyButton").trigger("click");
                 }
             });
         }
-    }, 
-    10);
+    },
+        10);
 });
 
 /**** END *****/
@@ -111,7 +111,7 @@ Culqi3DS.options = {
 window.addEventListener("message", async function (event) {
 
     if (event.origin === window.location.origin) {
-        const {parameters3DS, error} = event.data;
+        const { parameters3DS, error } = event.data;
         if (parameters3DS) {
             var token = Culqi.token.id;
             var email = Culqi.token.email;
@@ -156,13 +156,13 @@ window.addEventListener("message", async function (event) {
 
                         var url = fnReplace(phpData.postpayment_url);
                         var success_url = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
-                        
+
                         console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
-                        if (brand.toUpperCase() == "MASTERCARD"){
+                        if (brand.toUpperCase() == "MASTERCARD") {
                             fn_mc_sonic();
                             playSonic(success_url);
-                        }else{
+                        } else {
                             location.href = success_url;
                         }
                     }
@@ -200,13 +200,13 @@ Culqi3DS.publicKey = phpData.llave_publica;
 //var device = await Culqi3DS.generateDevice();
 const device_aux = Promise.resolve(Culqi3DS.generateDevice());
 device_aux.then(value => {
-    $('#checkout').on('click', '#buyButton', function(e) {
+    $('#checkout').on('click', '#buyButton', function (e) {
         var vaidate_opc_aux = $("#form_onepagecheckoutps").submit();
-        if(validateForm() == null) {
+        if (validateForm() == null) {
             $('#buyButton').attr('disabled', true);
             $("[data-payment=culqi]").attr('disabled', true);
             generateOrder(e, value);
-        } else if(validateForm()) {
+        } else if (validateForm()) {
             createCustomerCulqiPs(e, value);
         }
     });
@@ -214,6 +214,7 @@ device_aux.then(value => {
     console.log(err);
 });
 var orderid = '';
+
 
 $(document).ready(function () {
     var validateButtonOrder = setInterval(function () {
@@ -226,39 +227,6 @@ $(document).ready(function () {
         })
     }, 100);
 
-    Culqi.publicKey = phpData.llave_publica;
-    Culqi.useClasses = true;
-    Culqi.init();
-    let tarjeta = (phpData.tarjeta === "true");
-    let bancaMovil = (phpData.banca_movil === "true");
-    let yape = (phpData.yape === "true");
-    let agente = (phpData.agente === "true");
-    let billetera = (phpData.billetera === "true");
-    let cuotealo = (phpData.cuetealo === "true");
-
-    Culqi.options({
-        lang: 'auto',
-        paymentMethods: {
-            tarjeta: tarjeta,
-            bancaMovil: bancaMovil,
-            yape: yape,
-            agente: agente,
-            billetera: billetera,
-            cuotealo: cuotealo
-        },
-        installments: true,
-        style: {
-            bannerColor: phpData.color_pallete[0],
-            imageBanner: '',
-            buttonBackground: phpData.color_pallete[1],
-            menuColor: phpData.color_pallete[1],
-            linksColor: phpData.color_pallete[1],
-            buttontext: phpData.color_pallete[0],
-            priceColor: phpData.color_pallete[1],
-            logo: phpData.url_logo
-        }
-    });
-
     $('#payment-confirmation > .ps-shown-by-js > button').click(function (e) {
         var myPaymentMethodSelected = $('.payment-options').find("input[data-module-name='culqi']").is(':checked');
         if (myPaymentMethodSelected) {
@@ -269,26 +237,122 @@ $(document).ready(function () {
     });
 });
 
-function getSettings(order = false) {
-    let args_settings = {
+function setCheckout() {
+    const publicKey = setPublicKey();
+    const config = setConfig();
+    Culqi = new CulqiCheckout(publicKey, config);
+    Culqi.culqi = culqi
+}
+
+function setConfig() {
+    const settings = setSetting();
+    const client = setClient();
+    const options = setOptions();
+    const appearance = setAppearance();
+
+
+    const config = {
+        settings,
+        client,
+        options,
+        appearance
+    };
+
+    return config
+}
+
+function setPublicKey() {
+    return phpData.llave_publica;
+}
+
+function setSetting() {
+    const setting = {
         title: phpData.commerce,
         currency: phpData.currency,
         amount: Math.ceil(phpData.total),
         culqiclient: 'prestashop',
         culqiclientversion: phpData.psversion,
         culqipluginversion: phpData.CULQI_PLUGIN_VERSION
+    }
+
+    // Agregar el orden si existe
+    if (orderid != '') {
+        setting.order = orderid;
+    }
+
+    // Agregar llave publica si existe
+    if (phpData.rsa_id && phpData.rsa_pk) {
+        setting.xculqirsaid = phpData.rsa_id;
+        setting.rsapublickey = phpData.rsa_pk;
+    }
+
+    return setting;
+}
+
+function setClient() {
+    const client = {
+        email: phpData.email
     };
 
-    if(order) {
-        args_settings.order = order;
+    return client;
+}
+
+function setPaymentMethods() {
+    const paymentMethods = {
+        tarjeta: (phpData.tarjeta === "true"),
+        yape: (phpData.yape === "true"),
+        billetera: (phpData.billetera === "true"),
+        bancaMovil: (phpData.banca_movil === "true"),
+        agente: (phpData.agente === "true"),
+        cuotealo: (phpData.cuetealo === "true"),
     }
 
-    if(phpData.rsa_id && phpData.rsa_pk) {
-        args_settings.xculqirsaid = phpData.rsa_id;
-        args_settings.rsapublickey = phpData.rsa_pk;
+    return paymentMethods;
+}
+
+function setOptions() {
+    const paymentMethods = setPaymentMethods();
+
+    const options = {
+        lang: 'auto',
+        installments: true,
+        modal: true,
+        paymentMethods,
+        paymentMethodsSort: Object.keys(paymentMethods)
+    }
+    return options;
+}
+
+function validarArrayVacio(array) {
+    return array.every(elemento => typeof elemento === 'string' && elemento.trim() === '');
+}
+
+
+function setAppearance() {
+    const appearence = {
+        theme: "default",
+        hiddenCulqiLogo: false,
+        hiddenBannerContent: false,
+        hiddenBanner: false,
+        hiddenToolBarAmount: false,
+        menuType: "sidebar", // sidebar / sliderTop / select
+        logo: phpData.url_logo
     }
 
-    Culqi.settings(args_settings);
+
+    const colors = phpData.color_pallete;
+    if (!validarArrayVacio(colors)) {
+        const defaultStyle = {};
+        defaultStyle.bannerColor = colors[0];
+        defaultStyle.buttonBackground = colors[1];
+        defaultStyle.menuColor = colors[1];
+        defaultStyle.linksColor = colors[1];
+        defaultStyle.priceColor = colors[1];
+
+        appearence.defaultStyle = defaultStyle;
+    }
+
+    return appearence;
 }
 
 function generateOrder(e, device) {
@@ -296,16 +360,16 @@ function generateOrder(e, device) {
     /*if($("#" + name).length == 0) {
         //it doesn't exist
     }*/
-    if (phpData.banca_movil || phpData.agente || phpData.billetera || phpData.cuetealo) {
+    if ((phpData.banca_movil === "true") || (phpData.agente === "true") || (phpData.billetera === "true") || (phpData.cuetealo === "true")) {
         $.ajax({
             url: fnReplace(phpData.generate_order_url),
             data: {},
             type: "POST",
             dataType: 'json',
             success: function (response) {
-                console.log('response:::', response);
-                getSettings(response);
+                console.log('Se genero una orden:::', response);
                 orderid = response;
+                setCheckout();
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
                 Culqi.open();
@@ -313,10 +377,10 @@ function generateOrder(e, device) {
                 e.preventDefault();
             },
             error: function (error) {
-                console.log('error:::', error);
+                console.log('Error al generar orden :::', error);
                 $('#showresult').show();
-                getSettings();
-                orderid = 'ungenereted';
+                orderid = '';
+                setCheckout();
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
                 Culqi.open();
@@ -326,8 +390,9 @@ function generateOrder(e, device) {
         });
     } else {
         $('#showresult').show();
-        getSettings();
-        orderid = 'ungenereted';
+        console.log('No se genero orden');
+        orderid = '';
+        setCheckout();
         $('#buyButton').removeAttr('disabled');
         Culqi.open();
         $('#showresult').hide();
@@ -366,7 +431,7 @@ function redirect() {
 
 }
 
-function fn_mc_sonic(){  
+function fn_mc_sonic() {
     //$('#loadingloginculqi').remove();
     $('#loadingloginculqi').html(`<div style="
     width: 100%;
@@ -407,7 +472,7 @@ function culqi() {
 
         $.ajax({
             url: fnReplace(phpData.registersale_url),
-            data: {order_id: culqi_order_id},
+            data: { order_id: culqi_order_id },
             type: "POST",
             dataType: 'json',
             success: function (response) {
@@ -425,7 +490,7 @@ function culqi() {
             if (!Culqi.isOpen) {
                 run_waitMe();
                 clearInterval(id);
-                var orderid = Culqi.order['id'];
+                var orderid = culqi_order_id;
                 var url = fnReplace(phpData.postpaymentpending_url);
                 location.href = url + '?ps_order_id=' + ps_order_id;
             }
@@ -491,13 +556,13 @@ function culqi() {
 
                         var url = fnReplace(phpData.postpayment_url);
                         var success_url = url + '?card_number=' + card_number + '&card_brand=' + card_brand + '&orderid=' + orderid + '&chargeid=' + chargeid;
-                        
+
                         console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
-                        if (brand.toUpperCase() == "MASTERCARD"){
+                        if (brand.toUpperCase() == "MASTERCARD") {
                             fn_mc_sonic();
                             playSonic(success_url);
-                        }else{
+                        } else {
                             location.href = success_url;
                         }
                     }
@@ -528,16 +593,16 @@ function culqi() {
     }
 
 }
-window.culqi = culqi;
+
 function run_waitMe() {
     jQuery('body').append('<div id="loadingloginculqi" style="position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; top: 0; text-align: center; justify-content: center; align-content: center; flex-direction: column; color: white; font-size: 14px; display:table-cell; vertical-align:middle;"><div style="position: absolute; width: 100%; top: 50%">Cargando <img style="display: inline-block" width="14" src="https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg" /></div></div>');
 }
 
 //
 
-$(document).ready(function() {
+$(document).ready(function () {
     // Add class to radio buttons
-    $('input[name="payment-option"]').each(function() {
+    $('input[name="payment-option"]').each(function () {
         var container = $(this).closest('.payment-option');
         var labelculqi = container.find('label');
         var paymentText = container.find('label').find('span');
@@ -550,33 +615,33 @@ $(document).ready(function() {
         var txt_general = 'Acepta pagos con ';
         var txt = '';
         var txtPE = '';
-        if(paymentText.text() == 'Culqi') {
-            container.css({'display':'inline-flex','justify-content': 'space-between','width' : ' 100%'});
-            labelculqi.css({'display':'inline-flex','justify-content': 'space-between','width' : ' 100%'});
+        if (paymentText.text() == 'Culqi') {
+            container.css({ 'display': 'inline-flex', 'justify-content': 'space-between', 'width': ' 100%' });
+            labelculqi.css({ 'display': 'inline-flex', 'justify-content': 'space-between', 'width': ' 100%' });
             paymentText.hide();
             paymentText.next().addClass('culqi-logo');
             var parrafo = document.querySelector('.culqi-checkout-text');
             var logos = '';
-            if(tarjeta){
+            if (tarjeta) {
                 logos = logos + '<img  style="margin-right: 5px" src="/modules/culqi/cards.svg" />';
                 txt = txt + 'tarjetas de débito y crédito';
             }
-            if(yape){
+            if (yape) {
                 logos = logos + '<img style="margin-right: 5px" src="/modules/culqi/yape.svg" />';
-                if(tarjeta) {
+                if (tarjeta) {
                     txt = txt + ', ';
                 }
                 txt = txt + 'Yape';
             }
-            if(agente || bancaMovil || billetera || cuotealo){
+            if (agente || bancaMovil || billetera || cuotealo) {
                 logos = logos + '<img  style="margin-right: 5px" src="/modules/culqi/pagoefectivo.svg" />';
-                if(tarjeta || yape) {
+                if (tarjeta || yape) {
                     txt = txt + ', ';
                 }
                 txt = txt + 'Cuotéalo BCP y PagoEfectivo';
                 txtPE = ' (billeteras móviles, agentes y bodegas)';
             }
-            txt = '<strong>' + txt +'</strong>';
+            txt = '<strong>' + txt + '</strong>';
             txt = txt_general + txt + txtPE;
             txt = txt + '.';
 
