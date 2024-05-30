@@ -96,6 +96,10 @@ class Culqi extends PaymentModule
     public function hookDisplayHeader()
     {
         if (Tools::getValue('controller') === 'order') {
+            Media::addJsDef(array(
+                'modulePath' => $this->_path
+            ));
+
             $this->context->controller->registerJavascript(
                 'culqiv4',
                 $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
@@ -116,6 +120,16 @@ class Culqi extends PaymentModule
             $jsCode = "<script>
                 var phpData = {$data};
             </script>";
+
+            $this->context->controller->registerJavascript(
+                'brandFunctions',
+                $this->_path.'views/js/brand-handle.js?_='.time(),
+                array(
+                    'server' => 'remote', 
+                    'position' => 'bottom', 
+                    'priority' => 10000
+                )
+            );
             
             $this->context->controller->registerJavascript(
                 'culqifunctions',
@@ -124,10 +138,26 @@ class Culqi extends PaymentModule
             );
 
             $this->context->controller->registerJavascript(
-                'sonic',
-                $this->_path.'views/js/mc-sonic.min.js?_='.time(),
+                'sonicMastercard',
+                $this->_path.'views/brands/mastercard/mc-sonic.min.js?_='.time(),
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
+            
+            $this->context->controller->registerJavascript(
+                'sonicVisa',
+                $this->_path.'views/brands/visa/VisaSensoryBrandingSDK/visa-sensory-branding.js?_='.time(),
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
+            );
+
+            $this->context->controller->registerStylesheet(
+                'brandCss',
+                $this->_path.'views/css/brands.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+            );
+    
 
             return $jsCode;
         }

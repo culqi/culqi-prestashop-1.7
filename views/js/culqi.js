@@ -160,8 +160,9 @@ window.addEventListener("message", async function (event) {
                         console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
                         if (brand.toUpperCase() == "MASTERCARD") {
-                            fn_mc_sonic();
-                            playSonic(success_url);
+                            fnMcSonic(success_url);
+                        } else if (brand.toUpperCase() == "VISA") {
+                            fnBrandvisa(success_url);
                         } else {
                             location.href = success_url;
                         }
@@ -431,29 +432,6 @@ function redirect() {
 
 }
 
-function fn_mc_sonic() {
-    //$('#loadingloginculqi').remove();
-    $('#loadingloginculqi').html(`<div style="
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    margin: auto;">
-    <mc-sonic id="mc-sonic" style="height: 40%;" type="default"  clear-background ></mc-sonic> </div>`);
-}
-
-function playSonic(success_url) {
-    let mc_component = document.getElementById("mc-sonic")
-    document.addEventListener('sonicCompletion', onCompletion(success_url))
-    mc_component.play()
-}
-function onCompletion(success_url) {
-    setTimeout(() => {
-        location.href = success_url;
-    }, 2000);
-}
-
 // Process to Pay
 function culqi() {
 
@@ -560,8 +538,9 @@ function culqi() {
                         console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
                         if (brand.toUpperCase() == "MASTERCARD") {
-                            fn_mc_sonic();
-                            playSonic(success_url);
+                            fnMcSonic(success_url);
+                        } else if (brand.toUpperCase() == "VISA") {
+                            fnBrandvisa(success_url);
                         } else {
                             location.href = success_url;
                         }

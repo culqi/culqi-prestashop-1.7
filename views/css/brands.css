@@ -1,0 +1,48 @@
+body.showVisa {
+    background-color: #15195a;
+}
+/*#brand-wrapper {
+  position: absolute;
+  background-color: #15195a;
+  width: 700px;
+  height: 500px;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+#visa-sensory-branding {
+  display: none;
+  position: absolute;
+  margin: auto;
+}
+#visa-sensory-branding.show {
+  display:block;
+  width:700px;
+  height:500px;
+}*/
+#brand-wrapper {
+    position: relative;
+}
+#visa-sensory-branding {
+    display: none;
+    position: absolute;
+}
+#visa-sensory-branding.show {
+    display:block;
+    width:700px;
+    height:500px;
+}
+#demoButton {
+    width: 400px;
+    height: 100px;
+}
+#brandMastercard {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+}
