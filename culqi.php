@@ -10,25 +10,26 @@ define('CULQI_PLUGIN_VERSION', '3.1.0');
 define('URLAPI_INTEG', 'https://ag-plugins.culqi.com');
 define('URLAPI_PROD', 'https://ag-plugins.culqi.com');
 
-define('URLAPI_INTEG_3DS', 'https://3ds.culqi.com');
-define('URLAPI_PROD_3DS', 'https://3ds.culqi.com');
+define('URLAPI_INTEG_3DS', 'https://3ds-qa.culqi.xyz');
+define('URLAPI_PROD_3DS', 'https://3ds-qa.culqi.xyz');
 
-define('URLAPI_ORDERCHARGES_INTEG', 'https://api.culqi.com/v2');
-define('URLAPI_CHECKOUT_INTEG', 'https://js.culqi.com/checkout-js');
+define('URLAPI_ORDERCHARGES_INTEG', 'https://qa-api.culqi.xyz/v2');
+define('URLAPI_CHECKOUT_INTEG', 'https://qa-js.culqi.xyz/checkout-js');
 
 define('URLAPI_LOGIN_INTEG', URLAPI_INTEG.'/plugins/public/login');
 define('URLAPI_MERCHANT_INTEG', URLAPI_INTEG.'/plugins/public/get_merchants');
 define('URLAPI_MERCHANTSINGLE_INTEG', URLAPI_INTEG.'/plugins/public/get_merchant?public_key=');
 define('URLAPI_WEBHOOK_INTEG', URLAPI_INTEG.'/plugins/public/webhook');
 
-define('URLAPI_ORDERCHARGES_PROD', 'https://api.culqi.com/v2');
-define('URLAPI_CHECKOUT_PROD', 'https://js.culqi.com/checkout-js');
+define('URLAPI_ORDERCHARGES_PROD', 'https://qa-api.culqi.xyz/v2');
+define('URLAPI_CHECKOUT_PROD', 'https://qa-js.culqi.xyz/checkout-js');
 
 define('URLAPI_LOGIN_PROD', URLAPI_PROD.'/plugins/public/login');
 define('URLAPI_MERCHANT_PROD', URLAPI_PROD.'/plugins/public/get_merchants'); 
 define('URLAPI_MERCHANTSINGLE_PROD', URLAPI_PROD.'/plugins/public/get_merchant?public_key=');
 define('URLAPI_WEBHOOK_PROD', URLAPI_PROD.'/plugins/public/webhook');
 
+define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
 
 /**
  * Calling dependencies
@@ -97,7 +98,8 @@ class Culqi extends PaymentModule
     {
         if (Tools::getValue('controller') === 'order') {
             Media::addJsDef(array(
-                'modulePath' => $this->_path
+                'modulePath' => $this->_path,
+                'loaderImg' => LOADER_IMG
             ));
 
             $this->context->controller->registerJavascript(
@@ -149,6 +151,15 @@ class Culqi extends PaymentModule
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
 
+            $this->context->controller->registerStylesheet(
+                'globalCss',
+                $this->_path.'views/css/global.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+            );
+            
             $this->context->controller->registerStylesheet(
                 'brandCss',
                 $this->_path.'views/css/brands.css',

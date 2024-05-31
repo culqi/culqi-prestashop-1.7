@@ -9,9 +9,9 @@ const fnMcSonic = (success_url) => {
     mc_component.play();
 };
 
-const onCompletion = (success_url, time) => {
+const onCompletion = (success_url, time = 1) => {
     setTimeout(() => {
-        location.href = success_url;
+       location.href = success_url;
     }, time);
 };
 
@@ -25,9 +25,10 @@ const fnBrandvisa = (success_url) => {
     `${modulePath}views/brands/visa/VisaSensoryBrandingSDK`);
 
     document.getElementById('visa-sensory-branding').addEventListener('visa-sensory-branding-end', function(e) {
-        const time = 10;
-        run_waitMe();
-        onCompletion(success_url, time);
+        setTimeout(() => {
+            run_waitMe('transparent');
+            onCompletion(success_url);
+        }, 500);
     });
 
     $('body').addClass('showVisa');
