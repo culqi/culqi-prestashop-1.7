@@ -160,8 +160,9 @@ window.addEventListener("message", async function (event) {
                         console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
                         if (brand.toUpperCase() == "MASTERCARD") {
-                            fn_mc_sonic();
-                            playSonic(success_url);
+                            fnMcSonic(success_url);
+                        } else if (brand.toUpperCase() == "VISA") {
+                            fnBrandvisa(success_url);
                         } else {
                             location.href = success_url;
                         }
@@ -431,29 +432,6 @@ function redirect() {
 
 }
 
-function fn_mc_sonic() {
-    //$('#loadingloginculqi').remove();
-    $('#loadingloginculqi').html(`<div style="
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    margin: auto;">
-    <mc-sonic id="mc-sonic" style="height: 40%;" type="default"  clear-background ></mc-sonic> </div>`);
-}
-
-function playSonic(success_url) {
-    let mc_component = document.getElementById("mc-sonic")
-    document.addEventListener('sonicCompletion', onCompletion(success_url))
-    mc_component.play()
-}
-function onCompletion(success_url) {
-    setTimeout(() => {
-        location.href = success_url;
-    }, 2000);
-}
-
 // Process to Pay
 function culqi() {
 
@@ -560,8 +538,9 @@ function culqi() {
                         console.log("Marca de tarjeta: " + result['source']['iin']['card_brand']);
 
                         if (brand.toUpperCase() == "MASTERCARD") {
-                            fn_mc_sonic();
-                            playSonic(success_url);
+                            fnMcSonic(success_url);
+                        } else if (brand.toUpperCase() == "VISA") {
+                            fnBrandvisa(success_url);
                         } else {
                             location.href = success_url;
                         }
@@ -594,8 +573,11 @@ function culqi() {
 
 }
 
-function run_waitMe() {
-    jQuery('body').append('<div id="loadingloginculqi" style="position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; top: 0; text-align: center; justify-content: center; align-content: center; flex-direction: column; color: white; font-size: 14px; display:table-cell; vertical-align:middle;"><div style="position: absolute; width: 100%; top: 50%">Cargando <img style="display: inline-block" width="14" src="https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg" /></div></div>');
+const run_waitMe = (background = 'rgba(0,0,0,0.7)') => {
+    jQuery('body').append(`
+    <div id="loadingloginculqi" style="background: ${background}">
+        <div>Cargando <img width="14" src="${loaderImg}" /></div>
+    </div>`);
 }
 
 //

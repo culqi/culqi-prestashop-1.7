@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.1.0');
+define('CULQI_PLUGIN_VERSION', '3.1.1');
 
 define('URLAPI_INTEG', 'https://ag-plugins.culqi.com');
 define('URLAPI_PROD', 'https://ag-plugins.culqi.com');
@@ -29,6 +29,7 @@ define('URLAPI_MERCHANT_PROD', URLAPI_PROD.'/plugins/public/get_merchants');
 define('URLAPI_MERCHANTSINGLE_PROD', URLAPI_PROD.'/plugins/public/get_merchant?public_key=');
 define('URLAPI_WEBHOOK_PROD', URLAPI_PROD.'/plugins/public/webhook');
 
+define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
 
 /**
  * Calling dependencies
@@ -96,6 +97,11 @@ class Culqi extends PaymentModule
     public function hookDisplayHeader()
     {
         if (Tools::getValue('controller') === 'order') {
+            Media::addJsDef(array(
+                'modulePath' => $this->_path,
+                'loaderImg' => LOADER_IMG
+            ));
+
             $this->context->controller->registerJavascript(
                 'culqiv4',
                 $this->getCulqiInfoCheckout(true)['enviroment_fronted'],
@@ -116,6 +122,16 @@ class Culqi extends PaymentModule
             $jsCode = "<script>
                 var phpData = {$data};
             </script>";
+
+            $this->context->controller->registerJavascript(
+                'brandFunctions',
+                $this->_path.'views/js/brand-handle.js?_='.time(),
+                array(
+                    'server' => 'remote', 
+                    'position' => 'bottom', 
+                    'priority' => 10000
+                )
+            );
             
             $this->context->controller->registerJavascript(
                 'culqifunctions',
@@ -124,10 +140,35 @@ class Culqi extends PaymentModule
             );
 
             $this->context->controller->registerJavascript(
-                'sonic',
-                $this->_path.'views/js/mc-sonic.min.js?_='.time(),
+                'sonicMastercard',
+                $this->_path.'views/brands/mastercard/mc-sonic.min.js?_='.time(),
                 array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
             );
+            
+            $this->context->controller->registerJavascript(
+                'sonicVisa',
+                $this->_path.'views/brands/visa/VisaSensoryBrandingSDK/visa-sensory-branding.js?_='.time(),
+                array('server' => 'remote', 'position' => 'bottom', 'priority' => 10000)
+            );
+
+            $this->context->controller->registerStylesheet(
+                'globalCss',
+                $this->_path.'views/css/global.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+            );
+            
+            $this->context->controller->registerStylesheet(
+                'brandCss',
+                $this->_path.'views/css/brands.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+            );
+    
 
             return $jsCode;
         }
