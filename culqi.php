@@ -5,7 +5,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define('CULQI_PLUGIN_VERSION', '3.1.1');
+define('CULQI_PLUGIN_VERSION', '3.1.2');
 
 define('URLAPI_INTEG', 'https://ag-plugins.culqi.com');
 define('URLAPI_PROD', 'https://ag-plugins.culqi.com');
@@ -227,25 +227,27 @@ class Culqi extends PaymentModule
 
             $culqi = new Culqi\Culqi(array('api_key' => Configuration::get('CULQI_LLAVE_SECRETA')));
 
+            $args_charge = array(
+                "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
+                "antifraud_details" => array(
+                    "address" => $this->getAddress($userAddress),
+                    "address_city" => $userAddress->city,
+                    "country_code" => "PE",
+                    "first_name" => $this->context->customer->firstname,
+                    "last_name" => $this->context->customer->lastname,
+                    "phone_number" => $this->getPhone($userAddress)
+                ),
+                "capture" => true,
+                "currency_code" => $this->context->currency->iso_code,
+                "description" => "Orden de compra " . $cart->id,
+                "installments" => $installments,
+                "metadata" => array("order_id" => (string)$cart->id),
+                "email" => $this->context->customer->email,
+                "source_id" => $token_id
+            );
+
             $charge = $culqi->Charges->create(
-                array(
-                    "amount" => $this->removeComma($cart->getOrderTotal(true, Cart::BOTH)),
-                    "antifraud_details" => array(
-                        "address" => $this->getAddress($userAddress),
-                        "address_city" => $userAddress->city,
-                        "country_code" => "PE",
-                        "first_name" => $this->context->customer->firstname,
-                        "last_name" => $this->context->customer->lastname,
-                        "phone_number" => $this->getPhone($userAddress)
-                    ),
-                    "capture" => true,
-                    "currency_code" => $this->context->currency->iso_code,
-                    "description" => "Orden de compra " . $cart->id,
-                    "installments" => $installments,
-                    "metadata" => array("order_id" => (string)$cart->id),
-                    "email" => $this->context->customer->email,
-                    "source_id" => $token_id
-                )
+                $args_charge
             );
             //return $cargo;
             return $charge;
