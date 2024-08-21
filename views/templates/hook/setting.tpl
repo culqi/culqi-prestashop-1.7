@@ -2718,6 +2718,7 @@
             jQuery('#errorpubkey').html('');
             jQuery('#errorseckey').html('');
             jQuery('#errortimeexp').html('');
+            jQuery('#errorpaymentmethod').css('display', 'none');
             jQuery('#errorpubkey').css('display', 'none');
             jQuery('#errorseckey').css('display', 'none');
             jQuery('#errortimeexp').css('display', 'none');
