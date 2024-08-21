@@ -1680,7 +1680,7 @@
                 <div class="col-lg-8 can-toggle demo-rebrand-1">
                     <input id="d" type="checkbox" name="CULQI_ENABLED"
                            value="yes" {$status_enabled|escape:'htmlall':'UTF-8'}>
-                    <label for="d">
+                    <label for="d" style="display: block;width: 134px;">
                         <div class="can-toggle__switch" data-checked="Activo" data-unchecked="Inactivo"></div>
                     </label>
                 </div>
@@ -2613,7 +2613,7 @@
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form method="post" id="modal_login_form_culqi">
+            <form method="post" id="modal_login_form_culqi" autoComplete='off'>
                 <div class="modal-header">
                     <span class="modal-title"
                           id="modalLoginLabel">Ingresa tus datos para ayudarte con la configuración.</span>
@@ -2621,12 +2621,12 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="email">Correo electrónico</label>
-                        <input required type="email" class="form-control" id="email" name="email"
+                        <input required type="email" class="form-control" id="email" name="email" autocomplete="off"
                                aria-describedby="emailHelp" placeholder="ejemplo@culqi.com">
                     </div>
                     <div class="form-group">
                         <label for="password">Contraseña</label>
-                        <input required type="password" class="form-control" id="password" name="password"
+                        <input required type="password" class="form-control" id="password" name="password" autocomplete="new-password"
                                placeholder="Tu contraseña de CulqiPanel">
                     </div>
                     <div class="form-group d-none" style="display: none">
