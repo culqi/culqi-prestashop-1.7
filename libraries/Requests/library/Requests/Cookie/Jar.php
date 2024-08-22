@@ -60,8 +60,9 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	 * @param string $key Item key
 	 * @return boolean Does the item exist?
 	 */
-	public function offsetExists(mixed $offset): bool {
-		return isset($this->cookies[$offset]);
+	#[\ReturnTypeWillChange]
+	public function offsetExists($key) {
+		return isset($this->cookies[$key]);
 	}
 
 	/**
@@ -70,13 +71,14 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	 * @param string $key Item key
 	 * @return string Item value
 	 */
-	public function offsetGet(mixed $offset): mixed {
-		if (!isset($this->cookies[$offset])) {
+	#[\ReturnTypeWillChange]
+	public function offsetGet($key) {
+		if (!isset($this->cookies[$key])) {
 			return null;
 		}
-	
-		return $this->cookies[$offset];
-	}	
+
+		return $this->cookies[$key];
+	}
 
 	/**
 	 * Set the given item
@@ -86,12 +88,13 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	 * @param string $key Item name
 	 * @param string $value Item value
 	 */
-	public function offsetSet(mixed $offset, mixed $value): void {
-		if ($offset === null) {
+	#[\ReturnTypeWillChange]
+	 public function offsetSet($key, $value) {
+		if ($key === null) {
 			throw new Requests_Exception('Object is a dictionary, not a list', 'invalidset');
 		}
-	
-		$this->cookies[$offset] = $value;
+
+		$this->cookies[$key] = $value;
 	}
 
 	/**
@@ -99,17 +102,18 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	 *
 	 * @param string $key
 	 */
-	public function offsetUnset(mixed $offset): void {
-		unset($this->cookies[$offset]);
+	#[\ReturnTypeWillChange]
+	 public function offsetUnset($key) {
+		unset($this->cookies[$key]);
 	}
-	
 
 	/**
 	 * Get an iterator for the data
 	 *
 	 * @return ArrayIterator
 	 */
-	public function getIterator(): Traversable {
+	#[\ReturnTypeWillChange]
+	 public function getIterator() {
 		return new ArrayIterator($this->cookies);
 	}
 
