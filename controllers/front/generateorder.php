@@ -1,6 +1,7 @@
 <?php
 
 include_once dirname(__FILE__, 3) . '/libraries/culqi-php/lib/culqi.php';
+Requests::register_autoloader();
 include_once dirname(__FILE__, 3) . '/culqi.php';
 
 class CulqiGenerateOrderModuleFrontController extends ModuleFrontController

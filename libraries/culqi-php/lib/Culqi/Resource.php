@@ -7,6 +7,8 @@ namespace Culqi;
  *
  * @package Culqi
  */
+
+ #[\AllowDynamicProperties]
 class Resource extends Client {
 
     /**
