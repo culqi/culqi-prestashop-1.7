@@ -49,7 +49,7 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_ENABLED', '') &&
             Configuration::updateValue('CULQI_LLAVE_PUBLICA', '') &&
             Configuration::updateValue('CULQI_PAYMENT_TYPES', '') &&
-            Configuration::updateValue('CULQI_MERCHANT ', '') &&
+            Configuration::updateValue('CULQI_MERCHANT', '') &&
             Configuration::updateValue('CULQI_RSA_PK', '')
         );
     }
@@ -169,22 +169,9 @@ class Culqi extends PaymentModule
             || !Configuration::deleteByName('CULQI_STATE_ERROR')
             || !Configuration::deleteByName('CULQI_STATE_EXPIRED')
             || !Configuration::deleteByName('CULQI_ENABLED')
-            || !Configuration::deleteByName('CULQI_ENVIROMENT')
-            || !Configuration::deleteByName('CULQI_LLAVE_SECRETA')
             || !Configuration::deleteByName('CULQI_LLAVE_PUBLICA')
-            || !Configuration::deleteByName('CULQI_METHODS_TARJETA')
-            || !Configuration::deleteByName('CULQI_METHODS_BANCAMOVIL')
-            || !Configuration::deleteByName('CULQI_METHODS_YAPE')
-            || !Configuration::deleteByName('CULQI_METHODS_AGENTS')
-            || !Configuration::deleteByName('CULQI_METHODS_WALLETS')
-            || !Configuration::deleteByName('CULQI_METHODS_QUOTEBCP')
-            || !Configuration::deleteByName('CULQI_TIMEXP')
-            || !Configuration::deleteByName('CULQI_NOTPAY')
-            || !Configuration::deleteByName('CULQI_USERNAME')
-            || !Configuration::deleteByName('CULQI_PASSWORD')
-            || !Configuration::deleteByName('CULQI_URL_LOGO')
-            || !Configuration::deleteByName('CULQI_COLOR_PALETTE')
-            || !Configuration::deleteByName('CULQI_RSA_ID')
+            || !Configuration::deleteByName('CULQI_PAYMENT_TYPES')
+            || !Configuration::deleteByName('CULQI_MERCHANT')
             || !Configuration::deleteByName('CULQI_RSA_PK')
             || !$this->uninstallStates())
             return false;
