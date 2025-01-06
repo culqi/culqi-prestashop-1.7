@@ -17,6 +17,9 @@ class CulqiConfigModuleFrontController extends ModuleFrontController
             try {
                 $pk = Tools::getValue("publicKey");
                 $status = Tools::getValue("pluginStatus");
+                if (Configuration::get('CULQI_ENABLED') == '') {
+                    $status = 'true';
+                }
                 $merchant = Tools::getValue("merchant");
                 $rsa_pk = Tools::getValue("rsa_pk");
                 $payment_methods = Tools::getValue("payment_methods");

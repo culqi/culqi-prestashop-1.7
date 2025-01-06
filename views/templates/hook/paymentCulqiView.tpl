@@ -106,7 +106,7 @@
 		 </div>
 		<br>
 		<div class="row div-culqi-center">
-			<button id="buyButton" class="btn btn-success"> Pagarrrr</button>
+			<button id="buyButton" class="btn btn-success"> Pagar</button>
 		</div>
     </div>
     <div class="row">
