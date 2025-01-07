@@ -10,6 +10,8 @@ class CulqiPostpaymentModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
         $this->ajax = false;
+        var_dump("test api prestashop");
+        die("test api prestashop");
         $chargeid = Tools::getValue("chargeid");
         if($chargeid!=null and !empty($chargeid) and !is_null($chargeid) and $chargeid != ''){
         

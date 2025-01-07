@@ -213,7 +213,6 @@ class Culqi extends PaymentModule
 
     public function getConfigFieldsValues()
     {
-        
         $status = Configuration::get('CULQI_ENABLED') ?? '';
         $pk = Configuration::get('CULQI_LLAVE_PUBLICA') ?? '';
         $merchant = Configuration::get('CULQI_MERCHANT') ?? '';
@@ -224,16 +223,11 @@ class Culqi extends PaymentModule
             'pk' => $pk,
             'merchant' => $merchant,
             'payment_methods' => $payment_methods,
-            'shop_url' => Context::getContext()->shop->getBaseURL()
+            'shop_url' => Tools::getShopDomainSsl()
         ];
     }
 
     private function _postProcess(){}
-
-    public function hookActionOrderStatusPostUpdate($params)
-    {
-        $this->context->cart->save();  // Save the cart to avoid clearing
-    }
 
     private function queryGetStates($txt_state)
     {

@@ -1,8 +1,6 @@
 <?php
 
 include_once dirname(__FILE__, 3) . '/libraries/culqi-php/lib/culqi.php';
-Requests::register_autoloader();
-include_once dirname(__FILE__, 3) . '/culqi.php';
 
 class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
 {
@@ -10,6 +8,11 @@ class CulqiChargeAjaxModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         parent::initContent();
+        header('Content-Type: application/json');
+        die(json_encode([
+            'success' => true,
+            'message' => 'ChargeAjax endpoint works!',
+        ]));
         $this->ajax = true;
     }
 

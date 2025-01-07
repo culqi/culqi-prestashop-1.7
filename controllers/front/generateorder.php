@@ -8,33 +8,54 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
         $this->ajax = false;
-        $culqiPretashop =  new Culqi();
-        $infoCheckout = $culqiPretashop->getCulqiInfoCheckout();
-        $culqi = new Culqi\Culqi(array('api_key' => $infoCheckout['llave_secreta'] ));
-        $phone = ($infoCheckout['address'][0]['phone']!='' and !is_null($infoCheckout['address'][0]['phone'])) ? $infoCheckout['address'][0]['phone'] : false;
-        if(!$phone) {
-            $phone = $infoCheckout['address'][0]['phone_mobile'] ?: '999999999';
+    }
+    
+    public function postProcess()
+    {
+        header('Content-Type: application/json');
+        try {
+            $shop_domain = Tools::getShopDomainSsl(true);
+            $rawData = file_get_contents('php://input');
+            $data = json_decode($rawData, true);
+            $cart_id = $data["cartId"];
+            $customer_secure_key = $data["customerSecureKey"];
+            $card_number = $data["cardNumber"] ?? '';
+            $card_brand = $data["cardBrand"] ?? '';
+            $transaction_id = $data["transactionId"] ?? '';
+            $culqi_status = $this->getCulqiStatus($transaction_id);
+            $cart = new Cart($cart_id);
+            $this->module->validateOrder((int)$cart_id, $culqi_status, (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer_secure_key);
+            $id_order = Order::getIdByCartId($cart_id);
+            $order = new Order($id_order);
+            $order_payment_collection = $order->getOrderPaymentCollection();
+
+            $order_payment = $order_payment_collection[0];
+            $order_payment->card_number = $card_number;
+            $order_payment->card_brand = $card_brand;
+            $order_payment->transaction_id = $transaction_id;
+            $order_payment->update();
+            $success_url = $shop_domain . '/index.php?controller=order-confirmation&id_cart=' . (int)$cart_id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer_secure_key;
+            die(json_encode([
+                'success' => true,
+                'data' => $success_url,
+            ]));
+        } catch (Exception $e) {
+            die(json_encode([
+                'success' => false,
+                'data' => $e->getMessage(),
+            ]));
         }
-        $expiration_date = time() + (int)$infoCheckout['tiempo_exp'] * 60 * 60;
-        $args_order = array(
-             
-            'amount' => (int)$infoCheckout['total'],
-            'currency_code' => $infoCheckout['currency'],
-            'description' => 'Venta desde Plugin Prestashop',
-            'order_number' => 'pts-' . time(),
-            'client_details' => array(
-                'email' => $infoCheckout['customer']->email,
-                'first_name' => $infoCheckout['customer']->firstname,
-                'last_name' => $infoCheckout['customer']->lastname,
-                'phone_number' => $phone
-            ),
-            'expiration_date' => $expiration_date,
-            'confirm' => false,
-            'enviroment' => $infoCheckout['enviroment_backend'],
-            'metadata' => ["pts_order_id" => (string)$infoCheckout['orden'], "sponsor" => "prestashop"]
-        );
- 
-        $culqi_order = $culqi->Orders->create( $args_order );
-        die(json_encode($culqi_order->id));
+    }
+
+    private function getCulqiStatus($transaction_id)
+    {
+        $culqi_status = Configuration::get('CULQI_STATE_ERROR');
+        if (substr($transaction_id, 0, 4) === 'ord_') {
+            $culqi_status = Configuration::get('CULQI_STATE_PENDING');
+        } elseif (substr($transaction_id, 0, 4) === 'chr_') {
+            $culqi_status = Configuration::get('CULQI_STATE_OK');
+        }
+
+        return $culqi_status;
     }
 }
