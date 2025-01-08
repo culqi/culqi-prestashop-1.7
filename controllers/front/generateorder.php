@@ -17,8 +17,8 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             $shop_domain = Tools::getShopDomainSsl(true);
             $rawData = file_get_contents('php://input');
             $data = json_decode($rawData, true);
-            $cart_id = $data["cartId"];
-            $customer_secure_key = $data["customerSecureKey"];
+            $cart_id = $data["orderId"];
+            $customer_secure_key = $data["orderKey"];
             $card_number = $data["cardNumber"] ?? '';
             $card_brand = $data["cardBrand"] ?? '';
             $transaction_id = $data["transactionId"] ?? '';
