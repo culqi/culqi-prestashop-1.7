@@ -6,7 +6,7 @@ if (!defined('_PS_VERSION_'))
     exit;
 
 define( 'CULQI_API_URL' , 'https://ag-shopify-qa.culqi.xyz/gateway/' );
-define( 'CULQI_CONFIG_URL' , 'https://configonlineplatform-qa.culqi.xyz' );
+define( 'CULQI_CONFIG_URL' , 'https://configonlineplatform-qa.culqi.xyz/' );
 define( 'EXPIRATION_TIME' , 15 );
 define('CULQI_PLUGIN_VERSION', '4.0.0');
 define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
@@ -22,7 +22,7 @@ class Culqi extends PaymentModule
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
         $this->version = CULQI_PLUGIN_VERSION;
-        $this->controllers = array('chargeajax', 'postpayment', 'generateorder', 'webhook', 'registersale', 'config');
+        $this->controllers = array('chargeajax', 'postpayment', 'generateorder', 'webhook', 'registersale');
         $this->author = 'Culqi';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
@@ -50,7 +50,8 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_LLAVE_PUBLICA', '') &&
             Configuration::updateValue('CULQI_PAYMENT_TYPES', '') &&
             Configuration::updateValue('CULQI_MERCHANT', '') &&
-            Configuration::updateValue('CULQI_RSA_PK', '')
+            Configuration::updateValue('CULQI_RSA_PK', '') &&
+            Configuration::updateValue('CULQI_RSA_PLUGIN_SK', '')
         );
     }
 
@@ -173,6 +174,7 @@ class Culqi extends PaymentModule
             || !Configuration::deleteByName('CULQI_PAYMENT_TYPES')
             || !Configuration::deleteByName('CULQI_MERCHANT')
             || !Configuration::deleteByName('CULQI_RSA_PK')
+            || !Configuration::deleteByName('CULQI_RSA_PLUGIN_SK')
             || !$this->uninstallStates())
             return false;
         return true;
@@ -198,6 +200,13 @@ class Culqi extends PaymentModule
 
     public function renderForm()
     {
+        if (!isset($this->context->employee)) {
+            throw new Exception('Employee object is not set.');
+        }
+        if (!$this->context->employee->isLoggedBack()) {
+            throw new Exception('Employee is not logged in.');
+        }
+
         $this->context->smarty->assign(array(
             'currentIndex' => $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name,
             'token' => Tools::getAdminTokenLite('AdminModules'),
@@ -205,7 +214,7 @@ class Culqi extends PaymentModule
             'culqi_config_url' => CULQI_CONFIG_URL,
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
-            'save_config_ajax_url' => $this->context->link->getModuleLink('culqi', 'config', []),
+            'save_config_ajax_url' => $this->context->link->getAdminLink('AdminCulqiConfig'),
         ));
 
         return $this->display(__FILE__, '/views/templates/hook/setting.tpl');
@@ -223,7 +232,7 @@ class Culqi extends PaymentModule
             'pk' => $pk,
             'merchant' => $merchant,
             'payment_methods' => $payment_methods,
-            'shop_url' => Tools::getShopDomainSsl()
+            'shop_url' => Tools::getShopDomainSsl(true)
         ];
     }
 

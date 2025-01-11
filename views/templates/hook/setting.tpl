@@ -33,10 +33,10 @@
 
 <script>
     jQuery(document).ready(function($) {
+        console.log("test");
         window.addEventListener('message', function(event) {
             if (event.data.action === 'saveConfig') {
                 const data = event.data.data;
-                console.log(data);
                 $.ajax({
                     url: "{$save_config_ajax_url}",
                     type: 'POST',
@@ -45,7 +45,8 @@
                         pluginStatus: data.pluginStatus,
                         publicKey: data.publicKey,
                         merchant: data.merchant,
-                        rsa_pk: data.rsaPkPlugin,
+                        rsa_pk: data.rsaPkCulqi,
+                        rsa_plugin_sk: data.rsaSkPlugin,
                         payment_methods: data.paymentMethods
                     },
                     success: function(response) {
