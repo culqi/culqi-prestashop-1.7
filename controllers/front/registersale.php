@@ -82,6 +82,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
         $deliveryAddress = new Address((int)$cart->id_address_delivery);
         $billingAddress = new Address((int)$cart->id_address_invoice);
+        $env = $this->get_env();
 
         $body = array(
             "id" => $cart->id,
@@ -91,7 +92,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             "currency" => $currency->iso_code,
             "proposed_at" => gmdate('Y-m-d\TH:i:s'),
             "kind" => "sale",
-            "test" => true,
+            "test" => $env,
             "payment_method" => array(
                 "type" => "offsite",
                 "data" => array(
@@ -171,5 +172,24 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 'message' => 'Payment error: Invalid response from payment gateway.'
             );
         }
+    }
+
+    private function get_env()
+    {
+        $public_key = Configuration::get('CULQI_LLAVE_PUBLICA') ?? '';
+        if(!$public_key) {
+            return array(
+                'result' => 'failure',
+                'message' => 'Debes configurar tu llave pública.'
+            );
+        }
+
+        if (str_starts_with($public_key, 'pk_test')) {
+            return 'test';
+        } elseif (str_starts_with($public_key, 'pk_live')) {
+            return 'live';
+        }
+        
+        return false;
     }
 }
