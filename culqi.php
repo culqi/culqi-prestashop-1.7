@@ -29,7 +29,7 @@ define('URLAPI_MERCHANT_PROD', URLAPI_PROD.'/plugins/public/get_merchants');
 define('URLAPI_MERCHANTSINGLE_PROD', URLAPI_PROD.'/plugins/public/get_merchant?public_key=');
 define('URLAPI_WEBHOOK_PROD', URLAPI_PROD.'/plugins/public/webhook');
 
-define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
+define('LOADER_IMG', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" width="35" height="35" style="shape-rendering: auto; display: block; padding-top: 12px; background: rgba(255, 255, 255, 0);" xmlns:xlink="http://www.w3.org/1999/xlink"><g><circle stroke-dasharray="164.93361431346415 56.97787143782138" r="35" stroke-width="10" stroke="#ffffff" fill="none" cy="50" cx="50"><animateTransform keyTimes="0;1" values="0 50 50;360 50 50" dur="1s" repeatCount="indefinite" type="rotate" attributeName="transform"></animateTransform></circle><g></g></g></svg>');
 
 /**
  * Calling dependencies
