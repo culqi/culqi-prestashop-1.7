@@ -576,7 +576,7 @@ function culqi() {
 const run_waitMe = (background = 'rgba(0,0,0,0.7)') => {
     jQuery('body').append(`
     <div id="loadingloginculqi" style="background: ${background}">
-        <div>Cargando  <span style="display: inline-block; margin-left: 8px; width: 14px; height: 14px;">${loaderImg}</span></div>
+        <div>Cargando  <span style="display: inline-block; margin-left: 8px; margin-bottom: 2px; width: 14px; height: 14px;">${loaderImg}</span></div>
     </div>`);
 }
 
