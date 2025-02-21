@@ -15,7 +15,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         }
 
         $customer = new Customer($cart->id_customer);        
-        $token = $this->generate_token();
+        $token = generate_token();
 
         $gateway_url = $this->get_gateway_url($cart, $token);
 
@@ -27,47 +27,6 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
         //die(json_encode($id_order));
         die(json_encode($gateway_url));
-    }
-
-    private function generate_token()
-    {
-        $minutes = EXPIRATION_TIME;
-        $expirationTimeInSeconds = $minutes * 60;
-        $exp = time() + $expirationTimeInSeconds;
-
-        $rsa_pk = Configuration::get('CULQI_RSA_PK') ?? '';
-        $public_key = Configuration::get('CULQI_LLAVE_PUBLICA') ?? '';
-        $data = [
-            "pk" => $public_key,
-            "exp" => $exp
-        ];
-
-        $encryptedData = $this->encrypt_data_with_rsa(json_encode($data), $rsa_pk);
-        
-        return $encryptedData;
-    }
-
-    private function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?string {
-        try {
-            $publicKey = openssl_pkey_get_public($publicKeyString);
-            if ($publicKey === false) {
-                throw new Exception("Invalid public key: " . openssl_error_string());
-            }
-    
-            $encrypted = '';
-            $result = openssl_public_encrypt($jsonData, $encrypted, $publicKey, OPENSSL_PKCS1_OAEP_PADDING);
-    
-            // openssl_free_key($publicKey);
-    
-            if ($result === false) {
-                throw new Exception("Encryption failed: " . openssl_error_string());
-            }
-    
-            return base64_encode($encrypted);
-        } catch (Exception $e) {
-            error_log("RSA Encryption Error: " . $e->getMessage());
-            return null;
-        }
     }
 
     private function get_gateway_url($cart, $token)

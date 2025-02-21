@@ -11,6 +11,47 @@ define( 'EXPIRATION_TIME' , 15 );
 define('CULQI_PLUGIN_VERSION', '4.0.0');
 define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
 
+function generate_token()
+{
+    $minutes = EXPIRATION_TIME;
+    $expirationTimeInSeconds = $minutes * 60;
+    $exp = time() + $expirationTimeInSeconds;
+
+    $rsa_pk = Configuration::get('CULQI_RSA_PK') ?? '';
+    $public_key = Configuration::get('CULQI_LLAVE_PUBLICA') ?? '';
+    $data = [
+        "pk" => $public_key,
+        "exp" => $exp
+    ];
+
+    $encryptedData = encrypt_data_with_rsa(json_encode($data), $rsa_pk);
+    
+    return $encryptedData;
+}
+
+function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?string {
+    try {
+        $publicKey = openssl_pkey_get_public($publicKeyString);
+        if ($publicKey === false) {
+            throw new Exception("Invalid public key: " . openssl_error_string());
+        }
+
+        $encrypted = '';
+        $result = openssl_public_encrypt($jsonData, $encrypted, $publicKey, OPENSSL_PKCS1_OAEP_PADDING);
+
+        // openssl_free_key($publicKey);
+
+        if ($result === false) {
+            throw new Exception("Encryption failed: " . openssl_error_string());
+        }
+
+        return base64_encode($encrypted);
+    } catch (Exception $e) {
+        error_log("RSA Encryption Error: " . $e->getMessage());
+        return null;
+    }
+    }
+
 #[AllowDynamicProperties]
 class Culqi extends PaymentModule
 {
@@ -210,6 +251,7 @@ class Culqi extends PaymentModule
         $this->context->smarty->assign(array(
             'currentIndex' => $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name,
             'token' => Tools::getAdminTokenLite('AdminModules'),
+            'iframe_token' => generate_token(),
             'fields_value' => $this->getConfigFieldsValues(),
             'culqi_config_url' => CULQI_CONFIG_URL,
             'languages' => $this->context->controller->getLanguages(),
