@@ -238,15 +238,15 @@ $(document).ready(function () {
     });
 });
 
-function setCheckout() {
+function setCheckout(amount = 0) {
     const publicKey = setPublicKey();
-    const config = setConfig();
+    const config = setConfig(amount);
     Culqi = new CulqiCheckout(publicKey, config);
     Culqi.culqi = culqi
 }
 
-function setConfig() {
-    const settings = setSetting();
+function setConfig(amount = 0) {
+    const settings = setSetting(amount);
     const client = setClient();
     const options = setOptions();
     const appearance = setAppearance();
@@ -266,11 +266,11 @@ function setPublicKey() {
     return phpData.llave_publica;
 }
 
-function setSetting() {
+function setSetting(amount = 0) {
     const setting = {
         title: phpData.commerce,
         currency: phpData.currency,
-        amount: Math.ceil(phpData.total),
+        amount: Math.ceil(amount),
         culqiclient: 'prestashop',
         culqiclientversion: phpData.psversion,
         culqipluginversion: phpData.CULQI_PLUGIN_VERSION
@@ -369,8 +369,8 @@ function generateOrder(e, device) {
             dataType: 'json',
             success: function (response) {
                 console.log('Se genero una orden:::', response);
-                orderid = response;
-                setCheckout();
+                orderid = response.order_id;
+                setCheckout(response.amount);
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
                 Culqi.open();
@@ -381,10 +381,10 @@ function generateOrder(e, device) {
                 console.log('Error al generar orden :::', error);
                 $('#showresult').show();
                 orderid = '';
-                setCheckout();
+                // setCheckout();
                 $('#buyButton').removeAttr('disabled');
                 $("[data-payment=culqi]").removeAttr('disabled');
-                Culqi.open();
+                // Culqi.close();
                 $('#showresult').hide();
                 e.preventDefault();
             }
