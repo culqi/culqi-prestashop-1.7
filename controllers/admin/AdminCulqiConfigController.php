@@ -33,20 +33,30 @@ class AdminCulqiConfigController extends ModuleAdminController
                 }
                 $pk = Tools::getValue("publicKey");
                 $status = Tools::getValue("pluginStatus");
-                if (Configuration::get('CULQI_ENABLED') == '') {
-                    $status = 'true';
-                }
                 $merchant = Tools::getValue("merchant");
                 $rsa_pk = Tools::getValue("rsa_pk");
                 $rsa_sk_plugin = Tools::getValue("rsa_plugin_sk");
                 $payment_methods = Tools::getValue("payment_methods");
+                
+                if (Configuration::get('CULQI_ENABLED') == '') {
+                    $status = 'true';
+                }
 
-                Configuration::updateValue('CULQI_ENABLED', $status) &&
-                Configuration::updateValue('CULQI_LLAVE_PUBLICA', $pk) &&
-                Configuration::updateValue('CULQI_PAYMENT_TYPES', $payment_methods) &&
-                Configuration::updateValue('CULQI_MERCHANT', $merchant) &&
-                Configuration::updateValue('CULQI_RSA_PK', $rsa_pk) &&
-                Configuration::updateValue('CULQI_RSA_PLUGIN_SK',$rsa_sk_plugin);
+                if (!empty($status)) {
+                    Configuration::updateValue('CULQI_ENABLED', $status);
+                }
+                if (!empty($pk)) {
+                    Configuration::updateValue('CULQI_LLAVE_PUBLICA', $pk);
+                }
+                if (!empty($payment_methods)) {
+                    Configuration::updateValue('CULQI_PAYMENT_TYPES', $payment_methods);
+                }
+                if (!empty($rsa_pk)) {
+                    Configuration::updateValue('CULQI_RSA_PK', $rsa_pk);
+                }
+                if (!empty($rsa_sk_plugin)) {
+                    Configuration::updateValue('CULQI_RSA_PLUGIN_SK', $rsa_sk_plugin);
+                }
             } catch (Exception $e) {
                 die(json_encode($e->getMessage()));
             }

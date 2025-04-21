@@ -10,6 +10,7 @@ define( 'CULQI_CONFIG_URL' , 'https://configonlineplatform-qa.culqi.xyz/' );
 define( 'EXPIRATION_TIME' , 15 );
 define('CULQI_PLUGIN_VERSION', '4.0.0');
 define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
+define('PLATFORM', 'prestashop');
 
 function generate_token()
 {
@@ -254,6 +255,7 @@ class Culqi extends PaymentModule
             'iframe_token' => generate_token(),
             'fields_value' => $this->getConfigFieldsValues(),
             'culqi_config_url' => CULQI_CONFIG_URL,
+            'platform' => PLATFORM,
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'save_config_ajax_url' => $this->context->link->getAdminLink('AdminCulqiConfig'),

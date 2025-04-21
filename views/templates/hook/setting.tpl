@@ -25,7 +25,7 @@
 <div class="wrap">
     <div class="iframe-container">
         <iframe 
-            src="{$culqi_config_url}?platform=prestashop&status={$fields_value.status|escape:'url'}&pk={$fields_value.pk|escape:'url'}&merchant={$fields_value.merchant|escape:'url'}&activePaymentMethods={$fields_value.payment_methods|escape:'url'}&shop={$fields_value.shop_url|escape:'url'}&token={$iframe_token|escape:'url'}" 
+            src="{$culqi_config_url}?platform={$platform}&shop={$fields_value.shop_url|escape:'url'}&token={$iframe_token|escape:'url'}" 
             width="100%">
         </iframe>
     </div>
@@ -33,7 +33,6 @@
 
 <script>
     jQuery(document).ready(function($) {
-        console.log("test");
         window.addEventListener('message', function(event) {
             if (event.data.action === 'saveConfig') {
                 const data = event.data.data;
