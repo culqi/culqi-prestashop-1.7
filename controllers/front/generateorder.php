@@ -37,6 +37,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             $success_url = $shop_domain . '/index.php?controller=order-confirmation&id_cart=' . (int)$cart_id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer_secure_key;
             die(json_encode([
                 'success' => true,
+                'order_id' => $this->module->currentOrder,
                 'data' => $success_url,
             ]));
         } catch (Exception $e) {

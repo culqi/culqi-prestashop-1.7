@@ -1,4 +1,5 @@
 
+const operationProcessing = 'processing';
 $('#checkout').on('click', '#buyButton', function (e) {
         $('#buyButton').attr('disabled', true);
         $("[data-payment=culqi]").attr('disabled', true);
@@ -77,19 +78,26 @@ function redirect() {
 }
 
 window.addEventListener('message', function(event) {
-    console.log(event);
-    console.log(event.data);
     if (event.data.redirectUrl) {
         window.redirectUrl = event.data.redirectUrl;
+    }
+    if (event.data.operationType == operationProcessing) {
+        if (window.redirectUrl) {
+            customRedirect();
+        }
     }
     if (event.data.action === 'closeModal') {
         $('#order-created-modal').fadeOut();
         $('body').removeClass('no-scroll');
         if (window.redirectUrl) {
-            const redirectUrl = window.redirectUrl;
-            delete window.redirectUrl;
-            window.location.href = redirectUrl;
+            customRedirect();
         }
     }
 
 }, false);
+
+function customRedirect() {
+    const redirectUrl = window.redirectUrl;
+    delete window.redirectUrl;
+    window.location.href = redirectUrl;
+}
