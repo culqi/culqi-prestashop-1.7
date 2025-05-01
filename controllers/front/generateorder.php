@@ -88,7 +88,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
 
         Logger::addLog('Charge -> se cambio el estado a: '.$status);    
         try {
-            switch (get_payment_type($transaction_id)) {
+            switch ($this->get_payment_type($transaction_id)) {
 
                 case 'charge':
                     if ($status == "refunded"){
