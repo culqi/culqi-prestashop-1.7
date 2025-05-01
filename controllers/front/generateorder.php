@@ -109,6 +109,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
                     }
                     break;
             }
+            http_response_code(201);
             echo json_encode(['success' => 'true', 'msj' => 'Operación exitosa']);
         } catch (Exception $e) {
             Logger::addLog('Error -> '.$e->getMessage());    
