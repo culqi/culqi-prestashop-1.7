@@ -87,29 +87,37 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         $transaction_id = trim($data['transactionId']);
 
         Logger::addLog('Charge -> se cambio el estado a: '.$status);    
+        try {
+            switch (get_payment_type($transaction_id)) {
 
-        switch (get_payment_type($transaction_id)) {
+                case 'charge':
+                    if ($status == "refunded"){
 
-            case 'charge':
-                if ($status == "refunded"){
+                        $state_refund = 7;
+        
+                        $this->updateOrderAndcreateOrderHistoryState($order_id, $state_refund);
+                    }
+                    break;
 
-                    $state_refund = 7;
-    
-                    $this->updateOrderAndcreateOrderHistoryState($order_id, $state_refund);
-                }
-                break;
-
-            case 'order':
-                $state = 'CULQI_STATE_OK';
-                if ($status === "cancelled") {//expirado
-                    $state = 'CULQI_STATE_EXPIRED';
-                }
-                if ($status != 'pending') {
-                    $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
-                }
-                break;
+                case 'order':
+                    $state = 'CULQI_STATE_OK';
+                    if ($status === "cancelled") {//expirado
+                        $state = 'CULQI_STATE_EXPIRED';
+                    }
+                    if ($status != 'pending') {
+                        $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
+                    }
+                    break;
+            }
+            echo json_encode(['success' => 'true', 'msj' => 'Operación exitosa']);
+        } catch (Exception $e) {
+            Logger::addLog('Error -> '.$e->getMessage());    
+            die(json_encode([
+                'success' => false,
+                'data' => $e->getMessage(),
+            ]));
+            echo json_encode(['success' => 'false', 'msj' => 'Erro al ejecutar el webhook']);
         }
-        echo json_encode(['success' => 'true', 'msj' => 'Operación exitosa']);
     }
 
     private function updateOrderAndcreateOrderHistoryState($id_order, $id_state)
