@@ -101,10 +101,10 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
 
             case 'order':
                 $state = 'CULQI_STATE_OK';
-                if ($status === "expired") {
+                if ($status === "cancelled") {//expirado
                     $state = 'CULQI_STATE_EXPIRED';
                 }
-                if ($stateRequest != 'pending') {
+                if ($status != 'pending') {
                     $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
                 }
                 break;
