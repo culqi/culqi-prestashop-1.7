@@ -189,6 +189,10 @@ class Culqi extends PaymentModule
             Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value
                 FROM " . _DB_PREFIX_ . "configuration WHERE name =  'CULQI_STATE_OK' )") &&
             Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value
+                FROM " . _DB_PREFIX_ . "configuration WHERE name =  'CULQI_STATE_REFUND' )") &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value
+                FROM " . _DB_PREFIX_ . "configuration WHERE name =  'CULQI_STATE_REFUND' )") &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value
                 FROM " . _DB_PREFIX_ . "configuration WHERE name =  'CULQI_STATE_PENDING' )") &&
             Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value
                 FROM " . _DB_PREFIX_ . "configuration WHERE name =  'CULQI_STATE_PENDING' )") &&
@@ -208,6 +212,7 @@ class Culqi extends PaymentModule
     {
         if (!parent::uninstall()
             || !Configuration::deleteByName('CULQI_STATE_OK')
+            || !Configuration::deleteByName('CULQI_STATE_REFUND')
             || !Configuration::deleteByName('CULQI_STATE_PENDING')
             || !Configuration::deleteByName('CULQI_STATE_ERROR')
             || !Configuration::deleteByName('CULQI_STATE_EXPIRED')
@@ -294,6 +299,11 @@ class Culqi extends PaymentModule
             $txt_state='Pago aceptado';
             $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
             Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+        }
+        if (!Configuration::get('CULQI_STATE_REFUND')) {
+            $txt_state='Reembolsado';
+            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
+            Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
         }
         if (!Configuration::get('CULQI_STATE_PENDING')) {
             $txt_state = 'En espera de pago por Culqi';

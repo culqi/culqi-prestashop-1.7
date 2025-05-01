@@ -18,8 +18,8 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             $rawData = file_get_contents('php://input');
             $headers = getallheaders();
             $data = json_decode($rawData, true);
-            $this->postProcessWebhooks($headers, $data);
-            /*$cart_id = $data["orderId"];
+            //$this->postProcessWebhooks($headers, $data);
+            $cart_id = $data["orderId"];
             $customer_secure_key = $data["orderKey"];
             $card_number = $data["cardNumber"] ?? '';
             $card_brand = $data["cardBrand"] ?? '';
@@ -41,7 +41,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
                 'success' => true,
                 'order_id' => $this->module->currentOrder,
                 'data' => $success_url,
-            ]));*/
+            ]));
         } catch (Exception $e) {
             die(json_encode([
                 'success' => false,
@@ -61,26 +61,16 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
 
         return $culqi_status;
     }
-
+/*
     private function postProcessWebhooks($headers, $data)
     {
-        Logger::addLog('Inicio webhook');
+        Logger::addLog('Inicio webhook');*/
 /*
         $headers = $headers['Authorization'];
         if(!isset($headers)){
         	exit("Error: Cabecera Authorization no presente");
         }*/
-        /*
-        $authorization = substr($headers,6);
-        $credenciales = base64_decode($authorization);
-        $credenciales = explode( ':', $credenciales );
-        $username = $credenciales[0];
-        $password = $credenciales[1];
-        if(!isset($username) or !isset($password)){
-        	exit("Error: No autorizado");
-        }
-        */
-
+/*
         Logger::addLog('$data ' . serialize($data));
         $order_id = (int)trim($data['orderId']);
         $status = trim($data['status']);	
@@ -92,10 +82,9 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
 
                 case 'charge':
                     if ($status == "refunded"){
-
-                        $state_refund = 7;
-        
-                        $this->updateOrderAndcreateOrderHistoryState($order_id, $state_refund);
+                        //$state_refund = 7;
+                         $state = 'CULQI_STATE_REFUND';
+                        //$this->updateOrderAndcreateOrderHistoryState($order_id, $state_refund);
                     }
                     break;
 
@@ -104,20 +93,20 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
                     if ($status === "cancelled") {//expirado
                         $state = 'CULQI_STATE_EXPIRED';
                     }
-                    if ($status != 'pending') {
-                        $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
-                    }
                     break;
             }
+            $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
+
             http_response_code(201);
-            echo json_encode(['success' => 'true', 'msj' => 'Operación exitosa']);
+            echo json_encode(['type' => 'success', 'user_message' => 'Operación exitosa']);
         } catch (Exception $e) {
+            http_response_code(400);
             Logger::addLog('Error -> '.$e->getMessage());    
             die(json_encode([
                 'success' => false,
                 'data' => $e->getMessage(),
             ]));
-            echo json_encode(['success' => 'false', 'msj' => 'Erro al ejecutar el webhook']);
+            echo json_encode(['type' => 'eror', 'user_message' => 'Erro al ejecutar el webhook']);
         }
     }
 
@@ -136,5 +125,5 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
     public function get_payment_type($id) {
         $type = (substr( $id, 0, 4 ) === "ord_") ? "order" : "charge";
         return $type;
-    }
+    }*/
 }
