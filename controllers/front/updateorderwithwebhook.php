@@ -57,7 +57,7 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
             http_response_code(201);
             die(json_encode([
                 'type' => 'success',
-                'order_id' => $this->$order_id,
+                'order_id' => $order_id,
                 'user_message' => 'Operación exitosa',
             ]));
         } catch (Exception $e) {
@@ -65,8 +65,8 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
             Logger::addLog('Error -> '.$e->getMessage());    
             die(json_encode([
                 'type' => 'error',
-                'order_id' => $this->$order_id,
-                'user_message' => 'Erro al ejecutar el webhook, '.$e->getMessage(),
+                'order_id' => $order_id,
+                'user_message' => 'Error al ejecutar el webhook, '.$e->getMessage(),
             ]));
         }
     }
