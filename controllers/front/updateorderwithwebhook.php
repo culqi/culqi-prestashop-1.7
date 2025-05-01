@@ -41,7 +41,9 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
                     break;
 
                 case 'order':
-                    $state = 'CULQI_STATE_OK';
+                    if ($status === "processing") {//pagado
+                        $state = 'CULQI_STATE_OK';
+                    }
                     if ($status === "cancelled") {//expirado
                         $state = 'CULQI_STATE_EXPIRED';
                     }
