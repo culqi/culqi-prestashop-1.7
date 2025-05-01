@@ -18,7 +18,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             $rawData = file_get_contents('php://input');
             $headers = getallheaders();
             $data = json_decode($rawData, true);
-            postProcessWebhooks($headers, $data);
+            $this->postProcessWebhooks($headers, $data);
             /*$cart_id = $data["orderId"];
             $customer_secure_key = $data["orderKey"];
             $card_number = $data["cardNumber"] ?? '';
