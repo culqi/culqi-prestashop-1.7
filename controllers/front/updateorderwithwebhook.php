@@ -11,6 +11,7 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
     public function displayAjax()
     {
         Logger::addLog('Inicio weebhook');
+        header('Content-Type: application/json');
         $shop_domain = Tools::getShopDomainSsl(true);
         $rawData = file_get_contents('php://input');
         $headers = getallheaders();
