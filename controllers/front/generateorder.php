@@ -62,7 +62,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         return $culqi_status;
     }
 
-    private function postProcessWebhooks($headers, $postBody)
+    private function postProcessWebhooks($headers, $data)
     {
         Logger::addLog('Inicio webhook');
 /*
