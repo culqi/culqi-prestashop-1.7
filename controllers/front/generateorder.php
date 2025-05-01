@@ -64,7 +64,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
 
     private function postProcessWebhooks($headers, $postBody)
     {
-        Logger::addLog('Inicio weebhook');
+        Logger::addLog('Inicio webhook');
 /*
         $headers = $headers['Authorization'];
         if(!isset($headers)){
@@ -81,14 +81,10 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
         }
         */
 
-        $data = json_decode($postBody["data"], true);
         Logger::addLog('$data ' . serialize($data));
         $order_id = (int)trim($data['orderId']);
         $status = trim($data['status']);	
         $transaction_id = trim($data['transactionId']);
-
-        if ($postBody["object"] != 'event')
-            return;
 
         Logger::addLog('Charge -> se cambio el estado a: '.$status);    
 
