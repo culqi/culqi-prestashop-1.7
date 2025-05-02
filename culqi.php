@@ -30,7 +30,8 @@ function generate_token()
     return $encryptedData;
 }
 
-function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?string {
+function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?string 
+{
     try {
         $publicKey = openssl_pkey_get_public($publicKeyString);
         if ($publicKey === false) {
@@ -51,7 +52,35 @@ function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?stri
         error_log("RSA Encryption Error: " . $e->getMessage());
         return null;
     }
+}
+
+function verify_jwt_token($token)
+{
+    try {
+        $rsa_sk_plugin = Configuration::get('CULQI_RSA_PLUGIN_SK') ?? '';
+        $encryptedToken = base64_decode($token);
+        if ($encryptedToken === false) {
+            throw new Exception('Invalid Base64 token.');
+        }
+        $decrypted = '';
+        $success = openssl_private_decrypt($encryptedToken, $decrypted, $rsa_sk_plugin, OPENSSL_PKCS1_OAEP_PADDING);
+        if (!$success) {
+            throw new Exception('Failed to decrypt the token.');
+        }
+        $payload = json_decode($decrypted, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Invalid token payload format.');
+        }
+        if (!isset($payload['exp']) || $payload['exp'] < time()) {
+            throw new Exception('Token has expired.');
+        }
+        return $payload;
+    } catch (Exception $e) {
+        var_dump($e);
+        // throw new Exception('Token validation failed: ' . $e->getMessage());
+        return false;
     }
+}
 
 #[AllowDynamicProperties]
 class Culqi extends PaymentModule

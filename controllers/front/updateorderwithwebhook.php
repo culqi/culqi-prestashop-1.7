@@ -17,11 +17,11 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
         $headers = getallheaders();
         $data = json_decode($rawData, true);
 
-        /*
         $headers = $headers['Authorization'];
         if(!isset($headers)){
         	exit("Error: Cabecera Authorization no presente");
-        }*/
+        }
+        verify_jwt_token($headers);
 
         Logger::addLog('$data ' . serialize($data));
         $order_id = (int)trim($data['orderId']);
