@@ -17,6 +17,24 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             $shop_domain = Tools::getShopDomainSsl(true);
             $rawData = file_get_contents('php://input');
             $headers = getallheaders();
+            $headers = $headers['Authorization'];
+
+            if(!isset($headers)){
+                exit("Error: Cabecera Authorization no presente");
+            }
+
+            $token = explode(' ', $headers)[1];
+            $is_verified = verify_jwt_token($token);
+            if(!$is_verified){
+                Logger::addLog('Error: Token no verificado');
+                http_response_code(401);
+                die(json_encode([
+                    'type' => 'error',
+                    'order_id' => 0,
+                    'user_message' => 'Token no verificado',
+                ]));
+            }
+
             $data = json_decode($rawData, true);
             //$this->postProcessWebhooks($headers, $data);
             $cart_id = $data["orderId"];

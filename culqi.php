@@ -76,7 +76,7 @@ function verify_jwt_token($token)
         }
         return $payload;
     } catch (Exception $e) {
-        var_dump($e);
+        // var_dump($e);
         // throw new Exception('Token validation failed: ' . $e->getMessage());
         return false;
     }
@@ -93,7 +93,7 @@ class Culqi extends PaymentModule
         $this->name = 'culqi';
         $this->tab = 'payments_gateways';
         $this->version = CULQI_PLUGIN_VERSION;
-        $this->controllers = array('chargeajax', 'postpayment', 'generateorder', 'webhook', 'registersale');
+        $this->controllers = array('generateorder', 'webhook', 'registersale');
         $this->author = 'Culqi';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->bootstrap = true;

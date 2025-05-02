@@ -21,8 +21,18 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
         if(!isset($headers)){
         	exit("Error: Cabecera Authorization no presente");
         }
-        verify_jwt_token($headers);
 
+        $token = explode(' ', $headers)[1];
+        $is_verified = verify_jwt_token($token);
+        if(!$is_verified){
+            Logger::addLog('Error: Token no verificado');
+            http_response_code(401);
+            die(json_encode([
+                'type' => 'error',
+                'order_id' => 0,
+                'user_message' => 'Token no verificado',
+            ]));
+        }
         Logger::addLog('$data ' . serialize($data));
         $order_id = (int)trim($data['orderId']);
         $status = trim($data['status']);	
