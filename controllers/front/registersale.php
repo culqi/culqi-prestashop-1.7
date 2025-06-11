@@ -122,7 +122,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             return array(
                 'result' => 'success',
                 'show_modal' => true,
-                'redirect' => $gatewayUrl
+                'redirect' => $this->formatGatewayUrl($gatewayUrl)
             );
         } else {
             PrestaShopLogger::addLog('Payment error: Invalid response from payment gateway.', 3);
@@ -150,5 +150,9 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         }
         
         return false;
+    }
+
+    private function formatGatewayUrl(string $url): string {
+        return $url . '&culqiPluginVersion=' . CULQI_PLUGIN_VERSION . '&culqiClientVersion=' . _PS_VERSION_;
     }
 }
