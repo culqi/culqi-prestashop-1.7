@@ -34,6 +34,33 @@
 <script>
     jQuery(document).ready(function($) {
         window.addEventListener('message', function(event) {
+            console.log('event.data', event.data);
+            if (event.data.action === 'checkPluginSession') {
+                $.ajax({
+                    url: "{$save_config_ajax_url}",
+                    type: 'POST',
+                    data: {
+                        action: 'checkSession',
+                        ajax: true
+                    },
+                    success: function(response) {
+                        try {
+                            const sessionResponse = JSON.parse(response);
+                            console.log(sessionResponse);
+                            console.log(sessionResponse.session_valid);
+                            return true;
+                        } catch (e) {
+                            console.error('Error parsing JSON response:', e);
+                            window.location.reload();
+                            return false;
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error: ' + status + error);
+                        window.location.reload();
+                    }
+                });
+            }
             if (event.data.action === 'saveConfig') {
                 const data = event.data.data;
                 $.ajax({

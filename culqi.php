@@ -8,7 +8,7 @@ if (!defined('_PS_VERSION_'))
 define( 'CULQI_API_URL' , 'https://ag-shopify-qa.culqi.xyz/gateway/' );
 define( 'CULQI_CONFIG_URL' , 'https://configonlineplatform-qa.culqi.xyz/' );
 define( 'EXPIRATION_TIME' , 15 );
-define('CULQI_PLUGIN_VERSION', '4.0.0');
+define('CULQI_PLUGIN_VERSION', 'v4.0.0');
 define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
 define('PLATFORM', 'prestashop');
 
@@ -293,6 +293,7 @@ class Culqi extends PaymentModule
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'save_config_ajax_url' => $this->context->link->getAdminLink('AdminCulqiConfig'),
+            'check_session_url' => $this->context->link->getAdminLink('AdminCulqiSessionCheck'),
         ));
 
         return $this->display(__FILE__, '/views/templates/hook/setting.tpl');

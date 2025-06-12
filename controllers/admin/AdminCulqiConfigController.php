@@ -23,9 +23,16 @@ class AdminCulqiConfigController extends ModuleAdminController
 
     public function postProcess()
     {
+        if (Tools::getValue('action') === 'checkSession') {
+            die(json_encode([
+                'session_valid' => $this->context->employee->isLoggedBack(),
+            ]));
+        }
+
         if (!Context::getContext()->employee || !Context::getContext()->employee->isLoggedBack()) {
             die(json_encode(['success' => false, 'message' => 'Access denied.']));
         }
+
         if (Tools::getValue('action') === 'saveConfig') {
             try {
                 if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {

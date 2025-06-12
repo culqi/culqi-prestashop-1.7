@@ -121,3 +121,24 @@
         <iframe allowtransparency="true" style="background: transparent" src="#"></iframe>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Culqi payment module loaded');
+    const culqiElement = document.querySelector('[data-module-name="culqi"]');
+    
+    if (culqiElement) {
+        const ancestor = culqiElement.closest('.payment-option');
+        
+        if (ancestor) {
+            const label = ancestor.querySelector('label');
+            if (label) {
+                const span = label.querySelector('span');
+                if (span) {
+                    span.style.display = 'none'; // Hide the span
+                }
+            }
+        }
+    }
+});
+</script>
