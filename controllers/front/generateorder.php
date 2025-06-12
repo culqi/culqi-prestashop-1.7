@@ -57,7 +57,7 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
                 $culqi_status = $this->getCulqiStatus($transaction_id);
                 $cart = new Cart($cart_id);
                 $this->module->validateOrder((int)$cart_id, $culqi_status, (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer_secure_key);
-                
+                $id_order = Order::getIdByCartId($cart_id);
                 $order = new Order($id_order);
                 $order_payment_collection = $order->getOrderPaymentCollection();
                 $order_payment = $order_payment_collection[0];
