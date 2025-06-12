@@ -42,24 +42,36 @@ class CulqiGenerateOrderModuleFrontController extends ModuleFrontController
             $card_number = $data["cardNumber"] ?? '';
             $card_brand = $data["cardBrand"] ?? '';
             $transaction_id = $data["transactionId"] ?? '';
-            $culqi_status = $this->getCulqiStatus($transaction_id);
-            $cart = new Cart($cart_id);
-            $this->module->validateOrder((int)$cart_id, $culqi_status, (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer_secure_key);
-            $id_order = Order::getIdByCartId($cart_id);
-            $order = new Order($id_order);
-            $order_payment_collection = $order->getOrderPaymentCollection();
 
-            $order_payment = $order_payment_collection[0];
-            $order_payment->card_number = $card_number;
-            $order_payment->card_brand = $card_brand;
-            $order_payment->transaction_id = $transaction_id;
-            $order_payment->update();
-            $success_url = $shop_domain . '/index.php?controller=order-confirmation&id_cart=' . (int)$cart_id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer_secure_key;
-            die(json_encode([
-                'success' => true,
-                'order_id' => $this->module->currentOrder,
-                'data' => $success_url,
-            ]));
+            $id_order = Order::getIdByCartId($cart_id);
+            if ($id_order) {
+                $order = new Order($id_order);
+                $success_url = $shop_domain . '/index.php?controller=order-confirmation&id_cart=' . (int)$cart_id . '&id_module=' . (int)$this->module->id . '&id_order=' . $order->id . '&key=' . $customer_secure_key;
+                die(json_encode([
+                    'success' => true,
+                    'order_id' => $order->id,
+                    'data' => $success_url,
+                    'message' => 'Order already exists'
+                ]));
+            } else {
+                $culqi_status = $this->getCulqiStatus($transaction_id);
+                $cart = new Cart($cart_id);
+                $this->module->validateOrder((int)$cart_id, $culqi_status, (float)$cart->getordertotal(true), 'Culqi', null, array(), (int)$cart->id_currency, false, $customer_secure_key);
+                
+                $order = new Order($id_order);
+                $order_payment_collection = $order->getOrderPaymentCollection();
+                $order_payment = $order_payment_collection[0];
+                $order_payment->card_number = $card_number;
+                $order_payment->card_brand = $card_brand;
+                $order_payment->transaction_id = $transaction_id;
+                $order_payment->update();
+                $success_url = $shop_domain . '/index.php?controller=order-confirmation&id_cart=' . (int)$cart_id . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer_secure_key;
+                die(json_encode([
+                    'success' => true,
+                    'order_id' => $this->module->currentOrder,
+                    'data' => $success_url,
+                ]));
+            }
         } catch (Exception $e) {
             die(json_encode([
                 'success' => false,
