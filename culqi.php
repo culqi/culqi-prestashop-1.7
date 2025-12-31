@@ -5,8 +5,8 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define( 'CULQI_API_URL' , 'https://ag-shopify-qa.culqi.xyz/gateway/' );
-define( 'CULQI_CONFIG_URL' , 'https://configonlineplatform-qa.culqi.xyz/' );
+define( 'CULQI_API_URL' , 'https://c1-ag-online.qas.nonprodculqi.com/gateway/' );
+define( 'CULQI_CONFIG_URL' , 'https://c1-configonlineplatform.qas.nonprodculqi.com/' );
 define( 'EXPIRATION_TIME' , 15 );
 define('CULQI_PLUGIN_VERSION', 'v4.0.0');
 define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
@@ -153,9 +153,19 @@ class Culqi extends PaymentModule
     private function clearCache()
     {
         Tools::clearSmartyCache();
-		Tools::clearXMLCache();
-		Tools::clearCache();
-		Tools::generateIndex();
+        Tools::clearXMLCache();
+        Tools::clearCache();
+        
+        if (method_exists('Tools', 'generateIndex')) {
+            Tools::generateIndex();
+        } else {
+            if (method_exists('Tools', 'clearAllCache')) {
+                Tools::clearAllCache();
+            }
+            if (method_exists('Tools', 'clearSymfonyCache')) {
+                Tools::clearSymfonyCache();
+            }
+        }
     }
 
     public function errorPayment($mensaje)
