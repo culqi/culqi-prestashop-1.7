@@ -1,4 +1,7 @@
-2024-03-03 - version 4.0.0
+2024-04-13 - version 4.0.1
+Fix: Add mdd Fields
+
+2024-03-01 - version 4.0.0
 Fix: New plugin
 
 2025-02-06 - version 3.1.3

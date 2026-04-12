@@ -8,9 +8,11 @@ if (!defined('_PS_VERSION_'))
 define( 'CULQI_API_URL' , 'https://c1-ag-online.qas.nonprodculqi.com/gateway/' );
 define( 'CULQI_CONFIG_URL' , 'https://c1-configonlineplatform.qas.nonprodculqi.com/' );
 define( 'EXPIRATION_TIME' , 15 );
-define('CULQI_PLUGIN_VERSION', 'v4.0.0');
-define('LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
-define('PLATFORM', 'prestashop');
+define( 'CULQI_PLUGIN_VERSION', 'v4.0.1');
+define( 'LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
+define( 'PLATFORM', 'prestashop');
+define( 'CHECKOUT_VERSION', 'custom_checkout');
+define( 'CULQI_3DS', 'culqi_3ds');
 
 function generate_token()
 {

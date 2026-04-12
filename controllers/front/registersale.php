@@ -34,7 +34,9 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $orderReference = '';
         $shopDomain = Tools::getShopDomainSsl();
         $apiUrl = CULQI_API_URL . 'shopify/public/save-order';
-        $platform = "prestashop";
+        $platform = PLATFORM;
+        $theme = Context::getContext()->theme;
+        $user_agent = Tools::getValue('HTTP_USER_AGENT', $_SERVER['HTTP_USER_AGENT']);
 
         $currency = $this->context->currency;
         $customer = $this->context->customer;
@@ -87,6 +89,18 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             "merchant_locale" => "en-PE",
             "shop_domain" => $shopDomain,
             "order_key" => $customer->secure_key,
+            "audit_data" => array(
+                "ip"=>  $this->obtener_ip_real(),
+                "user_agent" =>  $user_agent,
+                "checkout_version" => CHECKOUT_VERSION,
+                "3ds" => CULQI_3DS,
+                "plugin_version" => CULQI_PLUGIN_VERSION,
+                "cms" => $platform,
+                "cms_version" => _PS_VERSION_,
+                "php_version" => PHP_VERSION,
+                "name_theme"=> $theme->get('display_name'),
+                "version_theme"=> $theme->get('version'),
+            ),
         );
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
@@ -154,5 +168,16 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
     private function formatGatewayUrl(string $url): string {
         return $url . '&culqiPluginVersion=' . CULQI_PLUGIN_VERSION . '&culqiClientVersion=' . _PS_VERSION_;
+    }
+
+    private function obtener_ip_real() {
+        if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+            $ip = explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR'] )[0];
+        } elseif ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
     }
 }
