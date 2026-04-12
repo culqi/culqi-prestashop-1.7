@@ -90,6 +90,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             "shop_domain" => $shopDomain,
             "order_key" => $customer->secure_key,
             "audit_data" => array(
+                "integration_type"=> 'plugin',
                 "ip"=>  $this->obtener_ip_real(),
                 "user_agent" =>  $user_agent,
                 "checkout_version" => CHECKOUT_VERSION,
