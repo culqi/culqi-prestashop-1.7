@@ -57,6 +57,13 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $billingAddress = new Address((int)$cart->id_address_invoice);
         $env = $this->get_env();
 
+        $themeName = '';
+        $themeVersion = '';
+
+        if (isset($this->context->shop) && !empty($this->context->shop->theme_name)) {
+            $themeName = (string) $this->context->shop->theme_name;
+        }
+
         $body = array(
             "id" => $cart->id,
             "platform" => $platform,
@@ -116,8 +123,8 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 "cms" => $platform,
                 "cms_version" => _PS_VERSION_,
                 "php_version" => PHP_VERSION,
-                "name_theme"=> $theme->get('display_name'),
-                "version_theme"=> $theme->get('version'),
+                "name_theme" => $themeName,
+                "version_theme" => $themeVersion,
             ),
         );
         $ch = curl_init();
