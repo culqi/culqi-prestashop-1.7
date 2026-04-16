@@ -47,7 +47,6 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $shopDomain = Tools::getShopDomainSsl();
         $apiUrl = CULQI_API_URL . 'shopify/public/save-order';
         $platform = PLATFORM;
-        $theme = Context::getContext()->theme;
         $user_agent = Tools::getValue('HTTP_USER_AGENT', $_SERVER['HTTP_USER_AGENT']);
 
         $currency = $this->context->currency;
