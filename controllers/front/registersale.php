@@ -31,6 +31,18 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
     private function get_gateway_url($cart, $token)
     {
+        $carrierName = 'No method selected';
+        if ((int) $cart->id_carrier > 0) {
+            $carrier = new Carrier((int) $cart->id_carrier);
+            if (Validate::isLoadedObject($carrier)) {
+                $carrierName = $carrier->name;
+            }
+        }
+
+        $shippingTotalTaxIncl = (float) $cart->getOrderTotal(true, Cart::ONLY_SHIPPING);
+        $shippingTotalTaxExcl = (float) $cart->getOrderTotal(false, Cart::ONLY_SHIPPING);
+        $shippingTax = $shippingTotalTaxIncl - $shippingTotalTaxExcl;
+
         $orderReference = '';
         $shopDomain = Tools::getShopDomainSsl();
         $apiUrl = CULQI_API_URL . 'shopify/public/save-order';
@@ -80,6 +92,11 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                     "postal_code" => $deliveryAddress->postcode,
                     "province" => State::getNameById($deliveryAddress->id_state),
                     "country_code" => Country::getIsoById($deliveryAddress->id_country)
+                ),
+                "shipping_data" => array(
+                    "method" => $carrierName ?: 'No method selected',
+                    "total" => (string) number_format($shippingTotalTaxExcl, 2, '.', ''),
+                    "tax" => (string) number_format($shippingTax, 2, '.', ''),
                 ),
                 "email" => $customer->email,
                 "locale" => "en-PE"
