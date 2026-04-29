@@ -44,7 +44,7 @@ class AdminCulqiConfigController extends ModuleAdminController
                 $rsa_pk = Tools::getValue("rsa_pk");
                 $rsa_sk_plugin = Tools::getValue("rsa_plugin_sk");
                 $payment_methods = Tools::getValue("payment_methods");
-                
+
                 if (Configuration::get('CULQI_ENABLED') == '') {
                     $status = 'true';
                 }
@@ -71,6 +71,20 @@ class AdminCulqiConfigController extends ModuleAdminController
             die(json_encode([
                 'success' => true,
                 'message' => 'Configuration saved successfully.',
+            ]));
+        }
+
+        if (Tools::getValue('action') === 'getNewConfigUrl') {
+            if (!Context::getContext()->employee || !Context::getContext()->employee->isLoggedBack()) {
+                die(json_encode(['success' => false, 'message' => 'Access denied.']));
+            }
+
+            $module = Module::getInstanceByName('culqi');
+            $newUrl = $module->getConfigUrl();
+
+            die(json_encode([
+                'success' => true,
+                'url' => $newUrl,
             ]));
         }
     }

@@ -286,6 +286,13 @@ class Culqi extends PaymentModule
      * Admin Zone
      */
 
+    public function getConfigUrl(): string
+    {
+        $token = generate_token();
+        $shopUrl = Tools::getShopDomainSsl(true);
+        return CULQI_CONFIG_URL . '?platform=' . PLATFORM . '&shop=' . urlencode($shopUrl) . '&token=' . urlencode($token);
+    }
+
     public function renderForm()
     {
         if (!isset($this->context->employee)) {
@@ -298,10 +305,8 @@ class Culqi extends PaymentModule
         $this->context->smarty->assign(array(
             'currentIndex' => $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name,
             'token' => Tools::getAdminTokenLite('AdminModules'),
-            'iframe_token' => generate_token(),
+            'culqi_config_url' => $this->getConfigUrl(),
             'fields_value' => $this->getConfigFieldsValues(),
-            'culqi_config_url' => CULQI_CONFIG_URL,
-            'platform' => PLATFORM,
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'save_config_ajax_url' => $this->context->link->getAdminLink('AdminCulqiConfig'),
