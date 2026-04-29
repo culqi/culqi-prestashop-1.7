@@ -108,22 +108,25 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 "locale" => "en-PE"
             ),
             "cancel_url" => $this->context->link->getPageLink('order'),
-            "success_url" => '',
             "merchant_locale" => "en-PE",
             "shop_domain" => $shopDomain,
             "order_key" => $customer->secure_key,
+            "phone" => $billingAddress->phone ?: '',
+            "browser" => $user_agent,
+            "products" => $this->get_cart_products($cart),
             "audit_data" => array(
                 "integration_type"=> 'plugin',
                 "ip"=>  $this->obtener_ip_real(),
                 "user_agent" =>  $user_agent,
                 "checkout_version" => CHECKOUT_VERSION,
-                "3ds" => CULQI_3DS,
+                "threeds" => CULQI_3DS,
                 "plugin_version" => CULQI_PLUGIN_VERSION,
                 "cms" => $platform,
                 "cms_version" => _PS_VERSION_,
                 "php_version" => PHP_VERSION,
                 "name_theme" => $themeName,
                 "version_theme" => $themeVersion,
+                "url_theme" => isset($this->context->shop->theme_name) ? $this->context->shop->theme_name : '',
             ),
         );
         $ch = curl_init();
@@ -169,6 +172,29 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 'message' => 'Payment error: Invalid response from payment gateway.'
             );
         }
+    }
+
+    private function get_cart_products($cart)
+    {
+        $products = $cart->getProducts();
+        if (empty($products)) {
+            return null;
+        }
+
+        $items = array();
+        foreach ($products as $product) {
+            $quantity = (int) $product['quantity'];
+            $line_total = (float) $product['price_wt'] * $quantity;
+            $unit_price = $quantity > 0 ? $line_total / $quantity : (float) $product['price_wt'];
+
+            $items[] = array(
+                'name' => $product['name'] ?? '',
+                'quantity' => $quantity > 0 ? $quantity : 1,
+                'unit_price' => number_format($unit_price, 2, '.', ''),
+            );
+        }
+
+        return $items;
     }
 
     private function get_env()
