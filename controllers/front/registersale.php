@@ -3,18 +3,24 @@
 include_once dirname(__FILE__, 3) . '/culqi.php';
 
 class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
-{	
+{
+    private $logger;
 
     public function initContent()
     {
         parent::initContent();
         $this->ajax = false;
+        $this->logger = CulqiLogger::get_instance();
         $cart = $this->context->cart;
+
+        $this->logger->info('Checkout', 'Starting payment process', ['cart_id' => $cart->id]);
+
         if (!$cart->id) {
+            $this->logger->warning('Checkout', 'Cart is empty');
             die(json_encode(['status' => 'error', 'message' => 'Cart is empty']));
         }
 
-        $customer = new Customer($cart->id_customer);        
+        $customer = new Customer($cart->id_customer);
         $token = generate_token();
 
         $gateway_url = $this->get_gateway_url($cart, $token);
@@ -22,6 +28,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         try{
             //die("llegamos bien");
         }catch (Exception $e){
+            $this->logger->error('Checkout', 'Exception in register sale', ['error' => $e->getMessage()]);
             echo '<script type="text/javascript">console.log("Error en el update de cargo!"); </script>';
         }
 
@@ -31,6 +38,8 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
     private function get_gateway_url($cart, $token)
     {
+        $this->logger->debug('Checkout', 'Building gateway URL', ['cart_id' => $cart->id]);
+
         $carrierName = 'No method selected';
         if ((int) $cart->id_carrier > 0) {
             $carrier = new Carrier((int) $cart->id_carrier);
@@ -55,6 +64,8 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $deliveryAddress = new Address((int)$cart->id_address_delivery);
         $billingAddress = new Address((int)$cart->id_address_invoice);
         $env = $this->get_env();
+
+        $this->logger->debug('Checkout', 'Environment check', ['env' => $env]);
 
         $themeName = '';
         $themeVersion = '';
@@ -129,6 +140,15 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 "url_theme" => isset($this->context->shop->theme_name) ? $this->context->shop->theme_name : '',
             ),
         );
+
+        $this->logger->info('Checkout', 'Sending API request', [
+            'api_url' => $apiUrl,
+            'cart_id' => $cart->id,
+            'amount' => $body['amount'],
+            'currency' => $body['currency'],
+            'body' => $body,
+        ]);
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -144,11 +164,20 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         ));
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
+
+        $this->logger->info('Checkout', 'API response received', [
+            'http_code' => $httpCode,
+            'response_length' => strlen($response),
+        ]);
 
         // Process response
         if ($httpCode != 200 || !$response) {
-            PrestaShopLogger::addLog('Payment error: Could not connect to the payment gateway.', 3);
+            $this->logger->error('Checkout', 'Could not connect to gateway', [
+                'http_code' => $httpCode,
+                'curl_error' => $curlError,
+            ]);
             return array(
                 'result' => 'failure',
                 'message' => 'Payment error: Could not connect to the payment gateway.'
@@ -160,13 +189,19 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         if (isset($result['redirect_url'])) {
             $gatewayUrl = $result['redirect_url'];
 
+            $this->logger->info('Checkout', 'Payment success, redirecting', [
+                'redirect_url' => substr($gatewayUrl, 0, 100) . '...',
+            ]);
+
             return array(
                 'result' => 'success',
                 'show_modal' => true,
                 'redirect' => $this->formatGatewayUrl($gatewayUrl)
             );
         } else {
-            PrestaShopLogger::addLog('Payment error: Invalid response from payment gateway.', 3);
+            $this->logger->warning('Checkout', 'Invalid response - no redirect_url', [
+                'response_preview' => substr($response, 0, 200),
+            ]);
             return array(
                 'result' => 'failure',
                 'message' => 'Payment error: Invalid response from payment gateway.'
@@ -178,6 +213,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
     {
         $products = $cart->getProducts();
         if (empty($products)) {
+            $this->logger->debug('Checkout', 'Cart has no products');
             return null;
         }
 
@@ -194,6 +230,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             );
         }
 
+        $this->logger->debug('Checkout', 'Cart products processed', ['product_count' => count($items)]);
         return $items;
     }
 
@@ -212,7 +249,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         } elseif (str_starts_with($public_key, 'pk_live')) {
             return 'live';
         }
-        
+
         return false;
     }
 

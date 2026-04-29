@@ -43,6 +43,6 @@ composer.lock
 # macOS metadata
 .DS_Store
 
-
 .prettierrc
 .editorconfig
+constants-dev.php
