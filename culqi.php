@@ -340,12 +340,16 @@ class Culqi extends PaymentModule
         if (!Configuration::get('CULQI_STATE_OK')) {
             $txt_state='Pago aceptado';
             $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-            Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+            if (!empty($orderstate) && isset($orderstate[0])) {
+                Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+            }
         }
         if (!Configuration::get('CULQI_STATE_REFUND')) {
             $txt_state='Reembolsado';
             $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-            Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
+            if (!empty($orderstate) && isset($orderstate[0])) {
+                Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
+            }
         }
         if (!Configuration::get('CULQI_STATE_PENDING')) {
             $txt_state = 'En espera de pago por Culqi';
@@ -369,7 +373,9 @@ class Culqi extends PaymentModule
                 Configuration::updateValue('CULQI_STATE_PENDING', (int)$order_state->id);
             } else {
                 $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
-                Configuration::updateValue('CULQI_STATE_PENDING', (int)$orderstate[0]['id_order_state']);
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_PENDING', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
         if (!Configuration::get('CULQI_STATE_ERROR')) {
@@ -392,7 +398,9 @@ class Culqi extends PaymentModule
                 Configuration::updateValue('CULQI_STATE_ERROR', (int)$order_state->id);
             } else {
                 $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-                Configuration::updateValue('CULQI_STATE_ERROR', (int)$orderstate[0]['id_order_state']);
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_ERROR', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
         if (!Configuration::get('CULQI_STATE_EXPIRED')) {
@@ -415,7 +423,9 @@ class Culqi extends PaymentModule
                 Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$order_state->id);
             } else {
                 $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-                Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$orderstate[0]['id_order_state']);
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
     }
