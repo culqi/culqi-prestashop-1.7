@@ -151,6 +151,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             'cart_id' => $cart->id,
             'amount' => $body['amount'],
             'currency' => $body['currency'],
+            'body' =>$body,
         ]);
 
         $ch = curl_init();
