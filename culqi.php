@@ -381,17 +381,57 @@ class Culqi extends PaymentModule
     private function createStates()
     {
         if (!Configuration::get('CULQI_STATE_OK')) {
-            $txt_state='Pago aceptado';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-            if (!empty($orderstate) && isset($orderstate[0])) {
-                Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+            $txt_state = 'Pago aceptado';
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
+                $order_state = new OrderState();
+                $order_state->name = array();
+                foreach (Language::getLanguages() as $language) {
+                    $order_state->name[$language['id_lang']] = $txt_state;
+                }
+                $order_state->send_email = false;
+                $order_state->color = '#32A05D';
+                $order_state->hidden = false;
+                $order_state->paid = true;
+                $order_state->module_name = 'culqi';
+                $order_state->delivery = false;
+                $order_state->logable = false;
+                $order_state->invoice = true;
+                $order_state->pdf_invoice = true;
+                $order_state->add();
+                Configuration::updateValue('CULQI_STATE_OK', (int)$order_state->id);
+            } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
         if (!Configuration::get('CULQI_STATE_REFUND')) {
-            $txt_state='Reembolsado';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-            if (!empty($orderstate) && isset($orderstate[0])) {
-                Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
+            $txt_state = 'Reembolsado';
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
+                $order_state = new OrderState();
+                $order_state->name = array();
+                foreach (Language::getLanguages() as $language) {
+                    $order_state->name[$language['id_lang']] = $txt_state;
+                }
+                $order_state->send_email = false;
+                $order_state->color = '#8F3A8E';
+                $order_state->hidden = false;
+                $order_state->paid = false;
+                $order_state->module_name = 'culqi';
+                $order_state->delivery = false;
+                $order_state->logable = false;
+                $order_state->invoice = false;
+                $order_state->pdf_invoice = false;
+                $order_state->add();
+                Configuration::updateValue('CULQI_STATE_REFUND', (int)$order_state->id);
+            } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
         if (!Configuration::get('CULQI_STATE_PENDING')) {

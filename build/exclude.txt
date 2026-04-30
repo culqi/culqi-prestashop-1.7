@@ -10,35 +10,14 @@ dist/
 .git/
 .gitignore
 
-# Development documentation
-PLUGIN_ANALYSIS.md
-README.md
-LICENSE
-changelog.txt
-
 # IDE and editor files
 .idea/
 .vscode/
 *.sublime-*
 
-# Benchmark and temporary files
-cards.svg
-*.psd
-*.ai
-logo_old.png
-pagoefectivo.svg
-yape.svg
-
-# Documentation images
-docs/*.png
-docs/*.jpg
-docs/*.jpeg
-
-# Legacy/unused files
-views/js/culqi-old.js
-
-# Composer files (vendor is included but lock is not needed)
+# Composer files
 composer.lock
+vendor/
 
 # macOS metadata
 .DS_Store
