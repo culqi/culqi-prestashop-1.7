@@ -6,17 +6,22 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 {
     private $logger;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = CulqiLogger::get_instance();
+    }
+
     public function initContent()
     {
         parent::initContent();
         $this->ajax = false;
-        $this->logger = CulqiLogger::get_instance();
         $cart = $this->context->cart;
 
-        $this->logger->info('Checkout', 'Starting payment process', ['cart_id' => $cart->id]);
+        $this->logger->info('Checkout', '[registersale] Starting payment process', ['cart_id' => $cart->id]);
 
         if (!$cart->id) {
-            $this->logger->warning('Checkout', 'Cart is empty');
+            $this->logger->warning('Checkout', '[registersale] Cart is empty');
             die(json_encode(['status' => 'error', 'message' => 'Cart is empty']));
         }
 
@@ -28,7 +33,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         try{
             //die("llegamos bien");
         }catch (Exception $e){
-            $this->logger->error('Checkout', 'Exception in register sale', ['error' => $e->getMessage()]);
+            $this->logger->error('Checkout', '[registersale] Exception in register sale', ['error' => $e->getMessage()]);
             echo '<script type="text/javascript">console.log("Error en el update de cargo!"); </script>';
         }
 
@@ -38,7 +43,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
     private function get_gateway_url($cart, $token)
     {
-        $this->logger->debug('Checkout', 'Building gateway URL', ['cart_id' => $cart->id]);
+        $this->logger->debug('Checkout', '[registersale] Building gateway URL', ['cart_id' => $cart->id]);
 
         $carrierName = 'No method selected';
         if ((int) $cart->id_carrier > 0) {
@@ -65,7 +70,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $billingAddress = new Address((int)$cart->id_address_invoice);
         $env = $this->get_env();
 
-        $this->logger->debug('Checkout', 'Environment check', ['env' => $env]);
+        $this->logger->debug('Checkout', '[registersale] Environment check', ['env' => $env]);
 
         $themeName = '';
         $themeVersion = '';
@@ -141,12 +146,11 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             ),
         );
 
-        $this->logger->info('Checkout', 'Sending API request', [
+        $this->logger->info('Checkout', '[registersale] Sending API request', [
             'api_url' => $apiUrl,
             'cart_id' => $cart->id,
             'amount' => $body['amount'],
             'currency' => $body['currency'],
-            'body' => $body,
         ]);
 
         $ch = curl_init();
@@ -167,14 +171,14 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $curlError = curl_error($ch);
         curl_close($ch);
 
-        $this->logger->info('Checkout', 'API response received', [
+        $this->logger->info('Checkout', '[registersale] API response received', [
             'http_code' => $httpCode,
             'response_length' => strlen($response),
         ]);
 
         // Process response
         if ($httpCode != 200 || !$response) {
-            $this->logger->error('Checkout', 'Could not connect to gateway', [
+            $this->logger->error('Checkout', '[registersale] Could not connect to gateway', [
                 'http_code' => $httpCode,
                 'curl_error' => $curlError,
             ]);
@@ -189,7 +193,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         if (isset($result['redirect_url'])) {
             $gatewayUrl = $result['redirect_url'];
 
-            $this->logger->info('Checkout', 'Payment success, redirecting', [
+            $this->logger->info('Checkout', '[registersale] Payment success, redirecting', [
                 'redirect_url' => substr($gatewayUrl, 0, 100) . '...',
             ]);
 
@@ -199,7 +203,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 'redirect' => $this->formatGatewayUrl($gatewayUrl)
             );
         } else {
-            $this->logger->warning('Checkout', 'Invalid response - no redirect_url', [
+            $this->logger->warning('Checkout', '[registersale] Invalid response - no redirect_url', [
                 'response_preview' => substr($response, 0, 200),
             ]);
             return array(
@@ -213,7 +217,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
     {
         $products = $cart->getProducts();
         if (empty($products)) {
-            $this->logger->debug('Checkout', 'Cart has no products');
+            $this->logger->debug('Checkout', '[registersale] Cart has no products');
             return null;
         }
 
@@ -230,7 +234,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             );
         }
 
-        $this->logger->debug('Checkout', 'Cart products processed', ['product_count' => count($items)]);
+        $this->logger->debug('Checkout', '[registersale] Cart products processed', ['product_count' => count($items)]);
         return $items;
     }
 

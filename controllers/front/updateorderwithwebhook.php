@@ -2,6 +2,14 @@
 
 class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontController
 {
+    private $logger;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = CulqiLogger::get_instance();
+    }
+
     public function initContent()
     {
         parent::initContent();
@@ -10,22 +18,30 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
 
     public function displayAjax()
     {
-        Logger::addLog('Inicio weebhook');
+        $this->logger->info('Webhook', '[updateorderwithwebhook] Webhook received');
+
         header('Content-Type: application/json');
         $shop_domain = Tools::getShopDomainSsl(true);
         $rawData = file_get_contents('php://input');
         $headers = getallheaders();
         $data = json_decode($rawData, true);
 
+        $this->logger->debug('Webhook', '[updateorderwithwebhook] Payload received', [
+            'shop_domain' => $shop_domain,
+            'has_data' => !empty($data),
+        ]);
+
         $headers = $headers['Authorization'];
-        if(!isset($headers)){
-        	exit("Error: Cabecera Authorization no presente");
+        if (!isset($headers)) {
+            $this->logger->warning('Webhook', '[updateorderwithwebhook] Authorization header missing');
+            exit("Error: Cabecera Authorization no presente");
         }
 
         $token = explode(' ', $headers)[1];
         $is_verified = verify_jwt_token($token);
-        if(!$is_verified){
-            Logger::addLog('Error: Token no verificado');
+
+        if (!$is_verified) {
+            $this->logger->warning('Webhook', '[updateorderwithwebhook] Token verification failed');
             http_response_code(401);
             die(json_encode([
                 'type' => 'error',
@@ -33,37 +49,48 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
                 'user_message' => 'Token no verificado',
             ]));
         }
-        Logger::addLog('$data ' . serialize($data));
+
+        $this->logger->debug('Webhook', '[updateorderwithwebhook] Token verified successfully');
+
         $order_id = (int)trim($data['orderId']);
-        $status = trim($data['status']);	
+        $status = trim($data['status']);
         $transaction_id = trim($data['transactionId']);
 
-        Logger::addLog('Charge -> se cambio el estado a: '.$status);    
+        $this->logger->info('Webhook', '[updateorderwithwebhook] Processing webhook', [
+            'order_id' => $order_id,
+            'status' => $status,
+            'transaction_id' => $transaction_id,
+            'payment_type' => $this->get_payment_type($transaction_id),
+        ]);
+
+        $state = null;
         try {
             switch ($this->get_payment_type($transaction_id)) {
 
                 case 'charge':
-                    if ($status == "refunded"){
-                        //$state_refund = 7;
+                    if ($status == "refunded") {
                         $state = 'CULQI_STATE_REFUND';
-                        //$this->updateOrderAndcreateOrderHistoryState($order_id, $state_refund);
                     }
                     break;
 
                 case 'order':
-                    if ($status === "processing") {//pagado
+                    if ($status === "processing") {
                         $state = 'CULQI_STATE_OK';
                     }
-                    if ($status === "cancelled") {//expirado
+                    if ($status === "cancelled") {
                         $state = 'CULQI_STATE_EXPIRED';
                     }
-                    /*if ($status != 'pending') {
-                        $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
-                    }*/
                     break;
             }
-            $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
-            
+
+            if ($state !== null) {
+                $this->updateOrderAndcreateOrderHistoryState($order_id, Configuration::get($state));
+                $this->logger->info('Webhook', '[updateorderwithwebhook] Order state updated', [
+                    'order_id' => $order_id,
+                    'new_state' => $state,
+                ]);
+            }
+
             http_response_code(201);
             die(json_encode([
                 'type' => 'success',
@@ -71,12 +98,15 @@ class CulqiUpdateOrderWithWebHookModuleFrontController extends ModuleFrontContro
                 'user_message' => 'Operación exitosa',
             ]));
         } catch (Exception $e) {
+            $this->logger->error('Webhook', '[updateorderwithwebhook] Webhook processing failed', [
+                'error' => $e->getMessage(),
+                'order_id' => $order_id,
+            ]);
             http_response_code(400);
-            Logger::addLog('Error -> '.$e->getMessage());    
             die(json_encode([
                 'type' => 'error',
                 'order_id' => $order_id,
-                'user_message' => 'Error al ejecutar el webhook, '.$e->getMessage(),
+                'user_message' => 'Error al ejecutar el webhook, ' . $e->getMessage(),
             ]));
         }
     }
