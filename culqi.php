@@ -343,7 +343,6 @@ class Culqi extends PaymentModule
             'culqi_config_url' => $this->getConfigUrl(),
             'iframe_token' => generate_token(),
             'fields_value' => $this->getConfigFieldsValues(),
-            'culqi_config_url' => CULQI_CONFIG_URL,
             'platform' => PLATFORM,
             'debug_mode' => (bool) (Configuration::get('CULQI_DEBUG') === '1' || Configuration::get('CULQI_DEBUG') === 'true'),
             'languages' => $this->context->controller->getLanguages(),
