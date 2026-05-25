@@ -3,18 +3,29 @@
 include_once dirname(__FILE__, 3) . '/culqi.php';
 
 class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
-{	
+{
+    private $logger;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = CulqiLogger::get_instance();
+    }
 
     public function initContent()
     {
         parent::initContent();
         $this->ajax = false;
         $cart = $this->context->cart;
+
+        $this->logger->info('Checkout', '[registersale] Starting payment process', ['cart_id' => $cart->id]);
+
         if (!$cart->id) {
+            $this->logger->warning('Checkout', '[registersale] Cart is empty');
             die(json_encode(['status' => 'error', 'message' => 'Cart is empty']));
         }
 
-        $customer = new Customer($cart->id_customer);        
+        $customer = new Customer($cart->id_customer);
         $token = generate_token();
 
         $gateway_url = $this->get_gateway_url($cart, $token);
@@ -22,6 +33,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         try{
             //die("llegamos bien");
         }catch (Exception $e){
+            $this->logger->error('Checkout', '[registersale] Exception in register sale', ['error' => $e->getMessage()]);
             echo '<script type="text/javascript">console.log("Error en el update de cargo!"); </script>';
         }
 
@@ -31,6 +43,8 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
     private function get_gateway_url($cart, $token)
     {
+        $this->logger->debug('Checkout', '[registersale] Building gateway URL', ['cart_id' => $cart->id]);
+
         $carrierName = 'No method selected';
         if ((int) $cart->id_carrier > 0) {
             $carrier = new Carrier((int) $cart->id_carrier);
@@ -55,6 +69,8 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         $deliveryAddress = new Address((int)$cart->id_address_delivery);
         $billingAddress = new Address((int)$cart->id_address_invoice);
         $env = $this->get_env();
+
+        $this->logger->debug('Checkout', '[registersale] Environment check', ['env' => $env]);
 
         $themeName = '';
         $themeVersion = '';
@@ -108,24 +124,36 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
                 "locale" => "en-PE"
             ),
             "cancel_url" => $this->context->link->getPageLink('order'),
-            "success_url" => '',
             "merchant_locale" => "en-PE",
             "shop_domain" => $shopDomain,
             "order_key" => $customer->secure_key,
+            "phone" => $billingAddress->phone ?: '',
+            "browser" => $user_agent,
+            "products" => $this->get_cart_products($cart),
             "audit_data" => array(
                 "integration_type"=> 'plugin',
                 "ip"=>  $this->obtener_ip_real(),
                 "user_agent" =>  $user_agent,
                 "checkout_version" => CHECKOUT_VERSION,
-                "3ds" => CULQI_3DS,
+                "threeds" => CULQI_3DS,
                 "plugin_version" => CULQI_PLUGIN_VERSION,
                 "cms" => $platform,
                 "cms_version" => _PS_VERSION_,
                 "php_version" => PHP_VERSION,
                 "name_theme" => $themeName,
                 "version_theme" => $themeVersion,
+                "url_theme" => isset($this->context->shop->theme_name) ? $this->context->shop->theme_name : '',
             ),
         );
+
+        $this->logger->info('Checkout', '[registersale] Sending API request', [
+            'api_url' => $apiUrl,
+            'cart_id' => $cart->id,
+            'amount' => $body['amount'],
+            'currency' => $body['currency'],
+            'body' =>$body,
+        ]);
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -141,11 +169,20 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         ));
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
+
+        $this->logger->info('Checkout', '[registersale] API response received', [
+            'http_code' => $httpCode,
+            'response_length' => strlen($response),
+        ]);
 
         // Process response
         if ($httpCode != 200 || !$response) {
-            PrestaShopLogger::addLog('Payment error: Could not connect to the payment gateway.', 3);
+            $this->logger->error('Checkout', '[registersale] Could not connect to gateway', [
+                'http_code' => $httpCode,
+                'curl_error' => $curlError,
+            ]);
             return array(
                 'result' => 'failure',
                 'message' => 'Payment error: Could not connect to the payment gateway.'
@@ -157,18 +194,49 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         if (isset($result['redirect_url'])) {
             $gatewayUrl = $result['redirect_url'];
 
+            $this->logger->info('Checkout', '[registersale] Payment success, redirecting', [
+                'redirect_url' => substr($gatewayUrl, 0, 100) . '...',
+            ]);
+
             return array(
                 'result' => 'success',
                 'show_modal' => true,
                 'redirect' => $this->formatGatewayUrl($gatewayUrl)
             );
         } else {
-            PrestaShopLogger::addLog('Payment error: Invalid response from payment gateway.', 3);
+            $this->logger->warning('Checkout', '[registersale] Invalid response - no redirect_url', [
+                'response_preview' => substr($response, 0, 200),
+            ]);
             return array(
                 'result' => 'failure',
                 'message' => 'Payment error: Invalid response from payment gateway.'
             );
         }
+    }
+
+    private function get_cart_products($cart)
+    {
+        $products = $cart->getProducts();
+        if (empty($products)) {
+            $this->logger->debug('Checkout', '[registersale] Cart has no products');
+            return null;
+        }
+
+        $items = array();
+        foreach ($products as $product) {
+            $quantity = (int) $product['quantity'];
+            $line_total = (float) $product['price_wt'] * $quantity;
+            $unit_price = $quantity > 0 ? $line_total / $quantity : (float) $product['price_wt'];
+
+            $items[] = array(
+                'name' => $product['name'] ?? '',
+                'quantity' => $quantity > 0 ? $quantity : 1,
+                'unit_price' => number_format($unit_price, 2, '.', ''),
+            );
+        }
+
+        $this->logger->debug('Checkout', '[registersale] Cart products processed', ['product_count' => count($items)]);
+        return $items;
     }
 
     private function get_env()
@@ -186,7 +254,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         } elseif (str_starts_with($public_key, 'pk_live')) {
             return 'live';
         }
-        
+
         return false;
     }
 

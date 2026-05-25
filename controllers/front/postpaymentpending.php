@@ -16,7 +16,19 @@ class CulqiPostpaymentpendingModuleFrontController extends ModuleFrontController
         $cart_id = $findorder[0]['id_cart'];
         $secure_key = $findorder[0]['secure_key'];
        
-        Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int)$cart_id . '&id_module=' . (int)$this->module->id . '&id_order=' . $order_id . '&key=' . $secure_key);
+        Tools::redirect(
+            Context::getContext()->link->getPageLink(
+                'order-confirmation',
+                null,
+                null,
+                [
+                    'id_cart' => (int)$cart_id,
+                    'id_module' => (int)$this->module->id,
+                    'id_order' => $order_id,
+                    'key' => $secure_key,
+                ]
+            )
+        );
 
     }
 

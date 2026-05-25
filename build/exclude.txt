@@ -1,0 +1,27 @@
+# Exclude patterns for Prestashop plugin build
+# Lines starting with # are comments
+# Paths are relative to project root
+
+# Build and distribution
+build/
+dist/
+
+# Version control
+.git/
+.gitignore
+
+# IDE and editor files
+.idea/
+.vscode/
+*.sublime-*
+
+# Composer files
+composer.lock
+vendor/
+
+# macOS metadata
+.DS_Store
+
+.prettierrc
+.editorconfig
+constants-dev.php

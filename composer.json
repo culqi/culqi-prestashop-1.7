@@ -1,0 +1,13 @@
+{
+    "require-dev": {
+        "stancer/php-stubs-prestashop": "^8.2"
+    },
+    "scripts": {
+        "build": [
+            "@install-prod",
+            "@package"
+        ],
+        "install-prod": "composer install --no-dev --optimize-autoloader --no-interaction",
+        "package": "php build/build.php"
+    }
+}
