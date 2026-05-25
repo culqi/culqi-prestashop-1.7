@@ -1,0 +1,46 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "fd4a41c3c1520e76e0bff9da0bee9fca",
+    "packages": [],
+    "packages-dev": [
+        {
+            "name": "stancer/php-stubs-prestashop",
+            "version": "v8.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/wearestancer/library/php-stubs-prestashop.git",
+                "reference": "e6f6b0d2bd34259a298f1aa318d980ff49e541c5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/wearestancer%2Flibrary%2Fphp-stubs-prestashop/repository/archive.zip?sha=e6f6b0d2bd34259a298f1aa318d980ff49e541c5",
+                "reference": "e6f6b0d2bd34259a298f1aa318d980ff49e541c5",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PrestaShop function and class declaration stubs for static analysis.",
+            "homepage": "https://gitlab.com/wearestancer/library/php-stubs-prestashop",
+            "support": {
+                "issues": "https://gitlab.com/wearestancer/library/php-stubs-prestashop/-/issues",
+                "source": "https://gitlab.com/wearestancer/library/php-stubs-prestashop/-/tree/v8.2.4"
+            },
+            "time": "2026-03-05T17:11:55+00:00"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}

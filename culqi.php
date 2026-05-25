@@ -5,81 +5,108 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-define( 'CULQI_API_URL' , 'https://c1-ag-online.qas.nonprodculqi.com/gateway/' );
-define( 'CULQI_CONFIG_URL' , 'https://c1-configonlineplatform.qas.nonprodculqi.com/' );
-define( 'EXPIRATION_TIME' , 15 );
-define( 'CULQI_PLUGIN_VERSION', 'v4.0.1');
-define( 'LOADER_IMG', 'https://icon-library.com/images/loading-icon-transparent-background/loading-icon-transparent-background-12.jpg');
-define( 'PLATFORM', 'prestashop');
-define( 'CHECKOUT_VERSION', 'custom_checkout');
-define( 'CULQI_3DS', 'culqi_3ds');
+if (file_exists(dirname(__FILE__) . '/constants-dev.php')) {
+    require_once dirname(__FILE__) . '/constants-dev.php';
+} else {
+    require_once dirname(__FILE__) . '/constants.php';
+}
+
+require_once dirname(__FILE__) . '/libraries/culqi/CulqiLogger.php';
 
 function generate_token()
 {
+    $logger = CulqiLogger::get_instance();
+    $logger->debug('Token', 'Token generation started');
+
     $minutes = EXPIRATION_TIME;
     $expirationTimeInSeconds = $minutes * 60;
     $exp = time() + $expirationTimeInSeconds;
 
     $rsa_pk = Configuration::get('CULQI_RSA_PK') ?? '';
     $public_key = Configuration::get('CULQI_LLAVE_PUBLICA') ?? '';
+
+    if (empty($public_key)) {
+        $logger->warning('Token', 'Config not set, cannot generate token');
+        return null;
+    }
+
     $data = [
         "pk" => $public_key,
         "exp" => $exp
     ];
 
+    $logger->debug('Token', 'RSA encryption started');
+
     $encryptedData = encrypt_data_with_rsa(json_encode($data), $rsa_pk);
-    
+
+    if ($encryptedData === null) {
+        $logger->error('Token', 'RSA encryption failed');
+        return null;
+    }
+
+    $logger->debug('Token', 'Token generated successfully', ['exp' => $exp]);
     return $encryptedData;
 }
 
-function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?string 
+function encrypt_data_with_rsa(string $jsonData, string $publicKeyString): ?string
 {
+    $logger = CulqiLogger::get_instance();
+    $logger->debug('Token', 'RSA encryption started');
+
     try {
         $publicKey = openssl_pkey_get_public($publicKeyString);
         if ($publicKey === false) {
+            $logger->error('Token', 'Invalid public key', ['error' => openssl_error_string()]);
             throw new Exception("Invalid public key: " . openssl_error_string());
         }
 
         $encrypted = '';
         $result = openssl_public_encrypt($jsonData, $encrypted, $publicKey, OPENSSL_PKCS1_OAEP_PADDING);
 
-        // openssl_free_key($publicKey);
-
         if ($result === false) {
+            $logger->error('Token', 'Encryption failed', ['error' => openssl_error_string()]);
             throw new Exception("Encryption failed: " . openssl_error_string());
         }
 
+        $logger->debug('Token', 'RSA encryption completed successfully');
         return base64_encode($encrypted);
     } catch (Exception $e) {
-        error_log("RSA Encryption Error: " . $e->getMessage());
+        $logger->error('Token', 'RSA encryption failed', ['error' => $e->getMessage()]);
         return null;
     }
 }
 
 function verify_jwt_token($token)
 {
+    $logger = CulqiLogger::get_instance();
+    $logger->debug('Token', 'Token verification started');
+
     try {
         $rsa_sk_plugin = Configuration::get('CULQI_RSA_PLUGIN_SK') ?? '';
         $encryptedToken = base64_decode($token);
         if ($encryptedToken === false) {
+            $logger->warning('Token', 'Invalid Base64 token');
             throw new Exception('Invalid Base64 token.');
         }
         $decrypted = '';
         $success = openssl_private_decrypt($encryptedToken, $decrypted, $rsa_sk_plugin, OPENSSL_PKCS1_OAEP_PADDING);
         if (!$success) {
+            $logger->warning('Token', 'Failed to decrypt token');
             throw new Exception('Failed to decrypt the token.');
         }
         $payload = json_decode($decrypted, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
+            $logger->warning('Token', 'Invalid token payload format');
             throw new Exception('Invalid token payload format.');
         }
         if (!isset($payload['exp']) || $payload['exp'] < time()) {
+            $logger->warning('Token', 'Token has expired');
             throw new Exception('Token has expired.');
         }
+        $logger->debug('Token', 'Token verified successfully', $payload);
         return $payload;
     } catch (Exception $e) {
-        // var_dump($e);
-        // throw new Exception('Token validation failed: ' . $e->getMessage());
+        $logger->warning('Token', 'Token verification failed', ['error' => $e->getMessage()]);
         return false;
     }
 }
@@ -124,7 +151,8 @@ class Culqi extends PaymentModule
             Configuration::updateValue('CULQI_PAYMENT_TYPES', '') &&
             Configuration::updateValue('CULQI_MERCHANT', '') &&
             Configuration::updateValue('CULQI_RSA_PK', '') &&
-            Configuration::updateValue('CULQI_RSA_PLUGIN_SK', '')
+            Configuration::updateValue('CULQI_RSA_PLUGIN_SK', '') &&
+            Configuration::updateValue('CULQI_DEBUG', '0')
         );
     }
 
@@ -157,7 +185,7 @@ class Culqi extends PaymentModule
         Tools::clearSmartyCache();
         Tools::clearXMLCache();
         Tools::clearCache();
-        
+
         if (method_exists('Tools', 'generateIndex')) {
             Tools::generateIndex();
         } else {
@@ -263,6 +291,7 @@ class Culqi extends PaymentModule
             || !Configuration::deleteByName('CULQI_MERCHANT')
             || !Configuration::deleteByName('CULQI_RSA_PK')
             || !Configuration::deleteByName('CULQI_RSA_PLUGIN_SK')
+            || !Configuration::deleteByName('CULQI_DEBUG')
             || !$this->uninstallStates())
             return false;
         return true;
@@ -286,6 +315,19 @@ class Culqi extends PaymentModule
      * Admin Zone
      */
 
+    public function getConfigUrl(): string
+    {
+        $logger = CulqiLogger::get_instance();
+        $logger->debug('Config', 'Generating config URL');
+
+        $token = generate_token();
+        $shopUrl = Tools::getShopDomainSsl(true);
+        $url = CULQI_CONFIG_URL . '?platform=' . PLATFORM . '&shop=' . urlencode($shopUrl) . '&token=' . urlencode($token);
+
+        $logger->debug('Config', 'Config URL generated', ['url_length' => strlen($url)]);
+        return $url;
+    }
+
     public function renderForm()
     {
         if (!isset($this->context->employee)) {
@@ -298,10 +340,11 @@ class Culqi extends PaymentModule
         $this->context->smarty->assign(array(
             'currentIndex' => $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name,
             'token' => Tools::getAdminTokenLite('AdminModules'),
+            'culqi_config_url' => $this->getConfigUrl(),
             'iframe_token' => generate_token(),
             'fields_value' => $this->getConfigFieldsValues(),
-            'culqi_config_url' => CULQI_CONFIG_URL,
             'platform' => PLATFORM,
+            'debug_mode' => (bool) (Configuration::get('CULQI_DEBUG') === '1' || Configuration::get('CULQI_DEBUG') === 'true'),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'save_config_ajax_url' => $this->context->link->getAdminLink('AdminCulqiConfig'),
@@ -317,12 +360,14 @@ class Culqi extends PaymentModule
         $pk = Configuration::get('CULQI_LLAVE_PUBLICA') ?? '';
         $merchant = Configuration::get('CULQI_MERCHANT') ?? '';
         $payment_methods = Configuration::get('CULQI_PAYMENT_TYPES') ?? '';
+        $debug = Configuration::get('CULQI_DEBUG') ?? '0';
 
         return [
             'status' => (bool) ($status === 'true'),
             'pk' => $pk,
             'merchant' => $merchant,
             'payment_methods' => $payment_methods,
+            'debug' => (bool) ($debug === '1' || $debug === 'true'),
             'shop_url' => Tools::getShopDomainSsl(true)
         ];
     }
@@ -338,14 +383,58 @@ class Culqi extends PaymentModule
     private function createStates()
     {
         if (!Configuration::get('CULQI_STATE_OK')) {
-            $txt_state='Pago aceptado';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-            Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+            $txt_state = 'Pago aceptado';
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
+                $order_state = new OrderState();
+                $order_state->name = array();
+                foreach (Language::getLanguages() as $language) {
+                    $order_state->name[$language['id_lang']] = $txt_state;
+                }
+                $order_state->send_email = false;
+                $order_state->color = '#32A05D';
+                $order_state->hidden = false;
+                $order_state->paid = true;
+                $order_state->module_name = 'culqi';
+                $order_state->delivery = false;
+                $order_state->logable = false;
+                $order_state->invoice = true;
+                $order_state->pdf_invoice = true;
+                $order_state->add();
+                Configuration::updateValue('CULQI_STATE_OK', (int)$order_state->id);
+            } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_OK', (int)$orderstate[0]['id_order_state']);
+                }
+            }
         }
         if (!Configuration::get('CULQI_STATE_REFUND')) {
-            $txt_state='Reembolsado';
-            $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-            Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
+            $txt_state = 'Reembolsado';
+            $rows = Db::getInstance()->getValue($this->queryGetStates($txt_state));
+            if (intval($rows) == 0) {
+                $order_state = new OrderState();
+                $order_state->name = array();
+                foreach (Language::getLanguages() as $language) {
+                    $order_state->name[$language['id_lang']] = $txt_state;
+                }
+                $order_state->send_email = false;
+                $order_state->color = '#8F3A8E';
+                $order_state->hidden = false;
+                $order_state->paid = false;
+                $order_state->module_name = 'culqi';
+                $order_state->delivery = false;
+                $order_state->logable = false;
+                $order_state->invoice = false;
+                $order_state->pdf_invoice = false;
+                $order_state->add();
+                Configuration::updateValue('CULQI_STATE_REFUND', (int)$order_state->id);
+            } else {
+                $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_REFUND', (int)$orderstate[0]['id_order_state']);
+                }
+            }
         }
         if (!Configuration::get('CULQI_STATE_PENDING')) {
             $txt_state = 'En espera de pago por Culqi';
@@ -369,7 +458,9 @@ class Culqi extends PaymentModule
                 Configuration::updateValue('CULQI_STATE_PENDING', (int)$order_state->id);
             } else {
                 $orderstate = Db::getInstance()->ExecuteS("SELECT distinct id_order_state, name FROM " . _DB_PREFIX_ . "order_state_lang where name='" . $txt_state . "'");
-                Configuration::updateValue('CULQI_STATE_PENDING', (int)$orderstate[0]['id_order_state']);
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_PENDING', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
         if (!Configuration::get('CULQI_STATE_ERROR')) {
@@ -392,7 +483,9 @@ class Culqi extends PaymentModule
                 Configuration::updateValue('CULQI_STATE_ERROR', (int)$order_state->id);
             } else {
                 $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-                Configuration::updateValue('CULQI_STATE_ERROR', (int)$orderstate[0]['id_order_state']);
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_ERROR', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
         if (!Configuration::get('CULQI_STATE_EXPIRED')) {
@@ -415,7 +508,9 @@ class Culqi extends PaymentModule
                 Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$order_state->id);
             } else {
                 $orderstate = Db::getInstance()->ExecuteS("SELECT distinct osl.id_order_state, osl.name FROM " . _DB_PREFIX_ . "order_state_lang osl, " . _DB_PREFIX_ . "order_state os where osl.id_order_state=os.id_order_state and osl.name='" . $txt_state . "' and deleted=0");
-                Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$orderstate[0]['id_order_state']);
+                if (!empty($orderstate) && isset($orderstate[0])) {
+                    Configuration::updateValue('CULQI_STATE_EXPIRED', (int)$orderstate[0]['id_order_state']);
+                }
             }
         }
     }
