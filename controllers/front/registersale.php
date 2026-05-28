@@ -59,7 +59,6 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
         $orderReference = '';
         $shopDomain = Tools::getShopDomainSsl();
-        $apiUrl = CULQI_API_URL . 'shopify/public/save-order';
         $platform = PLATFORM;
         $user_agent = Tools::getValue('HTTP_USER_AGENT', $_SERVER['HTTP_USER_AGENT']);
 
@@ -133,7 +132,7 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
             "audit_data" => array(
                 "integration_type"=> 'plugin',
                 "ip"=>  $this->obtener_ip_real(),
-                "user_agent" =>  $user_agent,
+                "user_agent" =>  $_SERVER['HTTP_USER_AGENT'] ?? '',
                 "checkout_version" => CHECKOUT_VERSION,
                 "threeds" => CULQI_3DS,
                 "plugin_version" => CULQI_PLUGIN_VERSION,
@@ -147,71 +146,50 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
         );
 
         $this->logger->info('Checkout', '[registersale] Sending API request', [
-            'api_url' => $apiUrl,
             'cart_id' => $cart->id,
             'amount' => $body['amount'],
             'currency' => $body['currency'],
             'body' =>$body,
         ]);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiUrl);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'shopify-shop-domain: ' . $shopDomain,
-            'Authorization: Bearer ' . $token,
-        ));
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError = curl_error($ch);
-        curl_close($ch);
-
-        $this->logger->info('Checkout', '[registersale] API response received', [
-            'http_code' => $httpCode,
-            'response_length' => strlen($response),
+        $client = new CulqiHttpClient();
+        $result = $client->post('shopify/public/save-order', $body, [
+            'Authorization' => 'Bearer ' . $token,
+            'shopify-shop-domain' => $shopDomain,
         ]);
 
-        // Process response
-        if ($httpCode != 200 || !$response) {
+        if (!$result['success']) {
             $this->logger->error('Checkout', '[registersale] Could not connect to gateway', [
-                'http_code' => $httpCode,
-                'curl_error' => $curlError,
+                'http_code' => $result['http_code'],
+                'error' => $result['error'] ?? 'Unknown error',
             ]);
-            return array(
+            return [
                 'result' => 'failure',
-                'message' => 'Payment error: Could not connect to the payment gateway.'
-            );
+                'message' => 'Payment error: Could not connect to the payment gateway.',
+            ];
         }
 
-        $result = json_decode($response, true);
-
-        if (isset($result['redirect_url'])) {
-            $gatewayUrl = $result['redirect_url'];
+        if (isset($result['data']['redirect_url'])) {
+            $gatewayUrl = $result['data']['redirect_url'];
 
             $this->logger->info('Checkout', '[registersale] Payment success, redirecting', [
                 'redirect_url' => substr($gatewayUrl, 0, 100) . '...',
             ]);
 
-            return array(
+            return [
                 'result' => 'success',
                 'show_modal' => true,
-                'redirect' => $this->formatGatewayUrl($gatewayUrl)
-            );
-        } else {
-            $this->logger->warning('Checkout', '[registersale] Invalid response - no redirect_url', [
-                'response_preview' => substr($response, 0, 200),
-            ]);
-            return array(
-                'result' => 'failure',
-                'message' => 'Payment error: Invalid response from payment gateway.'
-            );
+                'redirect' => $this->formatGatewayUrl($gatewayUrl),
+            ];
         }
+
+        $this->logger->warning('Checkout', '[registersale] Invalid response - no redirect_url', [
+            'response_preview' => substr(json_encode($result['data'] ?? ''), 0, 200),
+        ]);
+        return [
+            'result' => 'failure',
+            'message' => 'Payment error: Invalid response from payment gateway.',
+        ];
     }
 
     private function get_cart_products($cart)
