@@ -12,6 +12,7 @@ if (file_exists(dirname(__FILE__) . '/constants-dev.php')) {
 }
 
 require_once dirname(__FILE__) . '/libraries/culqi/CulqiLogger.php';
+require_once dirname(__FILE__) . '/libraries/culqi/CulqiHttpClient.php';
 
 function generate_token()
 {

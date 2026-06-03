@@ -10,28 +10,88 @@ class CulqiLogger
     private $source = 'culqi';
     private $logFile;
     private $employeeId;
+    private $sensitive_fields_lower = [];
 
     private $sensitive_fields = [
+        'access_token',
+        'accesstoken',
+        'account_number',
+        'accountnumber',
+        'api_key',
+        'apikey',
+        'appkey',
+        'appsecret',
+        'authorization',
+        'authorization',
+        'awsaccesskeyid',
+        'awssecretaccesskey',
+        'awssessiontoken',
+        'basic',
+        'bearer',
+        'card',
         'cardNumber',
         'card_number',
-        'cvv',
-        'token',
-        'authorization',
-        'password',
-        'secret',
-        'rsa_sk_plugin',
-        'rsa_pk_culqi',
-        'pk',
-        'private_key',
-        'public_key',
-        'culqi_rsa_sk',
+        'cardnumber',
+        'client_secret',
+        'clientsecret',
         'culqi_rsa_pk',
+        'culqi_rsa_sk',
+        'culqiapipassword',
+        'culqiapiusername',
+        'cvc',
+        'cvc2',
+        'cvv',
+        'cvv',
+        'cvv2',
+        'dbpassword',
+        'env',
+        'lb_retrynotification',
+        'loginheaderplugin',
+        'loginurlculqi2',
+        'mailer',
+        'pan',
+        'password',
+        'pgpassword',
+        'pin',
+        'pk',
+        'pluginssecretkeypem',
+        'private_key',
+        'privatekey',
+        'public_key',
+        'publicKey',
+        'pwd',
+        'refresh_token',
+        'refreshtoken',
+        'routing_number',
+        'routingnumber',
+        'rsa_pk_culqi',
+        'rsa_sk_plugin',
+        'secret',
+        'secret_key',
+        'secretiv',
+        'secretkey',
+        'secretname',
+        'sendgrid_id',
+        'sendgridapikey',
+        'social_security',
+        'socialsecurity',
+        'ssn',
+        'token',
+        'vtexculqiappkey',
+        'vtexculqiapptoken',
+        'vtexrequestverifyappkey',
+        'vtexrequestverifyapptoken',
+        'x-api-key',
+        'x-apikey',
+        'x-auth-token',
+        'x-authtoken',
     ];
 
     private function __construct()
     {
         $this->logFile = dirname(__FILE__, 3) . '/logs/culqi.json';
         $this->ensureLogDirectory();
+        $this->sensitive_fields_lower = array_map('strtolower', $this->sensitive_fields);
 
         $this->employeeId = null;
         if (Context::getContext()->employee && Context::getContext()->employee->id) {
@@ -195,13 +255,7 @@ class CulqiLogger
 
     private function is_sensitive_key(string $key): bool
     {
-        $lower_key = strtolower($key);
-        foreach ($this->sensitive_fields as $field) {
-            if (strpos($lower_key, strtolower($field)) !== false) {
-                return true;
-            }
-        }
-        return false;
+        return in_array(strtolower($key), $this->sensitive_fields_lower, true);
     }
 
     private function looks_like_sensitive_string(string $value): bool
