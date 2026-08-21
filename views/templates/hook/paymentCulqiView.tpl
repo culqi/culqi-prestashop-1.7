@@ -58,31 +58,31 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000;
+        z-index: 999999;
     }
-    
+
     .no-scroll {
         overflow: hidden !important;
     }
-    
+
     .culqi-modal-content {
         width: 100%;
         height: 100%;
         background: transparent;
     }
-    
+
     #order-created-modal iframe {
         width: 100%;
         height: 100%;
         border: 0;
         border-radius: 4px;
     }
-    
+
     .woocommerce-loader {
         display: none;
         background-color: rgb(0 0 0 / .6);
         place-items: center;
-        z-index: 100;
+        z-index: 1000000;
         inset: 0px;
         position: fixed;
         justify-content: center;
@@ -92,7 +92,7 @@
         color: #fff;
         font-size: 12px;
     }
-    
+
     .flex {
         display: flex !important;
     }
@@ -126,10 +126,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Culqi payment module loaded');
     const culqiElement = document.querySelector('[data-module-name="culqi"]');
-    
+
     if (culqiElement) {
         const ancestor = culqiElement.closest('.payment-option');
-        
+
         if (ancestor) {
             const label = ancestor.querySelector('label');
             if (label) {

@@ -13,19 +13,45 @@ Nuestro plugin integra por tí nuestro Checkout v4 y nuestra librería JS 3DS, c
 
 ## Instalación y activación
 
+### Opción 1: Instalación manual con archivo ZIP
+
 Descargar el zip (.zip) de nuestro plugin desde [aquí](https://github.com/culqi/culqi-prestashop-1.7/releases/download/vCulqi-Prestashop1.7/culqi.zip "download") y subirlo como un módulo.
 
-![prestashop](https://docs.culqi.com/images/plugins/prestashop-instalar-zip.png)
+![prestashop](screenshots/prestashop-instalar-zip.png)
 
 Luego busca el plugin instalado con el nombre de **Culqi** y procedes a activarlo.
 
-![prestashop](https://docs.culqi.com/images/plugins/prestashop-activar.png)
+![prestashop](screenshots/prestashop-activar.png)
+
+### Opción 2: Instalación desde código fuente
+
+Si prefieres usar el código fuente en lugar de descargar un ZIP pre-compilado, puedes construir el plugin manualmente.
+
+**Requisitos:**
+
+- [Composer](https://getcomposer.org/) instalado en tu computadora
+- PHP 7.4 o superior
+
+**Pasos:**
+
+1. Descarga o clona el código fuente del plugin desde este repositorio
+2. Abre una terminal en la carpeta raíz del proyecto
+3. Ejecuta el comando:
+
+    ```bash
+    composer run build
+    ```
+
+4. Se generará un archivo `dist/culqi-X.X.X.zip` (por ejemplo, `dist/culqi-4.0.0.zip`)
+5. Sigue los mismos pasos de la **Opción 1** para subir el ZIP a Prestashop
+
+> **Nota:** Si ya tienes una versión anterior del plugin instalada, te recomendamos desactivarla y eliminarla antes de instalar la nueva versión.
 
 ## Configuración
 
 A continuación se presenta una imagen de la pantalla de configuración:
 
-![prestashop](https://docs.culqi.com/images/plugins/prestashop_conf.png)
+![prestashop](screenshots/plugin-conf.jpg)
 
 Ingresa en la sección "Settings" para configurar el plugin.
 Independiente del mecanismo de instalación, los pasos para configurar el plugin son los mismos.
@@ -55,11 +81,11 @@ Independiente del mecanismo de instalación, los pasos para configurar el plugin
 
 8. Personaliza tu checkout: Con esta opción puedes cambiar los colores preestablecidos por los colores de tu marca, así como el logo.
 
-![prestashop](https://docs.culqi.com/images/plugins/prestashop-preview-checkout.png)
+![prestashop](./screenshots/plugin-preview-checkout.jpg)
+
 
 9. Finalmente guarda tu configuración: ¡Listo!, Tus clientes ya pueden realizar pagos a través de tu tienda virtual.
 
-![prestashop](https://docs.culqi.com/images/plugins/prestashop-save.png)
 
 ## Pruebas
 
@@ -114,7 +140,7 @@ Puedes usar el manual para obtener más detalle:
   <tbody class="bg-transparent divide-y divide-culqi-gray-ultra-light dark:divide-culqi-plate-light">
     <tr class="whitespace-nowrap font-normal font-Archivo  text-culqi-plate-dark dark:text-white-gray">
       <td class = "px-3 py-4 font-bold text-sm">
-        <img src="https://docs.culqi.com/images/plugins/prestashop.svg" alt="woocommerce" /></br>
+        <img src="https://docs.culqi.com/images/plugins/prestashop.svg" alt="prestashop" /></br>
       </td>
       <td class = "px-3 py-4 text-sm">
         <a href='https://docs.culqi.com/pdf/manual_prestashop.pdf' download>

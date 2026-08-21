@@ -24,8 +24,8 @@
 
 <div class="wrap">
     <div class="iframe-container">
-        <iframe 
-            src="{$culqi_config_url}?platform={$platform}&shop={$fields_value.shop_url|escape:'url'}&token={$iframe_token|escape:'url'}" 
+        <iframe
+            src="{$culqi_config_url|escape:'html'}"
             width="100%">
         </iframe>
     </div>
@@ -84,7 +84,30 @@
             }
             //if (event.origin !== 'http://localhost:5173') return;
             if (event.data.action === 'reload') {
-                location.reload();
+                var iframe = document.querySelector(".iframe-container iframe");
+                $.ajax({
+                    url: "{$save_config_ajax_url}",
+                    type: "POST",
+                    data: {
+                        action: 'getNewConfigUrl',
+                        ajax: true
+                    },
+                    success: function(response) {
+                        try {
+                            var data = typeof response === 'string' ? JSON.parse(response) : response;
+                            if (data.success && data.url) {
+                                iframe.src = data.url;
+                            } else {
+                                location.reload();
+                            }
+                        } catch (e) {
+                            location.reload();
+                        }
+                    },
+                    error: function() {
+                        location.reload();
+                    }
+                });
             }
         }, false);
     });
