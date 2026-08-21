@@ -1,3 +1,14 @@
+2026-08-18 - version 4.1.0
+Feature: Nuevo cliente HTTP CulqiHttpClient con gestión de user-agent
+Feature: Agregar campos MDD (Multi-Distribuidor)
+Feature: Mejoras en plugin unification para mejor compatibilidad
+Fix: Soporte para PrestaShop 9.0.x
+Fix: Prevenir errores cuando estados de pedido faltan en base de datos
+Fix: Mejoras en validación de autenticación en webhooks
+Fix: Mejoras en gestión de sesión y tokens
+Refactor: Agregar body de orden en logs para diagnóstico
+Chore: Actualizar README con pasos de build
+
 2024-04-13 - version 4.0.1
 Feature: Add centralized logging system for payment activity tracking
 Feature: Add cart products and browser data to checkout payload
