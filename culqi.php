@@ -323,7 +323,7 @@ class Culqi extends PaymentModule
 
         $token = generate_token();
         $shopUrl = Tools::getShopDomainSsl(true);
-        $url = CULQI_CONFIG_URL . '?platform=' . PLATFORM . '&shop=' . urlencode($shopUrl) . '&token=' . urlencode($token);
+        $url = CULQI_CONFIG_URL . '?platform=' . PLATFORM . '&shop=' . urlencode($shopUrl) . '&shop_name=' . urlencode(Configuration::get('PS_SHOP_NAME')) . '&token=' . urlencode($token);
 
         $logger->debug('Config', 'Config URL generated', ['url_length' => strlen($url)]);
         return $url;
