@@ -237,7 +237,12 @@ class CulqiRegisterSaleModuleFrontController extends ModuleFrontController
 
     private function formatGatewayUrl(string $url): string
     {
-        return $url . '&culqiPluginVersion=' . CULQI_PLUGIN_VERSION . '&culqiClientVersion=' . _PS_VERSION_;
+        $shopName = Configuration::get('PS_SHOP_NAME');
+        $url .= '&culqiPluginVersion=' . CULQI_PLUGIN_VERSION . '&culqiClientVersion=' . _PS_VERSION_;
+        if ($shopName !== false && $shopName !== '' && strpos($url, 'shop_name=') === false) {
+            $url .= '&shop_name=' . urlencode($shopName);
+        }
+        return $url;
     }
 
     private function obtener_ip_real()
